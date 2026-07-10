@@ -112,27 +112,82 @@ button { color: inherit; }
 .repo-strip a small { color: #74869a; }
 .repo-strip a em { position: absolute; top: 12px; right: 12px; font-style: normal; color: #3481ca; }
 
-.dark-titlebar { background: #203349; color: #a9bed2; }
-.about-window { background: #102030; }
-.about-grid { display: grid; grid-template-columns: 1.35fr .65fr; min-height: 650px; }
-.about-terminal { padding: 55px 60px; background: #102030; color: #cfe2f3; font: 14px/1.75 ui-monospace, SFMono-Regular, Consolas, monospace; }
-.about-terminal > p { margin: 0 0 18px; }
-.about-terminal p span, .cursor-line span { color: #63c1ff; }
-.about-terminal h2 { margin: 8px 0 22px; color: white; font: 700 clamp(34px, 4vw, 58px)/1.15 "Segoe UI", "Microsoft YaHei", sans-serif; letter-spacing: -.04em; }
-.terminal-copy { max-width: 650px; color: #9eb6c9; }
-.about-terminal ul { list-style: none; margin: 0 0 27px; padding: 0; color: #e7f2fb; }
-.contact-links { display: grid; gap: 5px; margin: -8px 0 24px; }
-.contact-links a:hover { color: var(--yellow); }
-.cursor-line i { display: inline-block; width: 8px; height: 16px; background: var(--yellow); vertical-align: middle; animation: blink 1s steps(1) infinite; }
-.service-panel { padding: 58px 42px; background: var(--yellow); color: var(--ink); }
-.panel-label { font: 800 11px ui-monospace, Consolas, monospace; letter-spacing: .16em; }
-.service-panel h3 { margin: 18px 0 28px; font-size: 35px; line-height: 1.12; letter-spacing: -.04em; }
-.service-panel ul { list-style: none; padding: 0; margin: 0 0 35px; }
-.service-panel li { padding: 12px 0; border-bottom: 1px solid #17365f2c; }
-.service-panel li::before { content: "→"; margin-right: 8px; }
-.service-button { display: block; padding: 15px 18px; border-radius: 8px; background: var(--ink); color: white; text-align: center; font-weight: 700; transition: transform .2s; }
-.service-button:hover { transform: translateY(-3px); }
-.service-panel small { display: block; margin-top: 16px; color: #54647a; text-align: center; }
+.canvas-app { position: relative; z-index: 4; height: calc(100svh - 48px); margin-top: 48px; overflow: hidden; background: #fffdf7; color: var(--ink); }
+.canvas-toolbar { position: absolute; z-index: 12; inset: 0 0 auto; height: 58px; display: grid; grid-template-columns: 250px 1fr 120px; align-items: center; border-bottom: 2px dashed #d6e2f1; background: #fffdf8; }
+.canvas-toolbar strong { height: 58px; display: flex; align-items: center; gap: 10px; padding: 0 22px; border-right: 2px dashed #d6e2f1; color: #427ec8; font: italic 700 16px "Segoe Script", cursive; }
+.canvas-toolbar strong span { width: 36px; height: 36px; display: grid; place-items: center; border: 2px solid #367ed0; border-radius: 11px; background: var(--yellow); font: 800 11px ui-monospace, Consolas, monospace; }
+.canvas-toolbar > div { justify-self: center; padding: 9px 16px; border: 1px solid #e6ebf0; border-radius: 999px; color: #8d97a4; font: 12px ui-monospace, Consolas, monospace; }
+.canvas-toolbar > button { justify-self: center; padding: 8px 13px; border: 2px dashed #d6e2f1; border-radius: 10px; background: white; color: #4b80be; cursor: pointer; }
+.canvas-layers { position: absolute; z-index: 10; top: 58px; bottom: 0; left: 0; width: 250px; display: flex; flex-direction: column; border-right: 2px dashed #d6e2f1; background: #fffdf8; }
+.canvas-layers h2 { margin: 24px 20px 13px; color: #3979c6; font: italic 700 16px "Segoe Script", cursive; }
+.layer-list { display: grid; gap: 2px; padding: 0 10px; }
+.layer-list button { display: flex; align-items: center; gap: 9px; width: 100%; padding: 10px; border: 0; border-radius: 9px; background: transparent; color: #4c5b6d; text-align: left; cursor: pointer; }
+.layer-list button.active { background: #fff3bf; color: #2776c8; font-weight: 700; }
+.layer-list i { width: 9px; height: 9px; border: 2px solid #3d7ece; border-radius: 50%; }
+.layer-list i.yellow { background: var(--yellow); }
+.layer-list i.blue { background: #3d7ece; }
+.layer-list small { margin-left: auto; color: #c1c8d0; }
+.new-layer { margin: 18px 10px; padding: 11px; border: 2px dashed #cedbea; border-radius: 9px; background: white; color: #4781c6; cursor: pointer; }
+.mini-map { margin-top: auto; padding: 13px 17px 17px; border-top: 2px dashed #d6e2f1; color: #4a7ec0; font: italic 700 13px "Segoe Script", cursive; }
+.mini-map > div { position: relative; height: 115px; margin-top: 11px; overflow: hidden; border: 2px dashed #afc7e5; border-radius: 8px; background: #f5f9fe; }
+.mini-map i { position: absolute; width: 48px; height: 38px; border-radius: 4px; background: #9bb8dc; }
+.mini-map i:nth-child(1) { left: 14px; top: 15px; width: 35px; height: 9px; }
+.mini-map i:nth-child(2) { left: 62px; top: 15px; }
+.mini-map i:nth-child(3) { left: 120px; top: 12px; height: 52px; }
+.mini-map i:nth-child(4) { left: 19px; top: 78px; width: 70px; height: 16px; }
+.mini-map i:nth-child(5) { left: 104px; top: 75px; width: 78px; height: 22px; }
+.canvas-board { position: absolute; z-index: 1; top: 58px; right: 0; bottom: 0; left: 250px; overflow: hidden; cursor: grab; touch-action: none; background-color: #fffef9; background-image: radial-gradient(#d9e5f2 1.6px, transparent 1.6px); background-size: 24px 24px; }
+.canvas-board.is-dragging { cursor: grabbing; }
+.canvas-stage { position: absolute; width: 1900px; height: 1100px; transform-origin: 0 0; will-change: transform; }
+.canvas-connector { position: absolute; z-index: 0; height: 0; border-top: 4px dashed; transform-origin: left center; opacity: .8; pointer-events: none; }
+.canvas-card { position: absolute; z-index: 2; border: 2px dashed #a9c6e8; border-radius: 18px; background: #fff; box-shadow: 0 8px 18px #6f91b210; color: #33485f; user-select: none; transition: box-shadow .2s, border-color .2s; }
+.canvas-card.selected { border-color: #357ed0; box-shadow: 0 0 0 4px #4e91dc18, 0 18px 38px #6f91b22a; }
+.card-grip { display: flex; justify-content: space-between; align-items: center; min-height: 40px; padding: 10px 16px; border-bottom: 2px dashed #dfebf5; color: #4a7fc3; font: 700 11px ui-monospace, Consolas, monospace; letter-spacing: .08em; cursor: grab; }
+.card-grip span { color: #9cb5cf; font-size: 17px; }
+.portrait-card { width: 300px; overflow: hidden; }
+.portrait-card::before, .identity-card::before, .timeline-card::before, .story-card::before { content: ""; position: absolute; z-index: 3; top: -5px; left: 22px; width: 50px; height: 10px; border-radius: 3px; background: var(--yellow); }
+.portrait-card img { display: block; width: 100%; height: 410px; object-fit: cover; object-position: center top; }
+.identity-card { width: 390px; min-height: 390px; padding: 0 28px 28px; background: #f5f8fe; }
+.identity-card .card-grip { margin: 0 -28px 22px; }
+.avatar-mini { width: 58px; height: 58px; overflow: hidden; border: 3px solid var(--yellow); border-radius: 50%; }
+.avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
+.identity-card h2 { margin: 13px 0 2px; color: #397bc9; font-size: 29px; }
+.identity-card > p { margin: 0; color: #6b7987; }
+.identity-card > b { display: inline-block; margin-top: 10px; padding: 4px 10px; border: 2px dashed #d7c35e; border-radius: 999px; background: #fff8ce; color: #4c6f9a; font-size: 11px; }
+.identity-card blockquote { margin: 24px 0 11px; color: #4b83cb; font: italic 20px "Segoe Script", cursive; }
+.identity-card .canvas-quote { padding-left: 12px; border-left: 4px solid var(--yellow); color: #667788; font-size: 13px; }
+.canvas-links { display: flex; gap: 8px; margin-top: 16px; }
+.canvas-links a { padding: 7px 12px; border: 1px solid #a8c4e4; border-radius: 999px; background: white; color: #427abd; font-size: 12px; }
+.timeline-card { width: 360px; padding: 0 28px 25px; }
+.timeline-card .card-grip { margin: 0 -28px 20px; font-family: inherit; font-size: 18px; }
+.timeline-item { position: relative; display: grid; gap: 3px; padding: 0 0 18px 28px; border-left: 2px dashed #4a88d2; }
+.timeline-item::before { content: ""; position: absolute; top: 1px; left: -8px; width: 12px; height: 12px; border: 2px solid #3d7fcf; border-radius: 50%; background: white; }
+.timeline-item b { width: max-content; padding: 2px 8px; border-radius: 5px; background: #fff4bd; color: #e2af13; font-size: 11px; }
+.timeline-item strong { color: #34465a; }
+.timeline-item small { color: #7c8998; }
+.story-card { width: 400px; padding: 0 30px 28px; background: #fffdf4; border-color: #e8cf5a; }
+.story-card .card-grip { margin: 0 -30px 15px; color: #397bc9; font-family: inherit; font-size: 19px; }
+.story-mark { margin: 0; color: #edc72f; font-size: 35px; line-height: 1; }
+.story-card h3 { margin: 0 0 12px; font-size: 24px; line-height: 1.35; }
+.story-card > p:not(.story-mark) { color: #667485; line-height: 1.8; }
+.story-card em { color: #4c82c4; font: italic 15px "Segoe Script", cursive; }
+.skills-card { width: 390px; padding: 0 24px 25px; }
+.skills-card .card-grip { margin: 0 -24px 18px; }
+.skills-card > div:last-child { display: flex; flex-wrap: wrap; gap: 9px; }
+.skills-card > div span { padding: 8px 11px; border: 1px solid #b8cde5; border-radius: 8px; background: #f5f9fe; color: #4779b7; font-size: 13px; }
+.service-canvas-card { width: 360px; padding: 0 27px 28px; border-color: #e6c94e; background: #fff5b9; }
+.service-canvas-card .card-grip { margin: 0 -27px 20px; border-color: #eadb8b; color: #72631b; }
+.service-canvas-card h3 { margin: 0 0 15px; font-size: 26px; line-height: 1.2; }
+.service-canvas-card ul { padding-left: 20px; color: #66717e; line-height: 1.9; }
+.service-canvas-card a { display: block; padding: 12px; border-radius: 8px; background: var(--ink); color: white; text-align: center; font-weight: 700; }
+.sticky-card { width: 260px; padding: 0 22px 20px; transform: rotate(-2deg); border: 0; border-radius: 3px; background: var(--yellow); box-shadow: 4px 9px 0 #e9c63f; }
+.sticky-card .card-grip { margin: 0 -22px 15px; border-color: #ddbd36; color: #66591f; }
+.sticky-card strong { font-size: 21px; }
+.sticky-card p { margin: 8px 0; color: #5a5f67; font-size: 13px; }
+.canvas-zoom { position: absolute; z-index: 15; right: 22px; bottom: 20px; display: flex; align-items: center; gap: 8px; padding: 7px; border: 2px dashed #c9d9eb; border-radius: 12px; background: #fff; color: #5783bb; }
+.canvas-zoom button { width: 34px; height: 32px; border: 0; border-radius: 7px; background: transparent; color: #4781c7; cursor: pointer; }
+.canvas-zoom button:last-child { background: var(--yellow); }
+.canvas-zoom span { min-width: 48px; text-align: center; font: 12px ui-monospace, Consolas, monospace; }
 
 .pill-nav { position: fixed; z-index: 30; left: 50%; bottom: 30px; display: flex; padding: 7px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 15px 35px #174f8452; backdrop-filter: blur(12px); }
 .pill-nav button { min-width: 120px; padding: 13px 18px; border: 0; border-radius: 999px; background: transparent; color: #65768a; font-weight: 700; cursor: pointer; transition: .2s; }
@@ -165,9 +220,13 @@ footer { position: relative; z-index: 2; margin-top: 20px; color: #b8daf8; text-
   .project-grid { grid-template-columns: 1fr 1fr; }
   .repo-strip { grid-template-columns: 1fr 1fr; }
   .repo-strip > div { grid-column: 1 / -1; }
-  .about-grid { grid-template-columns: 1fr; }
-  .about-terminal { padding: 38px 25px; }
-  .service-panel { padding: 40px 25px; }
+  .canvas-toolbar { grid-template-columns: 1fr 90px; }
+  .canvas-toolbar strong { border-right: 0; }
+  .canvas-toolbar > div { display: none; }
+  .canvas-toolbar > button { grid-column: 2; }
+  .canvas-layers { display: none; }
+  .canvas-board { left: 0; }
+  .canvas-zoom { right: 12px; bottom: 92px; }
 }
 
 @media (max-width: 560px) {
@@ -181,6 +240,10 @@ footer { position: relative; z-index: 2; margin-top: 20px; color: #b8daf8; text-
   .window-content > h2 { font-size: 39px; }
   .repo-strip { grid-template-columns: 1fr; }
   .repo-strip > div { grid-column: auto; }
+  .canvas-toolbar strong { padding: 0 12px; font-size: 13px; }
+  .canvas-toolbar strong span { width: 31px; height: 31px; }
+  .canvas-toolbar > button { padding: 7px 9px; font-size: 12px; }
+  .canvas-zoom { transform: scale(.9); transform-origin: right bottom; }
   .pill-nav { bottom: 14px; width: calc(100vw - 24px); }
   .pill-nav button { flex: 1; min-width: 0; padding: 12px 7px; font-size: 13px; }
   .pill-nav small { display: block; margin: 0 0 2px; }

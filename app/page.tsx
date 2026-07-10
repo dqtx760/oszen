@@ -3,6 +3,35 @@
 import { useEffect, useState } from "react";
 
 type Tab = "home" | "work" | "about";
+type CardId = "portrait" | "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
+
+const initialCardPositions: Record<CardId, { x: number; y: number }> = {
+  portrait: { x: 105, y: 155 },
+  identity: { x: 500, y: 160 },
+  timeline: { x: 1015, y: 110 },
+  story: { x: 520, y: 585 },
+  skills: { x: 1050, y: 650 },
+  service: { x: 1435, y: 370 },
+  sticky: { x: 110, y: 690 },
+};
+
+const canvasLayers: { id: CardId; label: string; color: string }[] = [
+  { id: "portrait", label: "个人照片", color: "blue" },
+  { id: "identity", label: "个人信息", color: "yellow" },
+  { id: "timeline", label: "经历时间线", color: "blue" },
+  { id: "story", label: "核心叙事", color: "yellow" },
+  { id: "skills", label: "技能标签", color: "blue" },
+  { id: "service", label: "商业服务", color: "yellow" },
+  { id: "sticky", label: "正在发生", color: "yellow" },
+];
+
+const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]; toOffset: [number, number]; color: string }[] = [
+  { from: "portrait", to: "identity", fromOffset: [300, 190], toOffset: [0, 190], color: "#8bb2e6" },
+  { from: "identity", to: "timeline", fromOffset: [380, 180], toOffset: [0, 220], color: "#8bb2e6" },
+  { from: "identity", to: "story", fromOffset: [195, 360], toOffset: [195, 0], color: "#f2c93d" },
+  { from: "story", to: "skills", fromOffset: [390, 170], toOffset: [0, 120], color: "#8bb2e6" },
+  { from: "timeline", to: "service", fromOffset: [360, 230], toOffset: [0, 150], color: "#8bb2e6" },
+];
 
 const profileImage =
   "https://gitee.com/da-qiang-classmate/typora/raw/master/image/image-20260208022750247.webp";
@@ -45,6 +74,18 @@ export default function Home() {
   const [tab, setTab] = useState<Tab>("home");
   const [booting, setBooting] = useState(true);
   const [time, setTime] = useState("");
+  const [zoom, setZoom] = useState(0.82);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
+  const [cardPositions, setCardPositions] = useState(initialCardPositions);
+  const [selectedCard, setSelectedCard] = useState<CardId>("identity");
+  const [interaction, setInteraction] = useState<{
+    type: "pan" | "card";
+    cardId?: CardId;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
 
   useEffect(() => {
     const bootTimer = window.setTimeout(() => setBooting(false), 1850);
@@ -61,6 +102,65 @@ export default function Home() {
   const changeTab = (next: Tab) => {
     setTab(next);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest("a, button")) return;
+
+    const handle = target.closest<HTMLElement>("[data-drag-handle]");
+    const card = handle?.closest<HTMLElement>("[data-card]");
+    event.currentTarget.setPointerCapture(event.pointerId);
+
+    if (card) {
+      const cardId = card.dataset.card as CardId;
+      setSelectedCard(cardId);
+      setInteraction({
+        type: "card",
+        cardId,
+        startX: event.clientX,
+        startY: event.clientY,
+        originX: cardPositions[cardId].x,
+        originY: cardPositions[cardId].y,
+      });
+      return;
+    }
+
+    if (!target.closest(".canvas-card")) {
+      setInteraction({ type: "pan", startX: event.clientX, startY: event.clientY, originX: pan.x, originY: pan.y });
+    }
+  };
+
+  const handleCanvasPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!interaction) return;
+    const deltaX = event.clientX - interaction.startX;
+    const deltaY = event.clientY - interaction.startY;
+    if (interaction.type === "pan") {
+      setPan({ x: interaction.originX + deltaX, y: interaction.originY + deltaY });
+      return;
+    }
+    if (interaction.cardId) {
+      setCardPositions((current) => ({
+        ...current,
+        [interaction.cardId as CardId]: {
+          x: interaction.originX + deltaX / zoom,
+          y: interaction.originY + deltaY / zoom,
+        },
+      }));
+    }
+  };
+
+  const focusCard = (cardId: CardId) => {
+    const position = cardPositions[cardId];
+    setSelectedCard(cardId);
+    setPan({ x: 300 - position.x * zoom, y: 150 - position.y * zoom });
+  };
+
+  const resetCanvas = () => {
+    setCardPositions(initialCardPositions);
+    setPan({ x: 0, y: 0 });
+    setZoom(0.82);
+    setSelectedCard("identity");
   };
 
   if (booting) {
@@ -164,44 +264,114 @@ export default function Home() {
       )}
 
       {tab === "about" && (
-        <section className="content-window about-window page-enter" aria-label="关于我">
-          <div className="window-titlebar dark-titlebar">
-            <div><i /><i /><i /></div>
-            <span>dqtx@universe ~ about.md</span>
-            <button onClick={() => changeTab("home")} aria-label="关闭关于页面">×</button>
+        <section className="canvas-app page-enter" aria-label="大强同学个人画布">
+          <div className="canvas-toolbar">
+            <strong><span>DQ</span> DQTX Canvas</strong>
+            <div>Scroll 缩放 · Drag 移动画布 · 拖拽卡片</div>
+            <button onClick={resetCanvas}>↶ 重置</button>
           </div>
-          <div className="about-grid">
-            <div className="about-terminal">
-              <p><span>$</span> cat about.md</p>
-              <h2>92 年生人，<br />与 AI 一起把生活变简单。</h2>
-              <p className="terminal-copy">我关注效率工具、AI Agent 生态、出海实操和可复用工作流。比起讨论未来，我更喜欢把今天能跑起来的东西做出来。</p>
-              <p><span>$</span> cat now.txt</p>
-              <ul>
-                <li>🛠️ AI Coding Agent Skills 跨平台管理</li>
-                <li>🌱 Obsidian 写作工作流与 CLI 工具链</li>
-                <li>📝 多平台内容分发自动化</li>
-              </ul>
-              <p><span>$</span> cat contact.md</p>
-              <div className="contact-links">
-                <a href="mailto:sphinx308@proton.me">📮 sphinx308@proton.me</a>
-                <a href="https://x.com/dqtx760" target="_blank" rel="noreferrer">🐦 X / Twitter @dqtx760</a>
-                <a href="https://space.bilibili.com/491358682/video" target="_blank" rel="noreferrer">📺 Bilibili 大强同学</a>
-              </div>
-              <p className="cursor-line"><span>$</span> <i /></p>
+
+          <aside className="canvas-layers">
+            <h2>✦ Layers</h2>
+            <div className="layer-list">
+              {canvasLayers.map((layer) => (
+                <button className={selectedCard === layer.id ? "active" : ""} onClick={() => focusCard(layer.id)} key={layer.id}>
+                  <i className={layer.color} />{layer.label}<small>◉</small>
+                </button>
+              ))}
             </div>
-            <aside className="service-panel">
-              <span className="panel-label">WORK WITH ME</span>
-              <h3>把卡住你的技术问题，交给我。</h3>
-              <ul>
-                <li>网站搭建 / 环境配置</li>
-                <li>AI Agent Skill 定制</li>
-                <li>Obsidian → Git → 网站工作流</li>
-                <li>系统优化 / 软件疑难排查</li>
-                <li>OpenList 网盘挂载</li>
-              </ul>
-              <a className="service-button" href="https://742112.xyz" target="_blank" rel="noreferrer">查看远程服务 ↗</a>
-              <small>单次问题解决 35 元起 · 远程配置 50 元起</small>
-            </aside>
+            <button className="new-layer" onClick={() => focusCard("sticky")}>＋ 聚焦正在发生</button>
+            <div className="mini-map" aria-hidden="true">
+              <span>✦ Minimap</span>
+              <div><i /><i /><i /><i /><i /></div>
+            </div>
+          </aside>
+
+          <div
+            className={`canvas-board ${interaction ? "is-dragging" : ""}`}
+            onPointerDown={handleCanvasPointerDown}
+            onPointerMove={handleCanvasPointerMove}
+            onPointerUp={() => setInteraction(null)}
+            onPointerCancel={() => setInteraction(null)}
+            onWheel={(event) => {
+              if (Math.abs(event.deltaY) < 2) return;
+              setZoom((current) => Math.min(1.25, Math.max(0.48, current - event.deltaY * 0.0008)));
+            }}
+          >
+            <div className="canvas-stage" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}>
+              {canvasConnectors.map((connector) => {
+                const from = cardPositions[connector.from];
+                const to = cardPositions[connector.to];
+                const x1 = from.x + connector.fromOffset[0];
+                const y1 = from.y + connector.fromOffset[1];
+                const x2 = to.x + connector.toOffset[0];
+                const y2 = to.y + connector.toOffset[1];
+                const width = Math.hypot(x2 - x1, y2 - y1);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                return <i className="canvas-connector" key={`${connector.from}-${connector.to}`} style={{ left: x1, top: y1, width, borderColor: connector.color, transform: `rotate(${angle}deg)` }} />;
+              })}
+
+              <article className={`canvas-card portrait-card ${selectedCard === "portrait" ? "selected" : ""}`} data-card="portrait" style={{ left: cardPositions.portrait.x, top: cardPositions.portrait.y }}>
+                <div className="card-grip" data-drag-handle>PERSON.JPG <span>⠿</span></div>
+                <img src={profileImage} alt="大强同学" />
+              </article>
+
+              <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
+                <div className="card-grip" data-drag-handle>PROFILE.MD <span>⠿</span></div>
+                <div className="avatar-mini"><img src={profileImage} alt="" /></div>
+                <h2>大强同学</h2>
+                <p>数字生产力玩家 · 工作流构建者</p>
+                <b>Build in Public</b>
+                <blockquote>1 person + AI = 1 team</blockquote>
+                <p className="canvas-quote">让复杂工具真正变成能落地的生产力。</p>
+                <div className="canvas-links">
+                  <a href="mailto:sphinx308@proton.me">📮 Email</a>
+                  <a href="https://x.com/dqtx760" target="_blank" rel="noreferrer">𝕏 @dqtx760</a>
+                </div>
+              </article>
+
+              <article className={`canvas-card timeline-card ${selectedCard === "timeline" ? "selected" : ""}`} data-card="timeline" style={{ left: cardPositions.timeline.x, top: cardPositions.timeline.y }}>
+                <div className="card-grip" data-drag-handle>📍 经历时间线 <span>⠿</span></div>
+                <div className="timeline-item"><b>NOW</b><strong>AI Coding Agent Skills</strong><small>跨平台管理与工程化</small></div>
+                <div className="timeline-item"><b>2024 — 2026</b><strong>Build in Public</strong><small>持续构建 Vibe Coding 产品</small></div>
+                <div className="timeline-item"><b>2023 — 2025</b><strong>Obsidian 工作流</strong><small>写作、Git 与多平台分发</small></div>
+                <div className="timeline-item"><b>2019 — 现在</b><strong>远程技术服务</strong><small>把问题解决在一线</small></div>
+              </article>
+
+              <article className={`canvas-card story-card ${selectedCard === "story" ? "selected" : ""}`} data-card="story" style={{ left: cardPositions.story.x, top: cardPositions.story.y }}>
+                <div className="card-grip" data-drag-handle>💡 核心叙事 <span>⠿</span></div>
+                <p className="story-mark">〃</p>
+                <h3>我不只收藏工具，<br />我把工具连成工作流。</h3>
+                <p>效率工具挖掘、AI 新玩法探索、出海实操攻略研究——最终都要落到一个目标：用 AI 干掉 90% 的重复劳动。</p>
+                <em>CREATE → CONNECT → SHIP</em>
+              </article>
+
+              <article className={`canvas-card skills-card ${selectedCard === "skills" ? "selected" : ""}`} data-card="skills" style={{ left: cardPositions.skills.x, top: cardPositions.skills.y }}>
+                <div className="card-grip" data-drag-handle>⚡ SKILLS <span>⠿</span></div>
+                <div>{["AI Agent", "Obsidian", "Claude Skills", "Codex", "CLI", "自动化", "网站搭建", "内容分发"].map((skill) => <span key={skill}>{skill}</span>)}</div>
+              </article>
+
+              <article className={`canvas-card service-canvas-card ${selectedCard === "service" ? "selected" : ""}`} data-card="service" style={{ left: cardPositions.service.x, top: cardPositions.service.y }}>
+                <div className="card-grip" data-drag-handle>WORK WITH ME <span>⠿</span></div>
+                <h3>把卡住你的技术问题，交给我。</h3>
+                <ul><li>网站搭建 / 环境配置</li><li>AI Agent Skill 定制</li><li>Obsidian → Git → 网站</li><li>系统与软件疑难排查</li></ul>
+                <a href="https://742112.xyz" target="_blank" rel="noreferrer">查看远程服务 ↗</a>
+              </article>
+
+              <article className={`canvas-card sticky-card ${selectedCard === "sticky" ? "selected" : ""}`} data-card="sticky" style={{ left: cardPositions.sticky.x, top: cardPositions.sticky.y }}>
+                <div className="card-grip" data-drag-handle>NOW.TXT <span>⠿</span></div>
+                <strong>正在发生</strong>
+                <p>Agent Skills 跨平台管理</p>
+                <p>Obsidian 写作工作流</p>
+                <p>CLI 工具链工程化</p>
+              </article>
+            </div>
+          </div>
+
+          <div className="canvas-zoom">
+            <button onClick={() => setZoom((current) => Math.max(0.48, current - 0.1))}>−</button>
+            <span>{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom((current) => Math.min(1.25, current + 0.1))}>＋</button>
           </div>
         </section>
       )}
