@@ -175,10 +175,13 @@ button { color: inherit; }
 .skills-card .card-grip { margin: 0 -24px 18px; }
 .skills-card > div:last-child { display: flex; flex-wrap: wrap; gap: 9px; }
 .skills-card > div span { padding: 8px 11px; border: 1px solid #b8cde5; border-radius: 8px; background: #f5f9fe; color: #4779b7; font-size: 13px; }
-.service-canvas-card { width: 360px; padding: 0 27px 28px; border-color: #e6c94e; background: #fff5b9; }
+.service-canvas-card { width: 430px; padding: 0 27px 28px; border-color: #e6c94e; background: #fff5b9; }
 .service-canvas-card .card-grip { margin: 0 -27px 20px; border-color: #eadb8b; color: #72631b; }
 .service-canvas-card h3 { margin: 0 0 15px; font-size: 26px; line-height: 1.2; }
-.service-canvas-card ul { padding-left: 20px; color: #66717e; line-height: 1.9; }
+.service-price-list { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; margin: 0 0 18px; }
+.service-price-list p { display: grid; gap: 2px; margin: 0; padding: 9px 10px; border: 1px solid #dfc959; border-radius: 7px; background: #fff9d9; }
+.service-price-list span { color: #657080; font-size: 11px; }
+.service-price-list b { color: #304866; font-size: 13px; }
 .service-canvas-card a { display: block; padding: 12px; border-radius: 8px; background: var(--ink); color: white; text-align: center; font-weight: 700; }
 .sticky-card { width: 260px; padding: 0 22px 20px; transform: rotate(-2deg); border: 0; border-radius: 3px; background: var(--yellow); box-shadow: 4px 9px 0 #e9c63f; }
 .sticky-card .card-grip { margin: 0 -22px 15px; border-color: #ddbd36; color: #66591f; }

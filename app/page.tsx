@@ -33,8 +33,7 @@ const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]
   { from: "timeline", to: "service", fromOffset: [360, 230], toOffset: [0, 150], color: "#8bb2e6" },
 ];
 
-const profileImage =
-  "https://gitee.com/da-qiang-classmate/typora/raw/master/image/image-20260208022750247.webp";
+const profileImage = "/profile.png";
 
 const shortcuts = [
   { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder" },
@@ -209,7 +208,7 @@ export default function Home() {
             </div>
             <p className="eyebrow">DIGITAL PRODUCTIVITY PLAYER</p>
             <h1>你好，我是大强同学。</h1>
-            <p>Build in Public 践行者、工作流构建者。探索 AI 新鲜玩法，也把复杂的工具链变成真正能落地的生产力。</p>
+            <p>我主要帮个人创作者、知识工作者和小团队，把 AI 工具用起来、把 Obsidian 知识库搭起来、把个人网站上线，并把重复工作自动化。</p>
             <div className="status"><span /> 正在构建：让 AI Coding Agent Skills 跨平台管理更简单</div>
           </div>
 
@@ -320,10 +319,10 @@ export default function Home() {
                 <div className="card-grip" data-drag-handle>PROFILE.MD <span>⠿</span></div>
                 <div className="avatar-mini"><img src={profileImage} alt="" /></div>
                 <h2>大强同学</h2>
-                <p>数字生产力玩家 · 工作流构建者</p>
+                <p>AI 工具 · Obsidian · 个人网站 · Agent 工作流</p>
                 <b>Build in Public</b>
                 <blockquote>1 person + AI = 1 team</blockquote>
-                <p className="canvas-quote">让复杂工具真正变成能落地的生产力。</p>
+                <p className="canvas-quote">把 AI 工具用起来，把知识库搭起来，把个人网站上线。</p>
                 <div className="canvas-links">
                   <a href="mailto:sphinx308@proton.me">📮 Email</a>
                   <a href="https://x.com/dqtx760" target="_blank" rel="noreferrer">𝕏 @dqtx760</a>
@@ -341,8 +340,8 @@ export default function Home() {
               <article className={`canvas-card story-card ${selectedCard === "story" ? "selected" : ""}`} data-card="story" style={{ left: cardPositions.story.x, top: cardPositions.story.y }}>
                 <div className="card-grip" data-drag-handle>💡 核心叙事 <span>⠿</span></div>
                 <p className="story-mark">〃</p>
-                <h3>我不只收藏工具，<br />我把工具连成工作流。</h3>
-                <p>效率工具挖掘、AI 新玩法探索、出海实操攻略研究——最终都要落到一个目标：用 AI 干掉 90% 的重复劳动。</p>
+                <h3>我不只安装工具，<br />我帮你把它真正用起来。</h3>
+                <p>从 AI 工具、Obsidian 知识库，到个人网站和 Agent 工作流，我更关心方案能否落地、能否长期使用、能否减少重复劳动。</p>
                 <em>CREATE → CONNECT → SHIP</em>
               </article>
 
@@ -353,9 +352,18 @@ export default function Home() {
 
               <article className={`canvas-card service-canvas-card ${selectedCard === "service" ? "selected" : ""}`} data-card="service" style={{ left: cardPositions.service.x, top: cardPositions.service.y }}>
                 <div className="card-grip" data-drag-handle>WORK WITH ME <span>⠿</span></div>
-                <h3>把卡住你的技术问题，交给我。</h3>
-                <ul><li>网站搭建 / 环境配置</li><li>AI Agent Skill 定制</li><li>Obsidian → Git → 网站</li><li>系统与软件疑难排查</li></ul>
-                <a href="https://742112.xyz" target="_blank" rel="noreferrer">查看远程服务 ↗</a>
+                <h3>从安装修复，<br />到长期技术顾问。</h3>
+                <div className="service-price-list">
+                  <p><span>技术咨询</span><b>50 / 小时</b></p>
+                  <p><span>Claude Code 配置</span><b>99</b></p>
+                  <p><span>Codex App 安装修复</span><b>50</b></p>
+                  <p><span>Obsidian 模板指导</span><b>99～399</b></p>
+                  <p><span>个人笔记网站</span><b>300</b></p>
+                  <p><span>个人简历网站</span><b>168</b></p>
+                  <p><span>Agent Skill 定制</span><b>50～300</b></p>
+                  <p><span>年度技术顾问</span><b>6800 / 年</b></p>
+                </div>
+                <a href="https://742112.xyz" target="_blank" rel="noreferrer">查看全部服务 ↗</a>
               </article>
 
               <article className={`canvas-card sticky-card ${selectedCard === "sticky" ? "selected" : ""}`} data-card="sticky" style={{ left: cardPositions.sticky.x, top: cardPositions.sticky.y }}>
