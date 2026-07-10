@@ -86,8 +86,10 @@ export default function Home() {
     originY: number;
   } | null>(null);
   const [openApps, setOpenApps] = useState<DesktopApp[]>([]);
+  const [minimizedApps, setMinimizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
-  const [chromeUrl, setChromeUrl] = useState("https://dqtx.cc");
+  const [chromeUrl, setChromeUrl] = useState("");
+  const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
   const [cmdInput, setCmdInput] = useState("");
   const [cmdLines, setCmdLines] = useState(["Microsoft Windows [Version 11.0.2026]", "(c) DQTX OS. All rights reserved.", "", "输入 help 查看可用命令。"]);
@@ -133,14 +135,21 @@ export default function Home() {
 
   const openApp = (app: DesktopApp) => {
     setStartOpen(false);
+    setMinimizedApps((current) => current.filter((item) => item !== app));
     setOpenApps((current) => [...current.filter((item) => item !== app), app]);
   };
 
   const closeApp = (app: DesktopApp) => {
     setOpenApps((current) => current.filter((item) => item !== app));
+    setMinimizedApps((current) => current.filter((item) => item !== app));
+  };
+
+  const minimizeApp = (app: DesktopApp) => {
+    setMinimizedApps((current) => current.includes(app) ? current : [...current, app]);
   };
 
   const handleWindowPointerDown = (event: React.PointerEvent<HTMLDivElement>, app: DesktopApp) => {
+    if ((event.target as HTMLElement).closest("button")) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     const position = windowPositions[app];
     setOpenApps((current) => [...current.filter((item) => item !== app), app]);
@@ -159,8 +168,23 @@ export default function Home() {
   };
 
   const openChromeUrl = () => {
-    const url = /^https?:\/\//i.test(chromeUrl) ? chromeUrl : `https://${chromeUrl}`;
-    window.open(url, "_blank", "noopener,noreferrer");
+    const value = chromeUrl.trim();
+    if (!value) {
+      setChromePageUrl("https://www.google.com/webhp?igu=1");
+      return;
+    }
+    const isUrl = /^https?:\/\//i.test(value) || /^[\w-]+(?:\.[\w-]+)+(?:[/?#].*)?$/i.test(value);
+    const url = isUrl
+      ? (/^https?:\/\//i.test(value) ? value : `https://${value}`)
+      : `https://www.google.com/search?igu=1&q=${encodeURIComponent(value)}`;
+    setChromeUrl(url);
+    setChromePageUrl(url);
+  };
+
+  const openInChrome = (url: string) => {
+    setChromeUrl(url);
+    setChromePageUrl(url);
+    openApp("chrome");
   };
 
   const runCommand = () => {
@@ -246,6 +270,21 @@ export default function Home() {
     setSelectedCard("identity");
   };
 
+  const handleCanvasWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    if (Math.abs(event.deltaY) < 2) return;
+    event.preventDefault();
+    const bounds = event.currentTarget.getBoundingClientRect();
+    const pointerX = event.clientX - bounds.left;
+    const pointerY = event.clientY - bounds.top;
+    const nextZoom = Math.min(1.15, Math.max(0.6, zoom - event.deltaY * 0.0007));
+    const ratio = nextZoom / zoom;
+    setPan({
+      x: pointerX - (pointerX - pan.x) * ratio,
+      y: pointerY - (pointerY - pan.y) * ratio,
+    });
+    setZoom(nextZoom);
+  };
+
   return (
     <main className={`site-shell tab-${tab}`}>
       {tab === "home" && <div className="win11-wallpaper" aria-hidden="true" />}
@@ -268,14 +307,14 @@ export default function Home() {
               </button>
             ))}
             {shortcuts.map((item) => (
-              <a className="desktop-app-icon" href={item.url} target="_blank" rel="noreferrer" key={item.label}>
+              <button className="desktop-app-icon" onClick={() => openInChrome(item.url)} key={item.label}>
                 <span className={`desktop-folder ${item.kind}`}>{item.icon}</span>
                 <small>{item.label}</small>
-              </a>
+              </button>
             ))}
           </div>
 
-          {openApps.map((app, index) => (
+          {openApps.filter((app) => !minimizedApps.includes(app)).map((app, index) => (
             <div
               className={`desktop-window window-${app}`}
               style={{ left: windowPositions[app].x, top: windowPositions[app].y, zIndex: 50 + index }}
@@ -290,7 +329,10 @@ export default function Home() {
                 onPointerCancel={() => setWindowDrag(null)}
               >
                 <span>{desktopApps.find((item) => item.id === app)?.icon} {desktopApps.find((item) => item.id === app)?.label}</span>
-                <div><button aria-label="最小化">—</button><button aria-label="关闭" onClick={(event) => { event.stopPropagation(); closeApp(app); }}>×</button></div>
+                <div>
+                  <button aria-label="最小化" onPointerDown={(event) => event.stopPropagation()} onClick={() => minimizeApp(app)}>—</button>
+                  <button aria-label="关闭" onPointerDown={(event) => event.stopPropagation()} onClick={() => closeApp(app)}>×</button>
+                </div>
               </div>
 
               {app === "computer" && (
@@ -300,10 +342,10 @@ export default function Home() {
                     <h2>此电脑</h2>
                     <p>常用位置</p>
                     <div className="explorer-grid">
-                      <a href="https://ai.dqtx.cc/" target="_blank" rel="noreferrer"><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></a>
-                      <a href="https://dqtx.cc" target="_blank" rel="noreferrer"><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></a>
-                      <a href="https://app.dqtx.cc" target="_blank" rel="noreferrer"><span>⚙️</span><b>数字工坊</b><small>app.dqtx.cc</small></a>
-                      <a href="https://742112.xyz" target="_blank" rel="noreferrer"><span>🛠️</span><b>远程服务</b><small>742112.xyz</small></a>
+                      <button onClick={() => openInChrome("https://ai.dqtx.cc/")}><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></button>
+                      <button onClick={() => openInChrome("https://dqtx.cc")}><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></button>
+                      <button onClick={() => openInChrome("https://app.dqtx.cc")}><span>⚙️</span><b>数字工坊</b><small>app.dqtx.cc</small></button>
+                      <button onClick={() => openInChrome("https://742112.xyz")}><span>🛠️</span><b>远程服务</b><small>742112.xyz</small></button>
                     </div>
                     <p>设备和驱动器</p>
                     <div className="drive"><span>💽</span><div><b>本地磁盘 (C:)</b><i><em /></i><small>128 GB 可用，共 256 GB</small></div></div>
@@ -314,20 +356,11 @@ export default function Home() {
               {app === "chrome" && (
                 <div className="chrome-window">
                   <form onSubmit={(event) => { event.preventDefault(); openChromeUrl(); }}>
-                    <button type="button">←</button><button type="button">→</button>
-                    <input value={chromeUrl} onChange={(event) => setChromeUrl(event.target.value)} aria-label="网址" />
+                    <button type="button" aria-label="返回" disabled>←</button><button type="button" aria-label="前进" disabled>→</button>
+                    <input value={chromeUrl} onChange={(event) => setChromeUrl(event.target.value)} placeholder="在 Google 中搜索，或输入网址" aria-label="搜索或输入网址" />
                     <button type="submit">前往</button>
                   </form>
-                  <div className="chrome-home">
-                    <span className="chrome-mark">🌐</span>
-                    <h2>浏览大强同学的数字世界</h2>
-                    <div>
-                      <button onClick={() => { setChromeUrl("https://dqtx.cc"); window.open("https://dqtx.cc", "_blank", "noopener,noreferrer"); }}>个人博客</button>
-                      <button onClick={() => { setChromeUrl("https://ai.dqtx.cc/"); window.open("https://ai.dqtx.cc/", "_blank", "noopener,noreferrer"); }}>个人简历</button>
-                      <button onClick={() => changeTab("work")}>作品集</button>
-                      <button onClick={() => changeTab("about")}>个人画布</button>
-                    </div>
-                  </div>
+                  <iframe className="chrome-frame" src={chromePageUrl} title="Chrome 浏览内容" />
                 </div>
               )}
 
@@ -361,10 +394,12 @@ export default function Home() {
           )}
 
           <div className="windows-taskbar">
-            <button className="windows-start" onClick={() => setStartOpen((current) => !current)} aria-label="开始菜单"><i /><i /><i /><i /></button>
-            {desktopApps.map((app) => <button className={openApps.includes(app.id) ? "running" : ""} onClick={() => openApp(app.id)} title={app.label} key={app.id}>{app.icon}</button>)}
-            <button onClick={() => changeTab("work")} title="作品集">🗂️</button>
-            <button onClick={() => changeTab("about")} title="个人画布">🧠</button>
+            <div className="taskbar-apps">
+              <button className="windows-start" onClick={() => setStartOpen((current) => !current)} aria-label="开始菜单"><i /><i /><i /><i /></button>
+              {desktopApps.map((app) => <button className={openApps.includes(app.id) ? "running" : ""} onClick={() => openApp(app.id)} title={app.label} key={app.id}>{app.icon}</button>)}
+              <button onClick={() => changeTab("work")} title="作品集">🗂️</button>
+              <button onClick={() => changeTab("about")} title="个人画布">🧠</button>
+            </div>
             <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
         </section>
@@ -431,10 +466,7 @@ export default function Home() {
             onPointerMove={handleCanvasPointerMove}
             onPointerUp={() => setInteraction(null)}
             onPointerCancel={() => setInteraction(null)}
-            onWheel={(event) => {
-              if (Math.abs(event.deltaY) < 2) return;
-              setZoom((current) => Math.min(1.25, Math.max(0.48, current - event.deltaY * 0.0008)));
-            }}
+            onWheel={handleCanvasWheel}
           >
             <div className="canvas-stage" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}>
               {canvasConnectors.map((connector) => {
