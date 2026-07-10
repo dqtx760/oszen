@@ -71,7 +71,6 @@ const stars = Array.from({ length: 58 }, (_, index) => ({
 
 export default function Home() {
   const [tab, setTab] = useState<Tab>("home");
-  const [booting, setBooting] = useState(true);
   const [time, setTime] = useState("");
   const [zoom, setZoom] = useState(0.82);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -87,13 +86,11 @@ export default function Home() {
   } | null>(null);
 
   useEffect(() => {
-    const bootTimer = window.setTimeout(() => setBooting(false), 1850);
     const updateTime = () =>
       setTime(new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date()));
     updateTime();
     const clockTimer = window.setInterval(updateTime, 30000);
     return () => {
-      window.clearTimeout(bootTimer);
       window.clearInterval(clockTimer);
     };
   }, []);
@@ -162,28 +159,6 @@ export default function Home() {
     setSelectedCard("identity");
   };
 
-  if (booting) {
-    return (
-      <main className="boot-screen" aria-label="系统正在启动">
-        <div className="laptop">
-          <div className="laptop-screen">
-            <div className="terminal-bar"><i /><i /><i /><span>dqtx@universe ~ zsh</span></div>
-            <div className="boot-terminal">
-              <p><b>$</b> whoami</p>
-              <p className="muted">&gt; 大强同学 · 数字生产力玩家</p>
-              <p><b>$</b> echo &quot;1 Person + AI = 1 Team&quot;</p>
-              <p className="gold">&gt; 用 AI 干掉 90% 的重复劳动</p>
-              <p><b>$</b> open dqtx-os.app</p>
-              <p className="muted">&gt; launching...</p>
-              <p className="loading-line">[████████████] 100%</p>
-            </div>
-          </div>
-          <div className="laptop-base" />
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="site-shell">
       <div className="wallpaper" aria-hidden="true">
@@ -202,16 +177,6 @@ export default function Home() {
 
       {tab === "home" && (
         <section className="desktop-page page-enter" aria-label="主页桌面">
-          <div className="intro-card">
-            <div className="portrait-ring">
-              <img src={profileImage} alt="大强同学" />
-            </div>
-            <p className="eyebrow">DIGITAL PRODUCTIVITY PLAYER</p>
-            <h1>你好，我是大强同学。</h1>
-            <p>我主要帮个人创作者、知识工作者和小团队，把 AI 工具用起来、把 Obsidian 知识库搭起来、把个人网站上线，并把重复工作自动化。</p>
-            <div className="status"><span /> 正在构建：让 AI Coding Agent Skills 跨平台管理更简单</div>
-          </div>
-
           <div className="shortcut-grid">
             {shortcuts.map((item) => (
               <a className="shortcut" href={item.url} target="_blank" rel="noreferrer" key={item.label}>
@@ -219,12 +184,6 @@ export default function Home() {
                 <span>{item.label}</span>
               </a>
             ))}
-          </div>
-
-          <div className="desktop-note">
-            <span>NOW PLAYING</span>
-            <strong>Obsidian × AI Agent</strong>
-            <small>写作工作流 / Skills 工程化 / CLI 工具链</small>
           </div>
         </section>
       )}

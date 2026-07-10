@@ -24,27 +24,9 @@ button, a { font: inherit; }
 a { color: inherit; text-decoration: none; }
 button { color: inherit; }
 
-.boot-screen {
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  background: radial-gradient(circle at 50% 35%, #438fdc, #1c68b9 70%);
-}
-
-.laptop { width: min(720px, 88vw); animation: laptopIn .7s ease both; }
-.laptop-screen { border: 16px solid #16314d; border-radius: 24px 24px 10px 10px; background: #0f1d2b; box-shadow: 0 28px 90px #0e4d8e88; }
-.terminal-bar { height: 40px; padding: 0 16px; display: flex; align-items: center; gap: 8px; background: #e8edf2; color: #6d7781; font: 12px ui-monospace, Consolas, monospace; }
-.terminal-bar i, .window-titlebar i { width: 11px; height: 11px; border-radius: 50%; background: #ff6258; }
-.terminal-bar i:nth-child(2), .window-titlebar i:nth-child(2) { background: #ffbd2e; }
-.terminal-bar i:nth-child(3), .window-titlebar i:nth-child(3) { background: #29c941; }
-.terminal-bar span { margin: auto; transform: translateX(-28px); }
-.boot-terminal { min-height: 330px; padding: 34px 42px; color: #edf7ff; font: 15px/1.72 ui-monospace, SFMono-Regular, Consolas, monospace; }
-.boot-terminal p { margin: 5px 0; }
-.boot-terminal b { color: #6bc7ff; }
-.boot-terminal .muted { color: #8da7bd; }
-.boot-terminal .gold, .loading-line { color: var(--yellow); }
-.laptop-base { height: 20px; margin: 0 -7%; border-radius: 2px 2px 38px 38px; background: linear-gradient(#d8e0e6, #96a7b5); box-shadow: 0 18px 30px #134e884f; }
+.window-titlebar i { width: 11px; height: 11px; border-radius: 50%; background: #ff6258; }
+.window-titlebar i:nth-child(2) { background: #ffbd2e; }
+.window-titlebar i:nth-child(3) { background: #29c941; }
 
 .site-shell { position: relative; min-height: 100svh; overflow: hidden; padding-bottom: 128px; background: var(--blue); }
 .wallpaper { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
@@ -67,27 +49,13 @@ button { color: inherit; }
 .menu-bar .brand { color: var(--yellow); font: italic 800 20px/1.2 "Segoe Script", cursive; margin-right: 2px; }
 .menu-bar time { margin-left: auto; font: 14px ui-monospace, Consolas, monospace; }
 
-.desktop-page { position: relative; z-index: 2; min-height: calc(100svh - 48px); padding: 96px 12vw 170px; }
-.intro-card { width: min(610px, 53vw); margin-top: 7vh; }
-.portrait-ring { width: 132px; height: 132px; padding: 6px; border: 2px solid #b9dafa; border-radius: 50%; box-shadow: 0 16px 34px #14589f66; background: #f8f4e9; }
-.portrait-ring img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.eyebrow { margin: 30px 0 12px; color: var(--yellow); font: 700 12px/1 ui-monospace, Consolas, monospace; letter-spacing: .16em; }
-.intro-card h1 { margin: 0; max-width: 600px; color: white; font-size: clamp(42px, 5.3vw, 82px); line-height: 1.04; letter-spacing: -.05em; }
-.intro-card > p:not(.eyebrow) { max-width: 600px; margin: 24px 0; color: #dbeeff; font-size: clamp(16px, 1.4vw, 20px); line-height: 1.9; }
-.status { display: inline-flex; gap: 10px; align-items: center; padding: 11px 15px; border: 1px solid #a9d3fa77; border-radius: 9px; background: #1d6db958; color: #eaf6ff; font-size: 13px; }
-.status span { width: 8px; height: 8px; border-radius: 50%; background: #7dff9e; box-shadow: 0 0 0 5px #7dff9e20; animation: pulse 2s infinite; }
-
-.shortcut-grid { position: absolute; z-index: 3; top: 92px; right: 4vw; display: grid; grid-template-columns: repeat(2, 106px); gap: 25px 18px; }
+.desktop-page { position: relative; z-index: 2; min-height: calc(100svh - 48px); padding: 48px 0 150px; }
+.shortcut-grid { position: absolute; z-index: 3; top: 92px; left: 4vw; display: grid; grid-template-columns: repeat(2, 106px); gap: 25px 18px; }
 .shortcut { display: grid; justify-items: center; gap: 8px; text-align: center; font: 13px/1.25 ui-monospace, Consolas, monospace; text-shadow: 0 1px 2px #15508f; transition: transform .2s; }
 .shortcut:hover { transform: translateY(-5px); }
 .shortcut-icon { position: relative; width: 66px; height: 66px; display: grid; place-items: center; border-radius: 15px; background: #fff; border: 3px solid #c5ddf5; color: #1b62a9; font-size: 25px; box-shadow: 0 6px 11px #124d874f; }
 .shortcut-icon.folder { border: 0; background: var(--yellow); border-radius: 13px 13px 15px 15px; }
 .shortcut-icon.folder::before { content: ""; position: absolute; width: 30px; height: 10px; left: 5px; top: -6px; border-radius: 7px 7px 0 0; background: #ffe268; }
-.desktop-note { position: absolute; right: 29vw; bottom: 165px; display: grid; gap: 5px; padding: 17px 20px; border: 1px solid #b9dcf98f; border-radius: 13px; background: #f9fbfded; color: var(--ink); transform: rotate(-2deg); box-shadow: 0 17px 32px #15559655; }
-.desktop-note span { color: #5882aa; font: 700 10px ui-monospace, Consolas, monospace; letter-spacing: .12em; }
-.desktop-note strong { font-size: 18px; }
-.desktop-note small { color: #607792; }
-
 .content-window { position: relative; z-index: 4; width: min(1180px, calc(100vw - 80px)); min-height: 680px; margin: 82px auto 60px; overflow: hidden; border: 2px solid #bedbf3; border-radius: 18px; box-shadow: 0 32px 70px #0d4e8f66; }
 .window-titlebar { height: 46px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 0 17px; background: #e9f1f7; color: #63778e; font: 12px ui-monospace, Consolas, monospace; }
 .window-titlebar > div { display: flex; gap: 7px; }
@@ -201,23 +169,17 @@ footer { position: relative; z-index: 2; margin-top: 20px; color: #b8daf8; text-
 
 .page-enter { animation: pageEnter .45s ease both; }
 @keyframes pageEnter { from { opacity: 0; transform: translateY(14px) scale(.99); } }
-@keyframes laptopIn { from { opacity: 0; transform: translateY(20px) scale(.94); } }
 @keyframes twinkle { 0%, 100% { opacity: .25; transform: scale(.7) rotate(0); } 50% { opacity: .95; transform: scale(1.18) rotate(20deg); } }
-@keyframes pulse { 50% { box-shadow: 0 0 0 8px #7dff9e05; } }
-@keyframes blink { 50% { opacity: 0; } }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }
   .menu-bar { gap: 15px; padding: 0 15px; }
   .menu-bar .brand { font-size: 17px; }
   .menu-bar a { display: none; }
-  .desktop-page { padding: 90px 24px 420px; }
-  .intro-card { width: 100%; margin-top: 2vh; }
-  .intro-card h1 { font-size: clamp(42px, 12vw, 66px); }
-  .shortcut-grid { top: auto; right: 18px; bottom: 135px; left: 18px; grid-template-columns: repeat(4, 1fr); gap: 23px 8px; }
+  .desktop-page { padding: 48px 0 150px; }
+  .shortcut-grid { top: 88px; right: auto; bottom: auto; left: 18px; grid-template-columns: repeat(3, 92px); gap: 23px 8px; }
   .shortcut { font-size: 11px; }
   .shortcut-icon { width: 55px; height: 55px; font-size: 20px; }
-  .desktop-note { display: none; }
   .content-window { width: calc(100vw - 24px); margin-top: 64px; }
   .window-content { padding: 35px 22px; }
   .project-grid { grid-template-columns: 1fr 1fr; }
@@ -234,11 +196,8 @@ footer { position: relative; z-index: 2; margin-top: 20px; color: #b8daf8; text-
 
 @media (max-width: 560px) {
   .menu-bar button:not(.brand) { display: none; }
-  .portrait-ring { width: 96px; height: 96px; }
-  .intro-card > p:not(.eyebrow) { font-size: 15px; }
-  .status { font-size: 11px; line-height: 1.5; }
-  .desktop-page { padding-bottom: 520px; }
-  .shortcut-grid { grid-template-columns: repeat(3, 1fr); }
+  .desktop-page { padding-bottom: 150px; }
+  .shortcut-grid { grid-template-columns: repeat(3, 88px); }
   .project-grid { grid-template-columns: 1fr; }
   .window-content > h2 { font-size: 39px; }
   .repo-strip { grid-template-columns: 1fr; }
@@ -250,8 +209,6 @@ footer { position: relative; z-index: 2; margin-top: 20px; color: #b8daf8; text-
   .pill-nav { bottom: 14px; width: calc(100vw - 24px); }
   .pill-nav button { flex: 1; min-width: 0; padding: 12px 7px; font-size: 13px; }
   .pill-nav small { display: block; margin: 0 0 2px; }
-  .boot-terminal { min-height: 290px; padding: 24px 20px; font-size: 12px; }
-  .laptop-screen { border-width: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
