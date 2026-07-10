@@ -425,8 +425,8 @@ export default function Home() {
           <div className="windows-taskbar">
             <div className="taskbar-apps">
               <button className="windows-start" onClick={() => setStartOpen((current) => !current)} aria-label="开始菜单"><i /><i /><i /><i /></button>
-              <button className="taskbar-link" onClick={() => changeTab("work")} title="作品集">作品集</button>
-              <button className="taskbar-link" onClick={() => changeTab("about")} title="个人画布">个人画布</button>
+              <button className="taskbar-icon-only taskbar-works" onClick={() => changeTab("work")} title="作品集" aria-label="作品集">▦</button>
+              <button className="taskbar-icon-only taskbar-canvas" onClick={() => changeTab("about")} title="个人画布" aria-label="个人画布">✦</button>
             </div>
             <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
@@ -511,10 +511,14 @@ export default function Home() {
 
               <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
                 <div className="card-grip" data-drag-handle>PROFILE.MD <span>⠿</span></div>
-                <div className="avatar-mini"><img src={profileImage} alt="" /></div>
-                <h2>大强同学</h2>
-                <p>AI 工具 · Obsidian · 个人网站 · Agent 工作流</p>
-                <b>Build in Public</b>
+                <div className="profile-intro">
+                  <img className="profile-photo" src={profileImage} alt="大强同学" />
+                  <div>
+                    <h2>大强同学</h2>
+                    <p>AI 工具 · Obsidian · 个人网站 · Agent 工作流</p>
+                    <b>Build in Public</b>
+                  </div>
+                </div>
                 <blockquote>1 person + AI = 1 team</blockquote>
                 <p className="canvas-quote">把 AI 工具用起来，把知识库搭起来，把个人网站上线。</p>
                 <div className="canvas-links">

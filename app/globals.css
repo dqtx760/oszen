@@ -136,16 +136,18 @@ button { color: inherit; }
 .taskbar-apps > button { position: relative; width: 45px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; font-size: 23px; cursor: pointer; }
 .taskbar-apps > button:hover, .taskbar-apps > button:focus-visible { background: #ffffffa8; outline: none; }
 .taskbar-apps > button.running::after { content: ""; position: absolute; bottom: 2px; width: 18px; height: 3px; border-radius: 4px; background: #167bd5; }
-.windows-start { grid-template-columns: 8px 8px; grid-template-rows: 8px 8px; gap: 2px !important; }
+.windows-start { grid-template-columns: 8px 8px; grid-template-rows: 8px 8px; justify-content: center; align-content: center; gap: 2px !important; padding: 0; line-height: 0; }
 .windows-start i { width: 8px; height: 8px; background: #1388e5; }
-.taskbar-apps > .taskbar-link { width: auto; min-width: 66px; padding: 0 13px; color: #1f4f83; font-size: 13px; font-weight: 700; }
+.taskbar-apps > .taskbar-icon-only { color: #1f4f83; font-size: 20px; font-weight: 800; }
+.taskbar-works { font-size: 21px !important; }
+.taskbar-canvas { font-size: 22px !important; }
 .taskbar-status { position: absolute; right: 12px; display: flex; align-items: center; gap: 14px; color: #25364a; font-size: 12px; }
 .taskbar-status time { min-width: 48px; }
 
-.start-menu { position: fixed; z-index: 110; bottom: 72px; left: 50%; width: min(560px, calc(100vw - 24px)); overflow: hidden; transform: translateX(-50%); border: 1px solid #ffffffb5; border-radius: 12px; background: #f4f8fbe8; color: #24344b; box-shadow: 0 28px 70px #002b636b; backdrop-filter: blur(35px) saturate(1.3); }
+.start-menu { position: fixed; z-index: 110; bottom: 72px; left: 50%; width: min(600px, calc(100vw - 24px)); min-height: min(440px, calc(100svh - 110px)); overflow: hidden; display: grid; grid-template-rows: auto auto 1fr auto; transform: translateX(-50%); border: 1px solid #ffffffb5; border-radius: 12px; background: #f4f8fbe8; color: #24344b; box-shadow: 0 28px 70px #002b636b; backdrop-filter: blur(35px) saturate(1.3); }
 .start-search { margin: 26px 28px 12px; padding: 11px 16px; border: 1px solid #ccd9e5; border-bottom: 2px solid #1687dc; border-radius: 7px; background: #fff; color: #758399; font-size: 13px; }
 .start-menu h3 { margin: 18px 33px 10px; font-size: 14px; }
-.start-apps { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; padding: 0 25px 25px; }
+.start-apps { display: grid; grid-template-columns: repeat(6, 1fr); align-content: start; gap: 8px; padding: 0 25px 25px; }
 .start-apps button { min-height: 78px; display: grid; justify-items: center; align-content: center; gap: 7px; border: 0; border-radius: 7px; background: transparent; color: #27384e; font-size: 11px; }
 .start-apps button:hover { background: #ffffffb5; }
 .start-apps span { font-size: 28px; }
@@ -208,13 +210,13 @@ button { color: inherit; }
 .card-grip { display: flex; justify-content: space-between; align-items: center; min-height: 40px; padding: 10px 16px; border-bottom: 2px dashed #dfebf5; color: #4a7fc3; font: 700 11px ui-monospace, Consolas, monospace; letter-spacing: .08em; cursor: grab; }
 .card-grip span { color: #9cb5cf; font-size: 17px; }
 .identity-card::before, .timeline-card::before, .story-card::before, .sticky-card::before { content: ""; position: absolute; z-index: 3; top: -5px; left: 22px; width: 50px; height: 10px; border-radius: 3px; background: var(--yellow); }
-.identity-card { width: 390px; min-height: 390px; padding: 0 28px 28px; background: #f5f8fe; }
+.identity-card { width: 430px; min-height: 390px; padding: 0 28px 28px; background: #f5f8fe; }
 .identity-card .card-grip { margin: 0 -28px 22px; }
-.avatar-mini { width: 58px; height: 58px; overflow: hidden; border: 3px solid var(--yellow); border-radius: 50%; }
-.avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
-.identity-card h2 { margin: 13px 0 2px; color: #397bc9; font-size: 29px; }
-.identity-card > p { margin: 0; color: #6b7987; }
-.identity-card > b { display: inline-block; margin-top: 10px; padding: 4px 10px; border: 2px dashed #d7c35e; border-radius: 999px; background: #fff8ce; color: #4c6f9a; font-size: 11px; }
+.profile-intro { display: grid; grid-template-columns: 112px 1fr; align-items: center; gap: 18px; }
+.profile-photo { width: 112px; height: 132px; border: 3px solid var(--yellow); border-radius: 16px; object-fit: cover; object-position: center top; box-shadow: 0 10px 20px #18406c1f; }
+.identity-card h2 { margin: 0 0 6px; color: #397bc9; font-size: 29px; }
+.profile-intro p { margin: 0; color: #6b7987; line-height: 1.55; }
+.profile-intro b { display: inline-block; margin-top: 12px; padding: 4px 10px; border: 2px dashed #d7c35e; border-radius: 999px; background: #fff8ce; color: #4c6f9a; font-size: 11px; }
 .identity-card blockquote { margin: 24px 0 11px; color: #4b83cb; font: italic 20px "Segoe Script", cursive; }
 .identity-card .canvas-quote { padding-left: 12px; border-left: 4px solid var(--yellow); color: #667788; font-size: 13px; }
 .canvas-links { display: flex; gap: 8px; margin-top: 16px; }
