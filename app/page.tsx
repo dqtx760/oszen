@@ -35,8 +35,8 @@ const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]
 const profileImage = "/profile.png";
 
 const shortcuts = [
-  { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "folder-logo" },
-  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "file-logo" },
+  { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "folder-logo", maximizeOnOpen: true },
+  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "file-logo", maximizeOnOpen: true },
   { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
   { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "file-logo" },
   { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
@@ -85,6 +85,7 @@ export default function Home() {
   } | null>(null);
   const [openApps, setOpenApps] = useState<DesktopApp[]>([]);
   const [minimizedApps, setMinimizedApps] = useState<DesktopApp[]>([]);
+  const [maximizedApps, setMaximizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [chromeUrl, setChromeUrl] = useState("");
@@ -101,6 +102,11 @@ export default function Home() {
   const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
   const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon}</span>;
+
+  const getCenteredWindowPosition = () => ({
+    x: Math.max(12, Math.round((window.innerWidth - Math.min(720, window.innerWidth - 40)) / 2)),
+    y: Math.max(12, Math.round((window.innerHeight - Math.min(500, window.innerHeight - 100)) / 2) - 20),
+  });
 
   useEffect(() => {
     const updateTime = () =>
@@ -143,8 +149,13 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const openApp = (app: DesktopApp) => {
+  const openApp = (app: DesktopApp, options?: { maximized?: boolean }) => {
     setStartOpen(false);
+    setWindowPositions((current) => ({ ...current, [app]: getCenteredWindowPosition() }));
+    setMaximizedApps((current) => {
+      const withoutApp = current.filter((item) => item !== app);
+      return options?.maximized ? [...withoutApp, app] : withoutApp;
+    });
     setMinimizedApps((current) => current.filter((item) => item !== app));
     setOpenApps((current) => [...current.filter((item) => item !== app), app]);
   };
@@ -152,14 +163,20 @@ export default function Home() {
   const closeApp = (app: DesktopApp) => {
     setOpenApps((current) => current.filter((item) => item !== app));
     setMinimizedApps((current) => current.filter((item) => item !== app));
+    setMaximizedApps((current) => current.filter((item) => item !== app));
   };
 
   const minimizeApp = (app: DesktopApp) => {
     setMinimizedApps((current) => current.includes(app) ? current : [...current, app]);
   };
 
+  const toggleMaximizeApp = (app: DesktopApp) => {
+    setMaximizedApps((current) => current.includes(app) ? current.filter((item) => item !== app) : [...current, app]);
+  };
+
   const handleWindowPointerDown = (event: React.PointerEvent<HTMLDivElement>, app: DesktopApp) => {
     if ((event.target as HTMLElement).closest("button")) return;
+    if (maximizedApps.includes(app)) return;
     event.currentTarget.setPointerCapture(event.pointerId);
     const position = windowPositions[app];
     setOpenApps((current) => [...current.filter((item) => item !== app), app]);
@@ -191,10 +208,10 @@ export default function Home() {
     setChromePageUrl(url);
   };
 
-  const openInChrome = (url: string) => {
+  const openInChrome = (url: string, maximized = false) => {
     setChromeUrl(url);
     setChromePageUrl(url);
-    openApp("chrome");
+    openApp("chrome", { maximized });
   };
 
   const runCommand = () => {
@@ -330,13 +347,13 @@ export default function Home() {
 
           <div className="desktop-icons">
             {desktopApps.map((app) => (
-              <button className="desktop-app-icon" onClick={() => openApp(app.id)} key={app.id}>
+              <button className="desktop-app-icon" onClick={() => openApp(app.id, { maximized: app.id === "chrome" })} key={app.id}>
                 {renderIcon(app.icon, app.iconClass)}
                 <small>{app.label}</small>
               </button>
             ))}
             {shortcuts.map((item) => (
-              <button className="desktop-app-icon" onClick={() => openInChrome(item.url)} key={item.label}>
+              <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
                 {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
               </button>
@@ -345,7 +362,7 @@ export default function Home() {
 
           {openApps.filter((app) => !minimizedApps.includes(app)).map((app, index) => (
             <div
-              className={`desktop-window window-${app}`}
+              className={`desktop-window window-${app} ${maximizedApps.includes(app) ? "maximized" : ""}`}
               style={{ left: windowPositions[app].x, top: windowPositions[app].y, zIndex: 50 + index }}
               onMouseDown={() => setOpenApps((current) => [...current.filter((item) => item !== app), app])}
               key={app}
@@ -360,6 +377,7 @@ export default function Home() {
                 <span>{desktopApps.find((item) => item.id === app)?.label}</span>
                 <div>
                   <button aria-label="最小化" onPointerDown={(event) => event.stopPropagation()} onClick={() => minimizeApp(app)}>—</button>
+                  <button aria-label={maximizedApps.includes(app) ? "还原" : "最大化"} onPointerDown={(event) => event.stopPropagation()} onClick={() => toggleMaximizeApp(app)}>{maximizedApps.includes(app) ? "❐" : "□"}</button>
                   <button aria-label="关闭" onPointerDown={(event) => event.stopPropagation()} onClick={() => closeApp(app)}>×</button>
                 </div>
               </div>
@@ -371,8 +389,8 @@ export default function Home() {
                     <h2>此电脑</h2>
                     <p>常用位置</p>
                     <div className="explorer-grid">
-                      <button onClick={() => openInChrome("https://ai.dqtx.cc/")}><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></button>
-                      <button onClick={() => openInChrome("https://dqtx.cc")}><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></button>
+                      <button onClick={() => openInChrome("https://ai.dqtx.cc/", true)}><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></button>
+                      <button onClick={() => openInChrome("https://dqtx.cc", true)}><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></button>
                       <button onClick={() => openInChrome("https://app.dqtx.cc")}><span>⚙️</span><b>数字工坊</b><small>app.dqtx.cc</small></button>
                       <button onClick={() => openInChrome("https://742112.xyz")}><span>🛠️</span><b>远程服务</b><small>742112.xyz</small></button>
                     </div>

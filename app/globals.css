@@ -83,8 +83,11 @@ button { color: inherit; }
 .x-logo { border-radius: 50%; background: #050505; color: #fff; font-size: 25px; }
 
 .desktop-window { position: absolute; width: min(720px, calc(100vw - 40px)); height: min(500px, calc(100svh - 100px)); min-width: 360px; min-height: 270px; overflow: hidden; resize: both; border: 1px solid #ffffffb8; border-radius: 10px; background: #f7f9fcee; color: #202634; box-shadow: 0 25px 60px #002b6366; backdrop-filter: blur(26px); }
+.desktop-window.maximized { left: 12px !important; top: 12px !important; width: calc(100vw - 24px); height: calc(100svh - 78px); min-width: 0; min-height: 0; resize: none; }
 .desktop-window::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 12px; height: 12px; border-right: 2px solid #8da0b4; border-bottom: 2px solid #8da0b4; opacity: .75; pointer-events: none; }
+.desktop-window.maximized::after { display: none; }
 .desktop-window-titlebar { height: 42px; display: flex; justify-content: space-between; align-items: center; padding-left: 14px; background: #f6f8fbe8; border-bottom: 1px solid #d9e0e8; font-size: 13px; cursor: move; touch-action: none; }
+.desktop-window.maximized .desktop-window-titlebar { cursor: default; }
 .desktop-window-titlebar > div { align-self: stretch; display: flex; }
 .desktop-window-titlebar button { width: 45px; border: 0; background: transparent; color: #334155; cursor: default; }
 .desktop-window-titlebar button:hover { background: #dde5ee; }
@@ -302,6 +305,7 @@ button { color: inherit; }
   .launch-screen-panel::before { right: 22px; left: 22px; }
   .desktop-app-icon small { font-size: 10px; }
   .desktop-window { left: 8px !important; top: 10px !important; width: calc(100vw - 16px); height: calc(100svh - 82px); min-width: 0; min-height: 260px; resize: none; }
+  .desktop-window.maximized { left: 8px !important; top: 8px !important; width: calc(100vw - 16px); height: calc(100svh - 70px); }
   .computer-window { grid-template-columns: 1fr; }
   .explorer-sidebar { display: none; }
   .explorer-main { padding: 16px; }
