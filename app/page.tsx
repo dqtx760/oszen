@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 type Tab = "home" | "work" | "about";
 type CardId = "portrait" | "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
+type DesktopApp = "computer" | "chrome" | "cmd" | "notepad";
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
   portrait: { x: 105, y: 155 },
@@ -37,13 +38,20 @@ const profileImage = "/profile.png";
 
 const shortcuts = [
   { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder" },
-  { icon: "📄", label: "个人简历", url: "https://cv.dqtx.cc", kind: "file" },
+  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file" },
   { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder" },
   { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file" },
   { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder" },
   { icon: "🧩", label: "Chrome 插件", url: "https://110.dqtx.cc", kind: "file" },
   { icon: "⌘", label: "GitHub", url: "https://github.com/dqtx760", kind: "file" },
   { icon: "𝕏", label: "@dqtx760", url: "https://x.com/dqtx760", kind: "file" },
+];
+
+const desktopApps: { id: DesktopApp; icon: string; label: string }[] = [
+  { id: "computer", icon: "🖥️", label: "此电脑" },
+  { id: "chrome", icon: "🌐", label: "Google Chrome" },
+  { id: "cmd", icon: "⌨️", label: "命令提示符" },
+  { id: "notepad", icon: "📝", label: "记事本" },
 ];
 
 const projects = [
@@ -62,13 +70,6 @@ const openSource = [
   { name: "oplist-Neumorphism", note: "OpenList 主题", url: "https://github.com/dqtx760/oplist-Neumorphism" },
 ];
 
-const stars = Array.from({ length: 58 }, (_, index) => ({
-  left: `${(index * 37 + 7) % 97}%`,
-  top: `${(index * 53 + 5) % 94}%`,
-  size: `${6 + (index % 4) * 3}px`,
-  delay: `${(index % 9) * 0.23}s`,
-}));
-
 export default function Home() {
   const [tab, setTab] = useState<Tab>("home");
   const [time, setTime] = useState("");
@@ -84,6 +85,19 @@ export default function Home() {
     originX: number;
     originY: number;
   } | null>(null);
+  const [openApps, setOpenApps] = useState<DesktopApp[]>([]);
+  const [startOpen, setStartOpen] = useState(false);
+  const [chromeUrl, setChromeUrl] = useState("https://dqtx.cc");
+  const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
+  const [cmdInput, setCmdInput] = useState("");
+  const [cmdLines, setCmdLines] = useState(["Microsoft Windows [Version 11.0.2026]", "(c) DQTX OS. All rights reserved.", "", "输入 help 查看可用命令。"]);
+  const [windowPositions, setWindowPositions] = useState<Record<DesktopApp, { x: number; y: number }>>({
+    computer: { x: 230, y: 100 },
+    chrome: { x: 330, y: 80 },
+    cmd: { x: 270, y: 150 },
+    notepad: { x: 390, y: 120 },
+  });
+  const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
   useEffect(() => {
     const updateTime = () =>
@@ -115,6 +129,62 @@ export default function Home() {
     const nextUrl = next === "work" ? "#works" : next === "about" ? "#about" : `${window.location.pathname}${window.location.search}`;
     window.history.pushState(null, "", nextUrl);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const openApp = (app: DesktopApp) => {
+    setStartOpen(false);
+    setOpenApps((current) => [...current.filter((item) => item !== app), app]);
+  };
+
+  const closeApp = (app: DesktopApp) => {
+    setOpenApps((current) => current.filter((item) => item !== app));
+  };
+
+  const handleWindowPointerDown = (event: React.PointerEvent<HTMLDivElement>, app: DesktopApp) => {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    const position = windowPositions[app];
+    setOpenApps((current) => [...current.filter((item) => item !== app), app]);
+    setWindowDrag({ app, startX: event.clientX, startY: event.clientY, originX: position.x, originY: position.y });
+  };
+
+  const handleWindowPointerMove = (event: React.PointerEvent<HTMLDivElement>, app: DesktopApp) => {
+    if (!windowDrag || windowDrag.app !== app) return;
+    setWindowPositions((current) => ({
+      ...current,
+      [app]: {
+        x: Math.max(0, windowDrag.originX + event.clientX - windowDrag.startX),
+        y: Math.max(0, windowDrag.originY + event.clientY - windowDrag.startY),
+      },
+    }));
+  };
+
+  const openChromeUrl = () => {
+    const url = /^https?:\/\//i.test(chromeUrl) ? chromeUrl : `https://${chromeUrl}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const runCommand = () => {
+    const command = cmdInput.trim().toLowerCase();
+    if (!command) return;
+    if (command === "clear" || command === "cls") {
+      setCmdLines([]);
+    } else if (command === "help") {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "可用命令：help、about、works、resume、date、clear"]);
+    } else if (command === "about") {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开个人画布…"]);
+      changeTab("about");
+    } else if (command === "works") {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开作品集…"]);
+      changeTab("work");
+    } else if (command === "resume") {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开个人简历…"]);
+      window.open("https://ai.dqtx.cc/", "_blank", "noopener,noreferrer");
+    } else if (command === "date") {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, new Date().toLocaleString("zh-CN")]);
+    } else {
+      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, `“${cmdInput}” 不是可识别的命令。`]);
+    }
+    setCmdInput("");
   };
 
   const handleCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -178,13 +248,9 @@ export default function Home() {
 
   return (
     <main className={`site-shell tab-${tab}`}>
-      {tab === "home" && <div className="wallpaper" aria-hidden="true">
-        {stars.map((star, index) => (
-          <span key={index} style={{ left: star.left, top: star.top, fontSize: star.size, animationDelay: star.delay }}>✦</span>
-        ))}
-      </div>}
+      {tab === "home" && <div className="win11-wallpaper" aria-hidden="true" />}
 
-      {tab !== "work" && <header className="menu-bar">
+      {tab === "about" && <header className="menu-bar">
         <button className="brand" onClick={() => changeTab("home")}>dqtx OS</button>
         <button onClick={() => changeTab("about")}>About</button>
         <button onClick={() => changeTab("work")}>Works</button>
@@ -193,14 +259,113 @@ export default function Home() {
       </header>}
 
       {tab === "home" && (
-        <section className="desktop-page page-enter" aria-label="主页桌面">
-          <div className="shortcut-grid">
+        <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
+          <div className="desktop-icons">
+            {desktopApps.map((app) => (
+              <button className="desktop-app-icon" onClick={() => openApp(app.id)} key={app.id}>
+                <span>{app.icon}</span>
+                <small>{app.label}</small>
+              </button>
+            ))}
             {shortcuts.map((item) => (
-              <a className="shortcut" href={item.url} target="_blank" rel="noreferrer" key={item.label}>
-                <span className={`shortcut-icon ${item.kind}`}>{item.icon}</span>
-                <span>{item.label}</span>
+              <a className="desktop-app-icon" href={item.url} target="_blank" rel="noreferrer" key={item.label}>
+                <span className={`desktop-folder ${item.kind}`}>{item.icon}</span>
+                <small>{item.label}</small>
               </a>
             ))}
+          </div>
+
+          {openApps.map((app, index) => (
+            <div
+              className={`desktop-window window-${app}`}
+              style={{ left: windowPositions[app].x, top: windowPositions[app].y, zIndex: 50 + index }}
+              onMouseDown={() => setOpenApps((current) => [...current.filter((item) => item !== app), app])}
+              key={app}
+            >
+              <div
+                className="desktop-window-titlebar"
+                onPointerDown={(event) => handleWindowPointerDown(event, app)}
+                onPointerMove={(event) => handleWindowPointerMove(event, app)}
+                onPointerUp={() => setWindowDrag(null)}
+                onPointerCancel={() => setWindowDrag(null)}
+              >
+                <span>{desktopApps.find((item) => item.id === app)?.icon} {desktopApps.find((item) => item.id === app)?.label}</span>
+                <div><button aria-label="最小化">—</button><button aria-label="关闭" onClick={(event) => { event.stopPropagation(); closeApp(app); }}>×</button></div>
+              </div>
+
+              {app === "computer" && (
+                <div className="computer-window">
+                  <div className="explorer-sidebar"><b>主页</b><span>桌面</span><span>文档</span><span>图片</span><span>下载</span></div>
+                  <div className="explorer-main">
+                    <h2>此电脑</h2>
+                    <p>常用位置</p>
+                    <div className="explorer-grid">
+                      <a href="https://ai.dqtx.cc/" target="_blank" rel="noreferrer"><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></a>
+                      <a href="https://dqtx.cc" target="_blank" rel="noreferrer"><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></a>
+                      <a href="https://app.dqtx.cc" target="_blank" rel="noreferrer"><span>⚙️</span><b>数字工坊</b><small>app.dqtx.cc</small></a>
+                      <a href="https://742112.xyz" target="_blank" rel="noreferrer"><span>🛠️</span><b>远程服务</b><small>742112.xyz</small></a>
+                    </div>
+                    <p>设备和驱动器</p>
+                    <div className="drive"><span>💽</span><div><b>本地磁盘 (C:)</b><i><em /></i><small>128 GB 可用，共 256 GB</small></div></div>
+                  </div>
+                </div>
+              )}
+
+              {app === "chrome" && (
+                <div className="chrome-window">
+                  <form onSubmit={(event) => { event.preventDefault(); openChromeUrl(); }}>
+                    <button type="button">←</button><button type="button">→</button>
+                    <input value={chromeUrl} onChange={(event) => setChromeUrl(event.target.value)} aria-label="网址" />
+                    <button type="submit">前往</button>
+                  </form>
+                  <div className="chrome-home">
+                    <span className="chrome-mark">🌐</span>
+                    <h2>浏览大强同学的数字世界</h2>
+                    <div>
+                      <button onClick={() => { setChromeUrl("https://dqtx.cc"); window.open("https://dqtx.cc", "_blank", "noopener,noreferrer"); }}>个人博客</button>
+                      <button onClick={() => { setChromeUrl("https://ai.dqtx.cc/"); window.open("https://ai.dqtx.cc/", "_blank", "noopener,noreferrer"); }}>个人简历</button>
+                      <button onClick={() => changeTab("work")}>作品集</button>
+                      <button onClick={() => changeTab("about")}>个人画布</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {app === "cmd" && (
+                <div className="cmd-window">
+                  {cmdLines.map((line, lineIndex) => <p key={lineIndex}>{line || "\u00a0"}</p>)}
+                  <label>C:\Users\dqtx&gt; <input autoFocus value={cmdInput} onChange={(event) => setCmdInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") runCommand(); }} /></label>
+                </div>
+              )}
+
+              {app === "notepad" && (
+                <div className="notepad-window">
+                  <div>文件　编辑　查看</div>
+                  <textarea value={notepadText} onChange={(event) => setNotepadText(event.target.value)} aria-label="记事本内容" />
+                </div>
+              )}
+            </div>
+          ))}
+
+          {startOpen && (
+            <div className="start-menu">
+              <div className="start-search">🔎 在此键入以搜索</div>
+              <h3>已固定</h3>
+              <div className="start-apps">
+                {desktopApps.map((app) => <button onClick={() => openApp(app.id)} key={app.id}><span>{app.icon}</span>{app.label}</button>)}
+                <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
+                <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
+              </div>
+              <div className="start-user"><img src={profileImage} alt="" /><b>大强同学</b><button title="电源">⏻</button></div>
+            </div>
+          )}
+
+          <div className="windows-taskbar">
+            <button className="windows-start" onClick={() => setStartOpen((current) => !current)} aria-label="开始菜单"><i /><i /><i /><i /></button>
+            {desktopApps.map((app) => <button className={openApps.includes(app.id) ? "running" : ""} onClick={() => openApp(app.id)} title={app.label} key={app.id}>{app.icon}</button>)}
+            <button onClick={() => changeTab("work")} title="作品集">🗂️</button>
+            <button onClick={() => changeTab("about")} title="个人画布">🧠</button>
+            <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
         </section>
       )}
@@ -358,11 +523,11 @@ export default function Home() {
         </section>
       )}
 
-      <nav className="pill-nav" aria-label="页面导航">
+      {tab !== "home" && <nav className="pill-nav" aria-label="页面导航">
         <button className={tab === "home" ? "active" : ""} onClick={() => changeTab("home")}><small>01</small>主页</button>
         <button className={tab === "work" ? "active" : ""} onClick={() => changeTab("work")}><small>02</small>作品集</button>
         <button className={tab === "about" ? "active" : ""} onClick={() => changeTab("about")}><small>03</small>关于我</button>
-      </nav>
+      </nav>}
 
     </main>
   );
