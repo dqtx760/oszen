@@ -3,21 +3,19 @@
 import { useEffect, useState } from "react";
 
 type Tab = "home" | "work" | "about";
-type CardId = "portrait" | "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
+type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad";
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
-  portrait: { x: 105, y: 155 },
-  identity: { x: 500, y: 160 },
-  timeline: { x: 1015, y: 110 },
-  story: { x: 520, y: 585 },
-  skills: { x: 1050, y: 650 },
-  service: { x: 1435, y: 370 },
-  sticky: { x: 110, y: 690 },
+  identity: { x: 170, y: 150 },
+  timeline: { x: 660, y: 120 },
+  service: { x: 1080, y: 230 },
+  story: { x: 180, y: 540 },
+  skills: { x: 690, y: 555 },
+  sticky: { x: 1100, y: 70 },
 };
 
 const canvasLayers: { id: CardId; label: string; color: string }[] = [
-  { id: "portrait", label: "个人照片", color: "blue" },
   { id: "identity", label: "个人信息", color: "yellow" },
   { id: "timeline", label: "经历时间线", color: "blue" },
   { id: "story", label: "核心叙事", color: "yellow" },
@@ -27,31 +25,31 @@ const canvasLayers: { id: CardId; label: string; color: string }[] = [
 ];
 
 const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]; toOffset: [number, number]; color: string }[] = [
-  { from: "portrait", to: "identity", fromOffset: [300, 190], toOffset: [0, 190], color: "#8bb2e6" },
-  { from: "identity", to: "timeline", fromOffset: [380, 180], toOffset: [0, 220], color: "#8bb2e6" },
+  { from: "identity", to: "timeline", fromOffset: [390, 140], toOffset: [0, 170], color: "#8bb2e6" },
   { from: "identity", to: "story", fromOffset: [195, 360], toOffset: [195, 0], color: "#f2c93d" },
-  { from: "story", to: "skills", fromOffset: [390, 170], toOffset: [0, 120], color: "#8bb2e6" },
-  { from: "timeline", to: "service", fromOffset: [360, 230], toOffset: [0, 150], color: "#8bb2e6" },
+  { from: "timeline", to: "service", fromOffset: [360, 170], toOffset: [0, 180], color: "#8bb2e6" },
+  { from: "story", to: "skills", fromOffset: [400, 150], toOffset: [0, 110], color: "#8bb2e6" },
+  { from: "sticky", to: "service", fromOffset: [210, 135], toOffset: [260, 0], color: "#f2c93d" },
 ];
 
 const profileImage = "/profile.png";
 
 const shortcuts = [
-  { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder" },
-  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file" },
-  { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder" },
-  { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file" },
-  { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder" },
-  { icon: "🧩", label: "Chrome 插件", url: "https://110.dqtx.cc", kind: "file" },
-  { icon: "⌘", label: "GitHub", url: "https://github.com/dqtx760", kind: "file" },
-  { icon: "𝕏", label: "@dqtx760", url: "https://x.com/dqtx760", kind: "file" },
+  { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "folder-logo" },
+  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "file-logo" },
+  { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
+  { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "file-logo" },
+  { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
+  { icon: "🧩", label: "Chrome 插件", url: "https://110.dqtx.cc", kind: "file", iconClass: "file-logo" },
+  { icon: "", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "github-logo" },
+  { icon: "𝕏", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "x-logo" },
 ];
 
-const desktopApps: { id: DesktopApp; icon: string; label: string }[] = [
-  { id: "computer", icon: "🖥️", label: "此电脑" },
-  { id: "chrome", icon: "🌐", label: "Google Chrome" },
-  { id: "cmd", icon: "⌨️", label: "命令提示符" },
-  { id: "notepad", icon: "📝", label: "记事本" },
+const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
+  { id: "computer", icon: "🖥️", label: "此电脑", iconClass: "computer-logo" },
+  { id: "chrome", icon: "", label: "Chrome", iconClass: "chrome-logo" },
+  { id: "cmd", icon: "", label: "Cmd", iconClass: "cmd-logo" },
+  { id: "notepad", icon: "📝", label: "记事本", iconClass: "notepad-logo" },
 ];
 
 const projects = [
@@ -88,6 +86,7 @@ export default function Home() {
   const [openApps, setOpenApps] = useState<DesktopApp[]>([]);
   const [minimizedApps, setMinimizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
+  const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
@@ -101,6 +100,8 @@ export default function Home() {
   });
   const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
+  const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon}</span>;
+
   useEffect(() => {
     const updateTime = () =>
       setTime(new Intl.DateTimeFormat("zh-CN", { hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date()));
@@ -110,6 +111,15 @@ export default function Home() {
       window.clearInterval(clockTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (tab !== "home" || desktopLaunched) return;
+    const launchOnEnter = (event: KeyboardEvent) => {
+      if (event.key === "Enter") setDesktopLaunched(true);
+    };
+    window.addEventListener("keydown", launchOnEnter);
+    return () => window.removeEventListener("keydown", launchOnEnter);
+  }, [desktopLaunched, tab]);
 
   useEffect(() => {
     const syncTabWithUrl = () => {
@@ -299,16 +309,35 @@ export default function Home() {
 
       {tab === "home" && (
         <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
+          {!desktopLaunched && (
+            <div className="launch-screen" onClick={() => setDesktopLaunched(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
+              <div className="launch-laptop" aria-hidden="true">
+                <div className="launch-screen-panel">
+                  <div className="launch-dots"><i /><i /><i /></div>
+                  <p><b>$</b> whoami</p>
+                  <p>&gt; 大强同学</p>
+                  <p><b>$</b> cat about.md</p>
+                  <p>&gt; AI 工具 / Obsidian / Agent 工作流</p>
+                  <p><b>$</b> echo "1 person + AI = 1 team"</p>
+                  <p><mark>&gt; 1 person + AI = 1 team</mark></p>
+                  <p><b>$</b> open dqtx-os.app</p>
+                </div>
+                <div className="launch-base" />
+              </div>
+              <div className="launch-hint">Press Enter to Launch <span>↓</span></div>
+            </div>
+          )}
+
           <div className="desktop-icons">
             {desktopApps.map((app) => (
               <button className="desktop-app-icon" onClick={() => openApp(app.id)} key={app.id}>
-                <span>{app.icon}</span>
+                {renderIcon(app.icon, app.iconClass)}
                 <small>{app.label}</small>
               </button>
             ))}
             {shortcuts.map((item) => (
               <button className="desktop-app-icon" onClick={() => openInChrome(item.url)} key={item.label}>
-                <span className={`desktop-folder ${item.kind}`}>{item.icon}</span>
+                {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
               </button>
             ))}
@@ -328,7 +357,7 @@ export default function Home() {
                 onPointerUp={() => setWindowDrag(null)}
                 onPointerCancel={() => setWindowDrag(null)}
               >
-                <span>{desktopApps.find((item) => item.id === app)?.icon} {desktopApps.find((item) => item.id === app)?.label}</span>
+                <span>{desktopApps.find((item) => item.id === app)?.label}</span>
                 <div>
                   <button aria-label="最小化" onPointerDown={(event) => event.stopPropagation()} onClick={() => minimizeApp(app)}>—</button>
                   <button aria-label="关闭" onPointerDown={(event) => event.stopPropagation()} onClick={() => closeApp(app)}>×</button>
@@ -385,7 +414,7 @@ export default function Home() {
               <div className="start-search">🔎 在此键入以搜索</div>
               <h3>已固定</h3>
               <div className="start-apps">
-                {desktopApps.map((app) => <button onClick={() => openApp(app.id)} key={app.id}><span>{app.icon}</span>{app.label}</button>)}
+                {desktopApps.map((app) => <button onClick={() => openApp(app.id)} key={app.id}>{renderIcon(app.icon, app.iconClass)}{app.label}</button>)}
                 <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
                 <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
               </div>
@@ -396,9 +425,8 @@ export default function Home() {
           <div className="windows-taskbar">
             <div className="taskbar-apps">
               <button className="windows-start" onClick={() => setStartOpen((current) => !current)} aria-label="开始菜单"><i /><i /><i /><i /></button>
-              {desktopApps.map((app) => <button className={openApps.includes(app.id) ? "running" : ""} onClick={() => openApp(app.id)} title={app.label} key={app.id}>{app.icon}</button>)}
-              <button onClick={() => changeTab("work")} title="作品集">🗂️</button>
-              <button onClick={() => changeTab("about")} title="个人画布">🧠</button>
+              <button className="taskbar-link" onClick={() => changeTab("work")} title="作品集">作品集</button>
+              <button className="taskbar-link" onClick={() => changeTab("about")} title="个人画布">个人画布</button>
             </div>
             <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
@@ -480,11 +508,6 @@ export default function Home() {
                 const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
                 return <i className="canvas-connector" key={`${connector.from}-${connector.to}`} style={{ left: x1, top: y1, width, borderColor: connector.color, transform: `rotate(${angle}deg)` }} />;
               })}
-
-              <article className={`canvas-card portrait-card ${selectedCard === "portrait" ? "selected" : ""}`} data-card="portrait" style={{ left: cardPositions.portrait.x, top: cardPositions.portrait.y }}>
-                <div className="card-grip" data-drag-handle>PERSON.JPG <span>⠿</span></div>
-                <img src={profileImage} alt="大强同学" />
-              </article>
 
               <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
                 <div className="card-grip" data-drag-handle>PROFILE.MD <span>⠿</span></div>

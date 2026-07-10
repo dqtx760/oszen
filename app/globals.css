@@ -51,15 +51,39 @@ button { color: inherit; }
 
 .desktop-page { position: relative; z-index: 2; min-height: 100svh; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
+.launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; place-items: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
+.launch-laptop { width: min(920px, 72vw); display: grid; justify-items: center; }
+.launch-screen-panel { position: relative; width: 100%; min-height: 420px; padding: 64px 42px 38px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
+.launch-screen-panel::before { content: "dqtx@universe ~ zsh"; position: absolute; top: 26px; right: 42px; left: 42px; padding-bottom: 17px; border-bottom: 1px solid #ffffff1f; text-align: center; color: #9fc9f2; font-size: 14px; }
+.launch-dots { position: absolute; top: 28px; left: 28px; display: flex; gap: 9px; }
+.launch-dots i { width: 13px; height: 13px; border-radius: 50%; }
+.launch-dots i:nth-child(1) { background: #ff5f56; }
+.launch-dots i:nth-child(2) { background: #ffbd2e; }
+.launch-dots i:nth-child(3) { background: #27c93f; }
+.launch-screen-panel p { margin: 0 0 18px; }
+.launch-screen-panel b { color: #ffe268; }
+.launch-screen-panel mark { padding: 3px 9px; border-radius: 4px; background: #ffe268; color: #205b9f; }
+.launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
+.launch-hint { display: grid; justify-items: center; gap: 18px; margin-top: 66px; color: #9ca3b5; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; }
+.launch-hint span { font-size: 24px; animation: hintArrow 1.2s ease-in-out infinite; }
 .desktop-icons { position: absolute; z-index: 3; top: 16px; bottom: 76px; left: 14px; display: grid; grid-template-rows: repeat(6, 92px); grid-auto-flow: column; grid-auto-columns: 92px; gap: 2px 8px; }
 .desktop-app-icon { width: 88px; height: 88px; display: grid; place-items: center; align-content: center; gap: 5px; padding: 5px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: white; text-align: center; text-shadow: 0 1px 3px #003c82; cursor: default; }
 .desktop-app-icon:hover, .desktop-app-icon:focus-visible { border-color: #d4edff99; background: #d5efff30; outline: none; }
-.desktop-app-icon > span { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #ffffffee, #cde8ffdd); box-shadow: 0 3px 8px #003e8348; color: #14579b; font-size: 28px; text-shadow: none; }
+.app-symbol { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #ffffffee, #cde8ffdd); box-shadow: 0 3px 8px #003e8348; color: #14579b; font-size: 28px; text-shadow: none; }
 .desktop-app-icon small { max-width: 82px; font-size: 12px; line-height: 1.15; }
-.desktop-app-icon .desktop-folder { position: relative; border-radius: 5px 5px 9px 9px; background: linear-gradient(#ffe582, #f6c53c); }
-.desktop-app-icon .desktop-folder::before { content: ""; position: absolute; top: -5px; left: 4px; width: 24px; height: 8px; border-radius: 4px 4px 0 0; background: #ffe582; }
+.folder-logo { border-radius: 5px 5px 9px 9px; background: linear-gradient(#ffe582, #f6c53c); }
+.folder-logo::before { content: ""; position: absolute; top: -5px; left: 4px; width: 24px; height: 8px; border-radius: 4px 4px 0 0; background: #ffe582; }
+.file-logo { background: linear-gradient(145deg, #fff, #dfe8f3); }
+.chrome-logo { overflow: hidden; border-radius: 50%; background: conic-gradient(#e94235 0 33%, #fabb05 0 66%, #34a853 0 82%, #e94235 0); }
+.chrome-logo::before { content: ""; position: absolute; inset: 11px; border: 5px solid #fff; border-radius: 50%; background: #4285f4; }
+.cmd-logo { border-radius: 6px; background: #111827; box-shadow: inset 0 0 0 2px #2f3948, 0 3px 8px #003e8348; }
+.cmd-logo::before { content: "C:\\_"; color: #f8fafc; font: 700 15px/1 Consolas, ui-monospace, monospace; }
+.github-logo { border-radius: 50%; background: #111827; color: #fff; }
+.github-logo::before { content: "GH"; font: 800 15px/1 "Segoe UI", sans-serif; letter-spacing: -.05em; }
+.x-logo { border-radius: 50%; background: #050505; color: #fff; font-size: 25px; }
 
-.desktop-window { position: absolute; width: min(720px, calc(100vw - 40px)); height: min(500px, calc(100svh - 100px)); overflow: hidden; border: 1px solid #ffffffb8; border-radius: 10px; background: #f7f9fcee; color: #202634; box-shadow: 0 25px 60px #002b6366; backdrop-filter: blur(26px); }
+.desktop-window { position: absolute; width: min(720px, calc(100vw - 40px)); height: min(500px, calc(100svh - 100px)); min-width: 360px; min-height: 270px; overflow: hidden; resize: both; border: 1px solid #ffffffb8; border-radius: 10px; background: #f7f9fcee; color: #202634; box-shadow: 0 25px 60px #002b6366; backdrop-filter: blur(26px); }
+.desktop-window::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 12px; height: 12px; border-right: 2px solid #8da0b4; border-bottom: 2px solid #8da0b4; opacity: .75; pointer-events: none; }
 .desktop-window-titlebar { height: 42px; display: flex; justify-content: space-between; align-items: center; padding-left: 14px; background: #f6f8fbe8; border-bottom: 1px solid #d9e0e8; font-size: 13px; cursor: move; touch-action: none; }
 .desktop-window-titlebar > div { align-self: stretch; display: flex; }
 .desktop-window-titlebar button { width: 45px; border: 0; background: transparent; color: #334155; cursor: default; }
@@ -107,13 +131,14 @@ button { color: inherit; }
 .notepad-window > div { padding: 8px 12px; border-bottom: 1px solid #e3e7eb; font-size: 13px; }
 .notepad-window textarea { width: 100%; height: 100%; padding: 18px; resize: none; border: 0; outline: 0; color: #1f2937; font: 16px/1.75 "Segoe UI", "Microsoft YaHei", sans-serif; }
 
-.windows-taskbar { position: fixed; z-index: 100; right: 12px; bottom: 8px; left: 12px; height: 56px; display: flex; justify-content: center; align-items: center; padding: 5px 12px; border: 1px solid #ffffff7a; border-radius: 12px; background: #edf6f8d9; box-shadow: 0 8px 28px #003c7666; backdrop-filter: blur(28px) saturate(1.35); }
-.taskbar-apps { display: flex; align-items: center; gap: 4px; }
+.windows-taskbar { position: fixed; z-index: 100; right: 12px; bottom: 8px; left: 12px; height: 48px; display: flex; justify-content: center; align-items: center; padding: 4px 12px; border: 1px solid #ffffff7a; border-radius: 10px; background: #edf6f8d9; box-shadow: 0 8px 28px #003c7666; backdrop-filter: blur(28px) saturate(1.35); }
+.taskbar-apps { position: absolute; left: 50%; display: flex; align-items: center; gap: 5px; transform: translateX(-50%); }
 .taskbar-apps > button { position: relative; width: 45px; height: 44px; display: grid; place-items: center; border: 0; border-radius: 6px; background: transparent; font-size: 23px; cursor: pointer; }
 .taskbar-apps > button:hover, .taskbar-apps > button:focus-visible { background: #ffffffa8; outline: none; }
 .taskbar-apps > button.running::after { content: ""; position: absolute; bottom: 2px; width: 18px; height: 3px; border-radius: 4px; background: #167bd5; }
 .windows-start { grid-template-columns: 8px 8px; grid-template-rows: 8px 8px; gap: 2px !important; }
 .windows-start i { width: 8px; height: 8px; background: #1388e5; }
+.taskbar-apps > .taskbar-link { width: auto; min-width: 66px; padding: 0 13px; color: #1f4f83; font-size: 13px; font-weight: 700; }
 .taskbar-status { position: absolute; right: 12px; display: flex; align-items: center; gap: 14px; color: #25364a; font-size: 12px; }
 .taskbar-status time { min-width: 48px; }
 
@@ -176,15 +201,13 @@ button { color: inherit; }
 .mini-map i:nth-child(5) { left: 104px; top: 75px; width: 78px; height: 22px; }
 .canvas-board { position: absolute; z-index: 1; top: 58px; right: 0; bottom: 0; left: 250px; overflow: hidden; overscroll-behavior: contain; cursor: grab; touch-action: none; background-color: #fffef9; background-image: radial-gradient(#d9e5f2 1.6px, transparent 1.6px); background-size: 24px 24px; }
 .canvas-board.is-dragging { cursor: grabbing; }
-.canvas-stage { position: absolute; width: 1900px; height: 1100px; transform-origin: 0 0; will-change: transform; }
+.canvas-stage { position: absolute; width: 1580px; height: 940px; transform-origin: 0 0; will-change: transform; }
 .canvas-connector { position: absolute; z-index: 0; height: 0; border-top: 4px dashed; transform-origin: left center; opacity: .8; pointer-events: none; }
 .canvas-card { position: absolute; z-index: 2; border: 2px dashed #a9c6e8; border-radius: 18px; background: #fff; box-shadow: 0 8px 18px #6f91b210; color: #33485f; user-select: none; transition: box-shadow .2s, border-color .2s; }
 .canvas-card.selected { border-color: #357ed0; box-shadow: 0 0 0 4px #4e91dc18, 0 18px 38px #6f91b22a; }
 .card-grip { display: flex; justify-content: space-between; align-items: center; min-height: 40px; padding: 10px 16px; border-bottom: 2px dashed #dfebf5; color: #4a7fc3; font: 700 11px ui-monospace, Consolas, monospace; letter-spacing: .08em; cursor: grab; }
 .card-grip span { color: #9cb5cf; font-size: 17px; }
-.portrait-card { width: 300px; overflow: hidden; }
-.portrait-card::before, .identity-card::before, .timeline-card::before, .story-card::before { content: ""; position: absolute; z-index: 3; top: -5px; left: 22px; width: 50px; height: 10px; border-radius: 3px; background: var(--yellow); }
-.portrait-card img { display: block; width: 100%; height: 410px; object-fit: cover; object-position: center top; }
+.identity-card::before, .timeline-card::before, .story-card::before, .sticky-card::before { content: ""; position: absolute; z-index: 3; top: -5px; left: 22px; width: 50px; height: 10px; border-radius: 3px; background: var(--yellow); }
 .identity-card { width: 390px; min-height: 390px; padding: 0 28px 28px; background: #f5f8fe; }
 .identity-card .card-grip { margin: 0 -28px 22px; }
 .avatar-mini { width: 58px; height: 58px; overflow: hidden; border: 3px solid var(--yellow); border-radius: 50%; }
@@ -230,13 +253,15 @@ button { color: inherit; }
 .canvas-zoom button:last-child { background: var(--yellow); }
 .canvas-zoom span { min-width: 48px; text-align: center; font: 12px ui-monospace, Consolas, monospace; }
 
-.pill-nav { position: fixed; z-index: 30; left: 50%; bottom: 30px; display: flex; padding: 7px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 15px 35px #174f8452; backdrop-filter: blur(12px); }
-.pill-nav button { min-width: 120px; padding: 13px 18px; border: 0; border-radius: 999px; background: transparent; color: #65768a; font-weight: 700; cursor: pointer; transition: .2s; }
+.pill-nav { position: fixed; z-index: 30; left: 50%; bottom: 22px; display: flex; padding: 5px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 12px 28px #174f843a; backdrop-filter: blur(12px); }
+.pill-nav button { min-width: 88px; padding: 9px 13px; border: 0; border-radius: 999px; background: transparent; color: #65768a; font-size: 14px; font-weight: 700; cursor: pointer; transition: .2s; }
 .pill-nav button:hover { color: #1d66ae; }
 .pill-nav button.active { background: var(--blue); color: white; }
-.pill-nav small { margin-right: 8px; font: 11px ui-monospace, Consolas, monospace; opacity: .7; }
+.pill-nav small { margin-right: 5px; font: 10px ui-monospace, Consolas, monospace; opacity: .7; }
 .page-enter { animation: pageEnter .45s ease both; }
 @keyframes pageEnter { from { opacity: 0; transform: translateY(14px) scale(.99); } }
+@keyframes launchIn { from { opacity: 0; transform: scale(1.02); } }
+@keyframes hintArrow { 50% { transform: translateY(5px); } }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }
@@ -246,6 +271,8 @@ button { color: inherit; }
   .menu-bar a { display: none; }
   .desktop-icons { grid-template-rows: repeat(6, 86px); grid-auto-columns: 86px; }
   .desktop-app-icon { width: 82px; height: 82px; }
+  .launch-screen-panel { min-height: 350px; font-size: 15px; }
+  .launch-hint { margin-top: 46px; }
   .taskbar-status span { display: none; }
   .start-apps { grid-template-columns: repeat(3, 1fr); }
   .works-page { padding: 64px 18px 140px; }
@@ -266,15 +293,20 @@ button { color: inherit; }
   .menu-bar button:not(.brand) { display: none; }
   .desktop-icons { top: 10px; left: 7px; grid-template-rows: repeat(6, 78px); grid-auto-columns: 78px; }
   .desktop-app-icon { width: 74px; height: 74px; gap: 2px; }
-  .desktop-app-icon > span { width: 40px; height: 40px; font-size: 23px; }
+  .app-symbol { width: 40px; height: 40px; font-size: 23px; }
+  .launch-laptop { width: 88vw; }
+  .launch-screen-panel { min-height: 310px; padding: 56px 22px 24px; border-width: 10px; font-size: 12px; }
+  .launch-screen-panel p { margin-bottom: 12px; }
+  .launch-screen-panel::before { right: 22px; left: 22px; }
   .desktop-app-icon small { font-size: 10px; }
-  .desktop-window { left: 8px !important; top: 10px !important; width: calc(100vw - 16px); height: calc(100svh - 82px); }
+  .desktop-window { left: 8px !important; top: 10px !important; width: calc(100vw - 16px); height: calc(100svh - 82px); min-width: 0; min-height: 260px; resize: none; }
   .computer-window { grid-template-columns: 1fr; }
   .explorer-sidebar { display: none; }
   .explorer-main { padding: 16px; }
   .explorer-grid { grid-template-columns: 1fr; }
-  .windows-taskbar { right: 5px; bottom: 5px; left: 5px; height: 52px; padding: 4px; }
+  .windows-taskbar { right: 5px; bottom: 5px; left: 5px; height: 48px; padding: 4px; }
   .taskbar-apps > button { width: 38px; height: 40px; font-size: 20px; }
+  .taskbar-apps > .taskbar-link { min-width: 58px; padding: 0 8px; font-size: 12px; }
   .taskbar-status { right: 7px; }
   .taskbar-status time { display: none; }
   .start-menu { bottom: 64px; }
@@ -288,8 +320,8 @@ button { color: inherit; }
   .canvas-toolbar strong span { width: 31px; height: 31px; }
   .canvas-toolbar > button { padding: 7px 9px; font-size: 12px; }
   .canvas-zoom { transform: scale(.9); transform-origin: right bottom; }
-  .pill-nav { bottom: 14px; width: calc(100vw - 24px); }
-  .pill-nav button { flex: 1; min-width: 0; padding: 12px 7px; font-size: 13px; }
+  .pill-nav { bottom: 14px; width: auto; max-width: calc(100vw - 24px); }
+  .pill-nav button { flex: 1; min-width: 74px; padding: 8px 7px; font-size: 12px; }
   .pill-nav small { display: block; margin: 0 0 2px; }
 }
 
