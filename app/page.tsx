@@ -95,8 +95,25 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const syncTabWithUrl = () => {
+      if (window.location.hash === "#works") setTab("work");
+      else if (window.location.hash === "#about") setTab("about");
+      else setTab("home");
+    };
+    syncTabWithUrl();
+    window.addEventListener("hashchange", syncTabWithUrl);
+    window.addEventListener("popstate", syncTabWithUrl);
+    return () => {
+      window.removeEventListener("hashchange", syncTabWithUrl);
+      window.removeEventListener("popstate", syncTabWithUrl);
+    };
+  }, []);
+
   const changeTab = (next: Tab) => {
     setTab(next);
+    const nextUrl = next === "work" ? "#works" : next === "about" ? "#about" : `${window.location.pathname}${window.location.search}`;
+    window.history.pushState(null, "", nextUrl);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -160,20 +177,20 @@ export default function Home() {
   };
 
   return (
-    <main className="site-shell">
-      <div className="wallpaper" aria-hidden="true">
+    <main className={`site-shell tab-${tab}`}>
+      {tab === "home" && <div className="wallpaper" aria-hidden="true">
         {stars.map((star, index) => (
           <span key={index} style={{ left: star.left, top: star.top, fontSize: star.size, animationDelay: star.delay }}>✦</span>
         ))}
-      </div>
+      </div>}
 
-      <header className="menu-bar">
+      {tab !== "work" && <header className="menu-bar">
         <button className="brand" onClick={() => changeTab("home")}>dqtx OS</button>
         <button onClick={() => changeTab("about")}>About</button>
         <button onClick={() => changeTab("work")}>Works</button>
         <a href="mailto:sphinx308@proton.me">Contact</a>
         <time>{time}</time>
-      </header>
+      </header>}
 
       {tab === "home" && (
         <section className="desktop-page page-enter" aria-label="主页桌面">
@@ -189,15 +206,13 @@ export default function Home() {
       )}
 
       {tab === "work" && (
-        <section className="content-window works-window page-enter" aria-label="作品集">
-          <div className="window-titlebar">
-            <div><i /><i /><i /></div>
-            <span>works — dqtx OS</span>
-            <button onClick={() => changeTab("home")} aria-label="关闭作品集">×</button>
-          </div>
-          <div className="window-content">
+        <section className="works-page page-enter" aria-label="作品集">
+          <div className="works-inner">
             <p className="section-kicker">VIBE CODING ARCHIVE / 2026</p>
-            <h2>做小而有用的工具，<br />让想法尽快上线。</h2>
+            <div className="works-hero">
+              <h1>1 Person + AI = 1 Team</h1>
+              <p>做小而有用的工具，让想法尽快上线。</p>
+            </div>
             <div className="project-grid">
               {projects.map((project, index) => (
                 <a href={project.url} target="_blank" rel="noreferrer" className="project-card" key={project.name}>
@@ -349,7 +364,6 @@ export default function Home() {
         <button className={tab === "about" ? "active" : ""} onClick={() => changeTab("about")}><small>03</small>关于我</button>
       </nav>
 
-      <footer>© 2026 大强同学 · Built with AI &amp; attitude</footer>
     </main>
   );
 }
