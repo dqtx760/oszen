@@ -40,7 +40,7 @@ const shortcuts = [
   { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
-  { icon: "/icons/github.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/github.webp", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
@@ -120,6 +120,7 @@ export default function Home() {
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
@@ -153,13 +154,16 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (tab !== "home" || desktopLaunched) return;
+    if (tab !== "home" || desktopLaunched || isLaunching) return;
     const launchOnEnter = (event: KeyboardEvent) => {
-      if (event.key === "Enter") launchDesktop();
+      if (event.key === "Enter") {
+        if (isLocked) unlockDesktop();
+        else launchDesktop();
+      }
     };
     window.addEventListener("keydown", launchOnEnter);
     return () => window.removeEventListener("keydown", launchOnEnter);
-  }, [desktopLaunched, isLaunching, tab]);
+  }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
     const syncTabWithUrl = () => {
@@ -184,9 +188,26 @@ export default function Home() {
   };
 
   const launchDesktop = () => {
-    if (isLaunching || desktopLaunched) return;
+    if (isLaunching || desktopLaunched || isLocked) return;
     setIsLaunching(true);
-    window.setTimeout(() => setDesktopLaunched(true), 1650);
+    window.setTimeout(() => {
+      setIsLaunching(false);
+      setIsLocked(true);
+    }, 1650);
+  };
+
+  const unlockDesktop = () => {
+    setIsLocked(false);
+    setDesktopLaunched(true);
+  };
+
+  const lockDesktop = () => {
+    setStartOpen(false);
+    setOpenApps([]);
+    setMinimizedApps([]);
+    setMaximizedApps([]);
+    setDesktopLaunched(false);
+    setIsLocked(true);
   };
 
   const openApp = (app: DesktopApp, options?: { maximized?: boolean }) => {
@@ -366,7 +387,7 @@ export default function Home() {
 
       {tab === "home" && (
         <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
-          {!desktopLaunched && (
+          {!desktopLaunched && !isLocked && (
             <div className={`launch-screen ${isLaunching ? "is-launching" : ""}`} onClick={launchDesktop} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
@@ -391,6 +412,18 @@ export default function Home() {
                 </nav>
               </>}
             </div>
+          )}
+
+          {isLocked && !desktopLaunched && (
+            <section className="lock-screen" aria-label="DQTX OS 锁屏界面">
+              <div className="lock-screen-content">
+                <time>{time}</time>
+                <img src={profileImage} alt="大强同学" />
+                <strong>大强同学</strong>
+                <span>DQTX OS 已锁定</span>
+                <button onClick={unlockDesktop}>确定进入桌面</button>
+              </div>
+            </section>
           )}
 
           <div className="desktop-icons">
@@ -511,7 +544,7 @@ export default function Home() {
                 <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
                 <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
               </div>
-              <div className="start-user"><img src={profileImage} alt="" /><b>大强同学</b><button title="电源">⏻</button></div>
+              <div className="start-user"><img src={profileImage} alt="" /><b>大强同学</b><button title="关机并锁屏" aria-label="关机并锁屏" onClick={lockDesktop}>⏻</button></div>
             </div>
           )}
 
