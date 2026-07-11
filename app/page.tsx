@@ -160,6 +160,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   const [cmdInput, setCmdInput] = useState("");
   const [cmdLines, setCmdLines] = useState(["Microsoft Windows [Version 11.0.2026]", "(c) DQTX OS. All rights reserved.", "", "输入 help 查看可用命令。"]);
   const [computerView, setComputerView] = useState<ComputerView>("home");
+  const [selectedPhoto, setSelectedPhoto] = useState<{ src: string; label: string } | null>(null);
   const [windowPositions, setWindowPositions] = useState<Record<DesktopApp, { x: number; y: number }>>({
     computer: { x: 230, y: 100 },
     chrome: { x: 330, y: 80 },
@@ -174,8 +175,8 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   const getWindowPosition = (app: DesktopApp) => {
     if (app === "computer" || app === "cmd" || app === "notepad") {
-      const width = Math.min(720, window.innerWidth - 40);
-      const height = Math.min(500, window.innerHeight - 100);
+      const width = Math.min(840, window.innerWidth - 40);
+      const height = Math.min(560, window.innerHeight - 100);
       return { x: Math.max(12, Math.round((window.innerWidth - width) / 2)), y: Math.max(12, Math.round((window.innerHeight - height) / 2) - 20) };
     }
     return { x: Math.min(280, Math.max(218, Math.round(window.innerWidth * 0.14))), y: 52 };
@@ -480,7 +481,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   <p>&gt; AI 工具 / Obsidian / Agent 工作流</p>
                   <p><b>$</b> echo "1 person + AI = 1 team"</p>
                   <p><mark>&gt; 1 person + AI = 1 team</mark></p>
-                  <p><b>$</b> open dqtx-os.app</p>
+                  <p><b>$</b> open os.dqtx.cc</p>
                   {isLaunching && <div className="launch-progress" aria-label="正在启动"><span>&gt; launching...</span><b><i /></b><em>100%</em></div>}
                 </div>
                 <div className="launch-base" />
@@ -599,7 +600,12 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                     </>}
                     {computerView === "photo" && <section className="computer-section">
                       <header><div><h2>photo</h2><p>关于大强同学的四个切面</p></div><small>4 个项目</small></header>
-                      <div className="photo-grid">{profilePhotos.map((photo) => <figure key={photo.src}><img src={photo.src} alt={photo.label} /><figcaption>{photo.label}</figcaption></figure>)}</div>
+                      <div className="photo-grid">{profilePhotos.map((photo) => (
+                        <button type="button" className="photo-card" key={photo.src} onClick={() => setSelectedPhoto(photo)}>
+                          <img src={photo.src} alt={photo.label} />
+                          <span>{photo.label}</span>
+                        </button>
+                      ))}</div>
                     </section>}
                     {computerView === "toolbox" && <section className="computer-section">
                       <header><div><h2>工具箱</h2><p>桌面快捷方式，一键进入对应内容</p></div><small>{toolboxItems.length} 个项目</small></header>
@@ -661,6 +667,15 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               )}
             </div>
           ))}
+
+          {selectedPhoto && (
+            <button className="photo-lightbox" type="button" onClick={() => setSelectedPhoto(null)} aria-label="关闭图片预览">
+              <span>
+                <img src={selectedPhoto.src} alt={selectedPhoto.label} />
+                <b>{selectedPhoto.label}</b>
+              </span>
+            </button>
+          )}
 
           {startOpen && (
             <div className="start-menu">
