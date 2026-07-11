@@ -7,6 +7,23 @@ type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
 type ComputerView = "home" | "photo" | "toolbox";
 type ScreenWakeLock = { release: () => Promise<void>; addEventListener: (type: "release", listener: () => void) => void };
+type CmdOutputKind = "text" | "muted" | "accent" | "success" | "warning" | "command";
+type CmdOutput = { kind: CmdOutputKind; text: string; command?: string };
+type CommandDefinition = {
+  name: string;
+  aliases: string[];
+  description: string;
+  group: "了解我" | "看服务" | "打开内容" | "系统命令";
+  handler: () => CmdOutput[];
+};
+
+const createCmdWelcome = (): CmdOutput[] => [
+  { kind: "muted", text: "Microsoft Windows [Version 11.0.2026]" },
+  { kind: "muted", text: "(c) DQTX OS. All rights reserved." },
+  { kind: "text", text: "" },
+  { kind: "success", text: "DQTX OS Terminal 已启动" },
+  { kind: "text", text: "输入 help 查看命令，输入 services 查看我能帮你什么。" },
+];
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
   identity: { x: 170, y: 150 },
@@ -53,7 +70,7 @@ const shortcuts = [
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
-  { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", download: true },
 ];
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
@@ -158,7 +175,10 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
 大强同学`);
   const [cmdInput, setCmdInput] = useState("");
-  const [cmdLines, setCmdLines] = useState(["Microsoft Windows [Version 11.0.2026]", "(c) DQTX OS. All rights reserved.", "", "输入 help 查看可用命令。"]);
+  const [cmdOutput, setCmdOutput] = useState<CmdOutput[]>(createCmdWelcome);
+  const [cmdHistory, setCmdHistory] = useState<string[]>([]);
+  const [cmdHistoryIndex, setCmdHistoryIndex] = useState(-1);
+  const cmdOutputRef = useRef<HTMLDivElement>(null);
   const [computerView, setComputerView] = useState<ComputerView>("home");
   const [selectedPhoto, setSelectedPhoto] = useState<{ src: string; label: string } | null>(null);
   const [windowPositions, setWindowPositions] = useState<Record<DesktopApp, { x: number; y: number }>>({
@@ -173,10 +193,15 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
+  useEffect(() => {
+    const output = cmdOutputRef.current;
+    if (output) output.scrollTop = output.scrollHeight;
+  }, [cmdOutput]);
+
   const getWindowPosition = (app: DesktopApp) => {
     if (app === "computer" || app === "cmd" || app === "notepad") {
-      const width = Math.min(840, window.innerWidth - 40);
-      const height = Math.min(560, window.innerHeight - 100);
+      const width = Math.min(app === "cmd" ? 980 : 840, window.innerWidth - 40);
+      const height = Math.min(app === "cmd" ? 580 : 560, window.innerHeight - 100);
       return { x: Math.max(12, Math.round((window.innerWidth - width) / 2)), y: Math.max(12, Math.round((window.innerHeight - height) / 2) - 20) };
     }
     return { x: Math.min(280, Math.max(218, Math.round(window.innerWidth * 0.14))), y: 52 };
@@ -358,28 +383,219 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     openApp("chrome", { maximized });
   };
 
-  const runCommand = () => {
-    const command = cmdInput.trim().toLowerCase();
+  const downloadFile = (url: string) => {
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "";
+    link.rel = "noreferrer";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
+
+  const openShortcut = (item: (typeof shortcuts)[number]) => {
+    if (item.download) {
+      downloadFile(item.url);
+      return;
+    }
+    openInChrome(item.url, item.maximizeOnOpen);
+  };
+
+  const commandDefinitions: CommandDefinition[] = [
+    {
+      name: "help", aliases: [], description: "查看全部命令", group: "系统命令",
+      handler: () => {
+        const groups: CommandDefinition["group"][] = ["了解我", "看服务", "打开内容", "系统命令"];
+        return groups.flatMap((group) => [
+          { kind: "accent" as const, text: `— ${group} —` },
+          ...commandDefinitions.filter((item) => item.group === group).map((item) => ({
+            kind: "command" as const,
+            text: `${item.name}${item.aliases.length ? ` / ${item.aliases.join(" / ")}` : ""} — ${item.description}`,
+            command: item.name,
+          })),
+        ]);
+      },
+    },
+    {
+      name: "whoami", aliases: ["about"], description: "了解大强同学", group: "了解我",
+      handler: () => [
+        { kind: "success", text: "大强同学 · 一人公司创业者" },
+        { kind: "text", text: "我做 AI 工具、Obsidian、个人网站和 Agent 工作流落地。" },
+        { kind: "text", text: "目标不是把工具装上，而是让它真正进入你的工作，持续创造结果。" },
+        { kind: "command", text: "services — 看看我能提供什么服务", command: "services" },
+      ],
+    },
+    {
+      name: "services", aliases: ["price"], description: "查看服务与价格", group: "看服务",
+      handler: () => [
+        { kind: "success", text: "我能帮你把 AI、知识库和工作流真正用起来：" },
+        { kind: "text", text: "技术咨询 50/小时 · Codex App 安装修复 50 · Claude Code 配置 99" },
+        { kind: "text", text: "Obsidian 模板指导 99～399 · 个人笔记网站 300 · 个人简历网站 168" },
+        { kind: "text", text: "Agent Skill 定制 50～300 · 年度技术顾问 6800/年" },
+        { kind: "command", text: "contact — 获取方案或咨询服务", command: "contact" },
+      ],
+    },
+    {
+      name: "contact", aliases: ["wechat"], description: "获取密码或咨询服务", group: "看服务",
+      handler: () => [
+        { kind: "success", text: "加微信 dqtx33 获取密码 / 咨询服务 / 获取方案" },
+        { kind: "muted", text: "添加时可备注：来自 DQTX OS。" },
+      ],
+    },
+    {
+      name: "works", aliases: [], description: "切换到作品集", group: "打开内容",
+      handler: () => {
+        changeTab("work");
+        return [{ kind: "success", text: "正在切换到作品集…" }];
+      },
+    },
+    {
+      name: "canvas", aliases: ["aboutme"], description: "打开个人画布", group: "打开内容",
+      handler: () => {
+        changeTab("about");
+        return [{ kind: "success", text: "正在打开个人画布…" }];
+      },
+    },
+    {
+      name: "resume", aliases: [], description: "在 Chrome 打开个人简历", group: "打开内容",
+      handler: () => {
+        openInChrome("https://ai.dqtx.cc/", true);
+        return [{ kind: "success", text: "正在打开个人简历…" }];
+      },
+    },
+    {
+      name: "blog", aliases: [], description: "在 Chrome 打开个人博客", group: "打开内容",
+      handler: () => {
+        openInChrome("https://dqtx.cc", true);
+        return [{ kind: "success", text: "正在打开个人博客…" }];
+      },
+    },
+    {
+      name: "tools", aliases: [], description: "打开效率工具", group: "打开内容",
+      handler: () => {
+        openApp("tools");
+        return [{ kind: "success", text: "正在打开效率工具…" }];
+      },
+    },
+    {
+      name: "agent", aliases: [], description: "打开 AI Agent 工具", group: "打开内容",
+      handler: () => {
+        openApp("agent");
+        return [{ kind: "success", text: "正在打开 AI Agent…" }];
+      },
+    },
+    {
+      name: "github", aliases: [], description: "在 Chrome 打开 GitHub", group: "打开内容",
+      handler: () => {
+        openInChrome("https://github.com/dqtx760");
+        return [{ kind: "success", text: "正在打开 GitHub…" }];
+      },
+    },
+    {
+      name: "x", aliases: ["twitter"], description: "在 Chrome 打开推特/X", group: "打开内容",
+      handler: () => {
+        openInChrome("https://x.com/dqtx760");
+        return [{ kind: "success", text: "正在打开推特/X…" }];
+      },
+    },
+    {
+      name: "date", aliases: [], description: "显示当前时间", group: "系统命令",
+      handler: () => [{ kind: "text", text: new Date().toLocaleString("zh-CN") }],
+    },
+    {
+      name: "clear", aliases: ["cls"], description: "清空终端输出", group: "系统命令",
+      handler: () => createCmdWelcome(),
+    },
+  ];
+
+  const commandDistance = (left: string, right: string) => {
+    const rows = Array.from({ length: left.length + 1 }, (_, index) => [index]);
+    for (let column = 0; column <= right.length; column += 1) rows[0][column] = column;
+    for (let row = 1; row <= left.length; row += 1) {
+      for (let column = 1; column <= right.length; column += 1) {
+        rows[row][column] = left[row - 1] === right[column - 1]
+          ? rows[row - 1][column - 1]
+          : Math.min(rows[row - 1][column] + 1, rows[row][column - 1] + 1, rows[row - 1][column - 1] + 1);
+      }
+    }
+    return rows[left.length][right.length];
+  };
+
+  const executeCommand = (rawCommand = cmdInput, recordHistory = true) => {
+    const command = rawCommand.trim().toLowerCase();
     if (!command) return;
-    if (command === "clear" || command === "cls") {
-      setCmdLines([]);
-    } else if (command === "help") {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "可用命令：help、about、works、resume、date、clear"]);
-    } else if (command === "about") {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开个人画布…"]);
-      changeTab("about");
-    } else if (command === "works") {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开作品集…"]);
-      changeTab("work");
-    } else if (command === "resume") {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, "正在打开个人简历…"]);
-      window.open("https://ai.dqtx.cc/", "_blank", "noopener,noreferrer");
-    } else if (command === "date") {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, new Date().toLocaleString("zh-CN")]);
+    const definition = commandDefinitions.find((item) => item.name === command || item.aliases.includes(command));
+
+    if (recordHistory) {
+      setCmdHistory((current) => current[current.length - 1] === rawCommand ? current : [...current, rawCommand]);
+    }
+    setCmdHistoryIndex(-1);
+
+    if (definition?.name === "clear") {
+      setCmdOutput(definition.handler());
+    } else if (definition) {
+      setCmdOutput((current) => [
+        ...current,
+        { kind: "muted", text: `C:\\Users\\dqtx> ${rawCommand}` },
+        ...definition.handler(),
+      ]);
     } else {
-      setCmdLines((current) => [...current, `C:\\Users\\dqtx> ${cmdInput}`, `“${cmdInput}” 不是可识别的命令。`]);
+      const names = commandDefinitions.flatMap((item) => [item.name, ...item.aliases]);
+      const suggestion = names
+        .map((name) => ({ name, distance: commandDistance(command, name) }))
+        .sort((left, right) => left.distance - right.distance)[0];
+      const suggestionLine = suggestion && suggestion.distance <= Math.max(2, Math.floor(command.length / 2))
+        ? { kind: "command" as const, text: `你是不是想输入 ${suggestion.name}？`, command: suggestion.name }
+        : { kind: "warning" as const, text: "输入 help 查看可用命令。" };
+      setCmdOutput((current) => [
+        ...current,
+        { kind: "muted", text: `C:\\Users\\dqtx> ${rawCommand}` },
+        { kind: "warning", text: `“${rawCommand}” 不是可识别的命令。` },
+        suggestionLine,
+      ]);
     }
     setCmdInput("");
+  };
+
+  const handleCmdKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      executeCommand();
+      return;
+    }
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setCmdInput("");
+      setCmdHistoryIndex(-1);
+      return;
+    }
+    if (event.key === "Tab") {
+      event.preventDefault();
+      const query = cmdInput.trim().toLowerCase();
+      if (!query) return;
+      const match = commandDefinitions.flatMap((item) => [item.name, ...item.aliases]).find((item) => item.startsWith(query));
+      if (match) setCmdInput(match);
+      return;
+    }
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!cmdHistory.length) return;
+      const nextIndex = cmdHistoryIndex < 0 ? cmdHistory.length - 1 : Math.max(0, cmdHistoryIndex - 1);
+      setCmdHistoryIndex(nextIndex);
+      setCmdInput(cmdHistory[nextIndex]);
+      return;
+    }
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (cmdHistoryIndex < 0) return;
+      const nextIndex = cmdHistoryIndex + 1;
+      if (nextIndex >= cmdHistory.length) {
+        setCmdHistoryIndex(-1);
+        setCmdInput("");
+        return;
+      }
+      setCmdHistoryIndex(nextIndex);
+      setCmdInput(cmdHistory[nextIndex]);
+    }
   };
 
   const handleCanvasPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -527,7 +743,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               </button>
             ))}
             {shortcuts.filter((item) => item.label === "个人博客").map((item) => (
-              <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
+              <button className="desktop-app-icon" onClick={() => openShortcut(item)} key={item.label}>
                 {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
               </button>
@@ -539,7 +755,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               </button>
             ))}
             {shortcuts.filter((item) => item.label === "GitHub" || item.label === "推特/X").map((item) => (
-              <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
+              <button className="desktop-app-icon" onClick={() => openShortcut(item)} key={item.label}>
                 {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
               </button>
@@ -551,7 +767,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               </button>
             ))}
             {shortcuts.filter((item) => item.label !== "个人博客" && item.label !== "GitHub" && item.label !== "推特/X").map((item) => (
-              <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
+              <button className="desktop-app-icon" onClick={() => openShortcut(item)} key={item.label}>
                 {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
               </button>
@@ -627,9 +843,13 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               )}
 
               {app === "cmd" && (
-                <div className="cmd-window">
-                  {cmdLines.map((line, lineIndex) => <p key={lineIndex}>{line || "\u00a0"}</p>)}
-                  <label>C:\Users\dqtx&gt; <input autoFocus value={cmdInput} onChange={(event) => setCmdInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") runCommand(); }} /></label>
+                <div className="cmd-window" ref={cmdOutputRef}>
+                  {cmdOutput.map((line, lineIndex) => line.kind === "command" ? (
+                    <button className="cmd-command-button" key={`${line.text}-${lineIndex}`} type="button" onClick={() => executeCommand(line.command, false)}>{line.text}</button>
+                  ) : (
+                    <p className={`cmd-line cmd-line-${line.kind}`} key={`${line.text}-${lineIndex}`}>{line.text || "\u00a0"}</p>
+                  ))}
+                  <label>C:\Users\dqtx&gt; <input autoFocus value={cmdInput} onChange={(event) => setCmdInput(event.target.value)} onKeyDown={handleCmdKeyDown} aria-label="输入 CMD 命令" autoComplete="off" spellCheck={false} /></label>
                 </div>
               )}
 
@@ -678,12 +898,12 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
           )}
 
           {startOpen && (
-            <div className="start-menu">
+            <div className="start-menu" onMouseLeave={() => setStartOpen(false)}>
               <div className="start-search">🔎 在此键入以搜索</div>
               <h3>已固定</h3>
               <div className="start-apps">
                 {desktopApps.map((app) => <button onClick={() => openApp(app.id)} key={app.id}>{renderIcon(app.icon, app.iconClass)}{app.label}</button>)}
-                {shortcuts.map((item) => <button onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>{renderIcon(item.icon, item.iconClass)}{item.label}</button>)}
+                {shortcuts.map((item) => <button onClick={() => openShortcut(item)} key={item.label}>{renderIcon(item.icon, item.iconClass)}{item.label}</button>)}
                 <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
                 <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
               </div>

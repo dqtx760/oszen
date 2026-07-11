@@ -137,7 +137,8 @@ button { color: inherit; }
 .x-logo { border-radius: 50%; background: #071018; color: #66edff; font-size: 25px; }
 
 .desktop-window { position: absolute; width: calc(100vw - clamp(256px, calc(14vw + 38px), 318px)); height: calc(100svh - 132px); min-width: 360px; min-height: 270px; overflow: hidden; resize: both; border: 1px solid #ffffffb8; border-radius: 10px; background: #f7f9fcee; color: #202634; box-shadow: 0 25px 60px #002b6366; backdrop-filter: blur(26px); }
-.window-computer, .window-cmd, .window-notepad { width: min(840px, calc(100vw - 40px)); height: min(560px, calc(100svh - 100px)); }
+.window-computer, .window-notepad, .window-tools, .window-agent { width: min(840px, calc(100vw - 40px)); height: min(560px, calc(100svh - 100px)); }
+.window-cmd { width: min(980px, calc(100vw - 40px)); height: min(580px, calc(100svh - 100px)); }
 .desktop-window.maximized { left: 12px !important; top: 12px !important; width: calc(100vw - 24px); height: calc(100svh - 78px); min-width: 0; min-height: 0; resize: none; }
 .desktop-window::after { content: ""; position: absolute; right: 4px; bottom: 4px; width: 12px; height: 12px; border-right: 2px solid #8da0b4; border-bottom: 2px solid #8da0b4; opacity: .75; pointer-events: none; }
 .desktop-window.maximized::after { display: none; }
@@ -205,6 +206,12 @@ button { color: inherit; }
 .window-cmd .desktop-window-titlebar button { color: white; }
 .cmd-window { height: calc(100% - 42px); overflow: auto; padding: 14px; background: linear-gradient(90deg, #06111fe8, #0b101aa8 52%, #02060dcc); color: #f1f5f9; font: 14px/1.5 Consolas, ui-monospace, monospace; text-shadow: 0 1px 7px #000; user-select: text; }
 .cmd-window p { margin: 0; white-space: pre-wrap; }
+.cmd-line-muted { color: #9caec2; }
+.cmd-line-accent { margin-top: 8px !important; color: #74d7ff; font-weight: 700; }
+.cmd-line-success { color: #b9f7b1; }
+.cmd-line-warning { color: #ffd878; }
+.cmd-command-button { display: block; max-width: 100%; margin: 2px 0; padding: 0; border: 0; background: transparent; color: #8edcff; font: inherit; line-height: 1.5; text-align: left; text-decoration: underline; text-decoration-color: #8edcff75; text-underline-offset: 3px; cursor: pointer; text-shadow: inherit; }
+.cmd-command-button:hover, .cmd-command-button:focus-visible { color: #fff2a2; text-decoration-color: currentColor; outline: none; }
 .cmd-window label { display: flex; white-space: nowrap; }
 .cmd-window input { flex: 1; border: 0; outline: 0; background: transparent; color: white; font: inherit; }
 
