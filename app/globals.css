@@ -69,12 +69,12 @@ button { color: inherit; }
 .launch-progress > b::before, .launch-progress > b::after { position: absolute; top: -5px; z-index: 2; color: #ffe268; font-size: 25px; line-height: 1; }
 .launch-progress > b::before { content: "["; left: -7px; }
 .launch-progress > b::after { content: "]"; right: -7px; }
-.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress 2.8s cubic-bezier(.2,.8,.2,1) forwards; }
-.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .18s 2.58s forwards; }
+.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress .95s steps(11, end) forwards; }
+.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .16s .8s forwards; }
 .launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
 .launch-hint { display: grid; justify-items: center; gap: 18px; margin-top: 58px; color: #9ca3b5; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; transition: opacity .45s ease, transform .45s ease; }
 .launch-hint span { font-size: 24px; animation: hintArrow 1.2s ease-in-out infinite; }
-.launch-hint.is-fading, .launch-nav.is-fading { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.launch-hint.is-fading { pointer-events: none; animation: launchHintFade .35s 1.35s ease forwards; }
 .launch-nav { position: absolute; bottom: 32px; left: 50%; display: flex; padding: 5px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 12px 28px #174f843a; transition: opacity .45s ease, transform .45s ease; }
 .launch-nav button { min-width: 88px; padding: 9px 13px; border: 0; border-radius: 999px; background: transparent; color: #65768a; font-size: 14px; font-weight: 700; cursor: pointer; }
 .launch-nav button:hover { color: #1d66ae; }
@@ -87,14 +87,24 @@ button { color: inherit; }
 .matrix-rain i:nth-child(3n) { animation-duration: 9s; animation-delay: -4s; opacity: .28; }
 .matrix-rain i:nth-child(3n + 1) { animation-duration: 5.8s; animation-delay: -2.2s; }
 .matrix-rain i:nth-child(4n) { animation-delay: -6s; }
-.lock-screen-content { position: relative; z-index: 1; display: grid; justify-items: center; gap: 13px; min-width: 320px; padding: 38px 46px; border: 1px solid #41e5f6a8; border-radius: 22px; background: linear-gradient(135deg, #05273444, #0c173a30); box-shadow: 0 0 0 1px #7af1ff24 inset, 0 0 22px #00d3f54f, 0 0 48px #00a8e526, 0 30px 80px #00070bb3; backdrop-filter: blur(18px) saturate(1.35); }
-.lock-screen-content::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; background: linear-gradient(135deg, #5cf3ff, #645dff 48%, #ec53d3); opacity: .72; filter: blur(5px); z-index: -1; }
+.lock-screen-content { position: relative; z-index: 1; display: grid; justify-items: center; gap: 13px; min-width: 340px; padding: 36px 40px 32px; border: 1px solid #5cf3ffc7; border-radius: 24px; background: linear-gradient(145deg, #071b2940, #07131e1a); box-shadow: 0 0 0 1px #e65ad034 inset, 0 0 16px #00e0f778, 0 0 34px #7656ff45, 0 28px 78px #00070bb3; backdrop-filter: blur(22px) saturate(1.2); }
+.lock-screen-content::before { content: ""; position: absolute; inset: -2px; border-radius: inherit; border: 1px solid #f25bdd8c; box-shadow: 0 0 18px #f65cdc4d; pointer-events: none; }
 .lock-screen-content time { color: #cefbff; font: 500 clamp(60px, 9vw, 96px)/1 "Segoe UI", sans-serif; letter-spacing: -.07em; text-shadow: 0 0 10px #8cefff, 0 0 28px #00cbe5; }
 .lock-screen-content img { width: 92px; height: 92px; margin-top: 12px; border: 3px solid #5feeff; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px #6c5dff38, 0 0 22px #00e0ff, 0 0 38px #ca48df66; }
 .lock-screen-content strong { color: #f1fdff; font-size: 21px; text-shadow: 0 0 14px #64e9ff; }
-.lock-screen-content span { color: #bcecf2; font-size: 13px; text-shadow: 0 0 8px #00d7ed; }
-.lock-screen-content button { margin-top: 15px; padding: 11px 25px; border: 1px solid #72edff; border-radius: 999px; background: #061d2a5c; color: #d9fbff; font-weight: 800; cursor: pointer; box-shadow: 0 0 12px #00d8f566 inset, 0 0 18px #4865ff59; }
-.lock-screen-content button:hover, .lock-screen-content button:focus-visible { border-color: #f16be5; background: #1c174f80; box-shadow: 0 0 20px #ed56dc6b, 0 0 14px #00d8f566 inset; outline: none; }
+.lock-screen-content > span { color: #bcecf2; font-size: 13px; text-shadow: 0 0 8px #00d7ed; }
+.keep-screen-control { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 7px; padding: 11px 13px; border: 1px solid #66efff47; border-radius: 14px; background: #04172233; }
+.keep-screen-control div { display: grid; gap: 2px; }
+.keep-screen-control small { color: #80b9c2; font: 10px ui-monospace, Consolas, monospace; letter-spacing: .08em; }
+.keep-screen-control b { color: #e7fdff; font-size: 13px; text-shadow: 0 0 8px #00d7ed; }
+.keep-screen-control button { width: 48px; height: 27px; margin: 0; padding: 3px; border: 1px solid #6aefff9c; border-radius: 999px; background: #0410188c; box-shadow: 0 0 10px #00d8f544 inset; }
+.keep-screen-control button i { display: block; width: 19px; height: 19px; border-radius: 50%; background: #c9f9ff; box-shadow: 0 0 10px #6ef4ff; transition: transform .25s ease, background .25s ease; }
+.keep-screen-control button.active { border-color: #f16be5; background: #a13acb55; box-shadow: 0 0 12px #e651db83 inset, 0 0 12px #00d8f555; }
+.keep-screen-control button.active i { transform: translateX(19px); background: #fff0fb; box-shadow: 0 0 12px #f66de3; }
+.keep-screen-timer { display: flex; justify-content: space-between; width: 100%; color: #9bcbd2; font-size: 12px; }
+.keep-screen-timer b { color: #d9fcff; font: 700 15px/1 Consolas, ui-monospace, monospace; letter-spacing: .08em; text-shadow: 0 0 9px #00d8f5; }
+.lock-screen-content > button { margin-top: 7px; padding: 11px 25px; border: 1px solid #72edff; border-radius: 999px; background: #061d2a5c; color: #d9fbff; font-weight: 800; cursor: pointer; box-shadow: 0 0 12px #00d8f566 inset, 0 0 18px #4865ff59; }
+.lock-screen-content > button:hover, .lock-screen-content > button:focus-visible { border-color: #f16be5; background: #1c174f80; box-shadow: 0 0 20px #ed56dc6b, 0 0 14px #00d8f566 inset; outline: none; }
 .desktop-icons { position: absolute; z-index: 3; top: 16px; bottom: 76px; left: 14px; display: grid; grid-template-columns: repeat(2, 92px); grid-auto-rows: 92px; gap: 2px 8px; }
 .desktop-app-icon { width: 88px; height: 88px; display: grid; place-items: center; align-content: center; gap: 5px; padding: 5px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: white; text-align: center; text-shadow: 0 1px 3px #003c82; cursor: default; }
 .desktop-app-icon:hover, .desktop-app-icon:focus-visible { border-color: #39e7ffb8; background: #002a4f43; outline: none; }
@@ -322,6 +332,7 @@ button { color: inherit; }
 @keyframes bootProgress { to { width: 100%; } }
 @keyframes bootPercent { to { opacity: 1; } }
 @keyframes matrixRain { from { transform: translateY(-10%); } to { transform: translateY(150%); } }
+@keyframes launchHintFade { to { opacity: 0; transform: translateY(10px); } }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }

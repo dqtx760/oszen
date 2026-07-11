@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Tab = "home" | "work" | "about";
 type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
+type ScreenWakeLock = { release: () => Promise<void>; addEventListener: (type: "release", listener: () => void) => void };
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
   identity: { x: 170, y: 150 },
@@ -40,7 +41,7 @@ const shortcuts = [
   { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
-  { icon: "/icons/github.webp", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/github.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
@@ -121,6 +122,9 @@ export default function Home() {
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [keepScreenOn, setKeepScreenOn] = useState(false);
+  const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
+  const wakeLockRef = useRef<ScreenWakeLock | null>(null);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
@@ -181,6 +185,16 @@ export default function Home() {
   }, [isLaunching]);
 
   useEffect(() => {
+    if (!keepScreenOn) return;
+    const sessionTimer = window.setInterval(() => setKeepScreenSeconds((current) => current + 1), 1000);
+    return () => window.clearInterval(sessionTimer);
+  }, [keepScreenOn]);
+
+  useEffect(() => () => {
+    void wakeLockRef.current?.release();
+  }, []);
+
+  useEffect(() => {
     const syncTabWithUrl = () => {
       if (window.location.hash === "#works") setTab("work");
       else if (window.location.hash === "#about") setTab("about");
@@ -215,6 +229,23 @@ export default function Home() {
   const unlockDesktop = () => {
     setIsLocked(false);
     setDesktopLaunched(true);
+  };
+
+  const toggleKeepScreenOn = async () => {
+    if (keepScreenOn) {
+      await wakeLockRef.current?.release();
+      wakeLockRef.current = null;
+      setKeepScreenOn(false);
+      return;
+    }
+
+    const wakeLock = (navigator as Navigator & { wakeLock?: { request: (type: "screen") => Promise<ScreenWakeLock> } }).wakeLock;
+    if (!wakeLock) return;
+    const lock = await wakeLock.request("screen");
+    wakeLockRef.current = lock;
+    setKeepScreenSeconds(0);
+    setKeepScreenOn(true);
+    lock.addEventListener("release", () => setKeepScreenOn(false));
   };
 
   const lockDesktop = () => {
@@ -420,7 +451,7 @@ export default function Home() {
                 <div className="launch-base" />
               </div>
               <div className={`launch-hint ${isLaunching ? "is-fading" : ""}`}>Press Enter to Launch <span>↓</span></div>
-              <nav className={`launch-nav ${isLaunching ? "is-fading" : ""}`} aria-label="启动页导航">
+              <nav className="launch-nav" aria-label="启动页导航">
                 <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
                 <button onClick={(event) => { event.stopPropagation(); changeTab("work"); }}><small>02</small>作品集</button>
                 <button onClick={(event) => { event.stopPropagation(); changeTab("about"); }}><small>03</small>关于我</button>
@@ -437,7 +468,12 @@ export default function Home() {
                 <time>{time}</time>
                 <img src={profileImage} alt="大强同学" />
                 <strong>大强同学</strong>
-                <span>DQTX OS 已锁定</span>
+                <span>加微信 dqtx33 获取密码</span>
+                <div className="keep-screen-control">
+                  <div><small>Screen Wake Lock</small><b>{keepScreenOn ? "防止锁屏已开启" : "防止锁屏"}</b></div>
+                  <button className={keepScreenOn ? "active" : ""} onClick={toggleKeepScreenOn} aria-pressed={keepScreenOn} aria-label="防止锁屏"><i /></button>
+                </div>
+                <div className="keep-screen-timer"><span>保持屏幕唤醒</span><b>{String(Math.floor(keepScreenSeconds / 3600)).padStart(2, "0")}:{String(Math.floor(keepScreenSeconds / 60) % 60).padStart(2, "0")}:{String(keepScreenSeconds % 60).padStart(2, "0")}</b></div>
                 <button onClick={unlockDesktop}>确定进入桌面</button>
               </div>
             </section>
