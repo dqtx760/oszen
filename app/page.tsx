@@ -430,6 +430,9 @@ export default function Home() {
 
           {isLocked && !desktopLaunched && (
             <section className="lock-screen" aria-label="DQTX OS 锁屏界面">
+              <div className="matrix-rain" aria-hidden="true">
+                {Array.from({ length: 22 }, (_, index) => <i key={index}>{index % 2 ? "01AI<>/{}" : "0101DQTX"}</i>)}
+              </div>
               <div className="lock-screen-content">
                 <time>{time}</time>
                 <img src={profileImage} alt="大强同学" />
