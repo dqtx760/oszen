@@ -35,25 +35,25 @@ const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]
 const profileImage = "/profile.png";
 
 const shortcuts = [
-  { icon: "🌐", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "folder-logo", maximizeOnOpen: true },
-  { icon: "📄", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "file-logo", maximizeOnOpen: true },
-  { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
-  { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "file-logo" },
-  { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
-  { icon: "", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "github-logo" },
-  { icon: "𝕏", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "x-logo" },
-  { icon: "MD", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "markdown-logo", maximizeOnOpen: true },
-  { icon: "MD", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "markdown-logo", maximizeOnOpen: true },
-  { icon: "BAT", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "script-logo", maximizeOnOpen: true },
+  { icon: "/icons/web.png", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/files.png", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
+  { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
+  { icon: "/icons/package.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/media.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
 ];
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
-  { id: "computer", icon: "🖥️", label: "此电脑", iconClass: "computer-logo" },
+  { id: "computer", icon: "/icons/computer.png", label: "计算机", iconClass: "image-logo" },
   { id: "chrome", icon: "", label: "Chrome", iconClass: "chrome-logo" },
   { id: "cmd", icon: "", label: "Cmd", iconClass: "cmd-logo" },
-  { id: "notepad", icon: "📝", label: "记事本", iconClass: "notepad-logo" },
-  { id: "tools", icon: "🧰", label: "效率工具", iconClass: "folder-logo" },
-  { id: "agent", icon: "✦", label: "Ai Agent", iconClass: "agent-logo" },
+  { id: "notepad", icon: "/icons/files.png", label: "记事本", iconClass: "image-logo" },
+  { id: "tools", icon: "/icons/drive.png", label: "效率工具", iconClass: "image-logo" },
+  { id: "agent", icon: "/icons/agent.png", label: "Ai Agent", iconClass: "image-logo" },
 ];
 
 const efficiencyTools = [
@@ -135,7 +135,7 @@ export default function Home() {
   });
   const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
-  const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon}</span>;
+  const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
   const getCenteredWindowPosition = () => ({
     x: Math.max(12, Math.round((window.innerWidth - Math.min(720, window.innerWidth - 40)) / 2)),

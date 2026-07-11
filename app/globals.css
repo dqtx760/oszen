@@ -83,6 +83,8 @@ button { color: inherit; }
 .desktop-app-icon { width: 88px; height: 88px; display: grid; place-items: center; align-content: center; gap: 5px; padding: 5px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: white; text-align: center; text-shadow: 0 1px 3px #003c82; cursor: default; }
 .desktop-app-icon:hover, .desktop-app-icon:focus-visible { border-color: #39e7ffb8; background: #002a4f43; outline: none; }
 .app-symbol { position: relative; width: 54px; height: 54px; display: grid; place-items: center; border: 2px solid #13d7fb; border-radius: 9px; background: linear-gradient(145deg, #24313c, #050b11 58%, #162431); box-shadow: inset 0 0 0 2px #000b13, inset 0 0 18px #00b6e955, 0 4px 10px #001829a8, 0 0 10px #11d8ef68; color: #66edff; font-size: 28px; text-shadow: 0 0 8px #15c9ff; }
+.image-logo { width: 64px; height: 64px; overflow: visible; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.image-logo img { width: 68px; height: 68px; object-fit: contain; filter: drop-shadow(0 4px 5px #00101fc0) drop-shadow(0 0 5px #00c8ed70); }
 .desktop-app-icon small { max-width: 82px; font-size: 12px; line-height: 1.15; }
 .folder-logo { border-radius: 5px 5px 9px 9px; background: linear-gradient(145deg, #1a3340, #050b11 58%, #133542); }
 .folder-logo::before { content: ""; position: absolute; top: -6px; left: 5px; width: 27px; height: 9px; border: 2px solid #13d7fb; border-bottom: 0; border-radius: 4px 4px 0 0; background: #143b4a; }
@@ -186,6 +188,8 @@ button { color: inherit; }
 .start-apps button { min-height: 78px; display: grid; justify-items: center; align-content: center; gap: 7px; border: 0; border-radius: 7px; background: transparent; color: #27384e; font-size: 11px; }
 .start-apps button:hover { background: #ffffffb5; }
 .start-apps span { font-size: 28px; }
+.start-apps .image-logo { width: 42px; height: 42px; }
+.start-apps .image-logo img { width: 46px; height: 46px; }
 .start-user { display: flex; align-items: center; gap: 10px; padding: 12px 35px; background: #e7eef4c9; font-size: 13px; }
 .start-user img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .start-user button { margin-left: auto; width: 34px; height: 34px; border: 0; border-radius: 5px; background: transparent; }
@@ -334,6 +338,8 @@ button { color: inherit; }
   .desktop-icons { top: 10px; left: 7px; grid-template-columns: repeat(2, 78px); grid-auto-rows: 78px; }
   .desktop-app-icon { width: 74px; height: 74px; gap: 2px; }
   .app-symbol { width: 40px; height: 40px; font-size: 23px; }
+  .image-logo { width: 52px; height: 52px; }
+  .image-logo img { width: 56px; height: 56px; }
   .launch-laptop { width: 88vw; }
   .launch-screen-panel { min-height: 310px; padding: 56px 22px 24px; border-width: 10px; font-size: 12px; }
   .launch-screen-panel p { margin-bottom: 12px; }
