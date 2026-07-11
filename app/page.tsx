@@ -40,8 +40,8 @@ const shortcuts = [
   { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
-  { icon: "/icons/package.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
-  { icon: "/icons/media.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/github.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
@@ -49,8 +49,8 @@ const shortcuts = [
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
   { id: "computer", icon: "/icons/computer.png", label: "计算机", iconClass: "image-logo" },
-  { id: "chrome", icon: "", label: "Chrome", iconClass: "chrome-logo" },
-  { id: "cmd", icon: "", label: "Cmd", iconClass: "cmd-logo" },
+  { id: "chrome", icon: "/icons/chrome.png", label: "Chrome", iconClass: "image-logo" },
+  { id: "cmd", icon: "/icons/cmd.png", label: "Cmd", iconClass: "image-logo" },
   { id: "notepad", icon: "/icons/files.png", label: "记事本", iconClass: "image-logo" },
   { id: "tools", icon: "/icons/drive.png", label: "效率工具", iconClass: "image-logo" },
   { id: "agent", icon: "/icons/agent.png", label: "Ai Agent", iconClass: "image-logo" },
@@ -507,6 +507,7 @@ export default function Home() {
               <h3>已固定</h3>
               <div className="start-apps">
                 {desktopApps.map((app) => <button onClick={() => openApp(app.id)} key={app.id}>{renderIcon(app.icon, app.iconClass)}{app.label}</button>)}
+                {shortcuts.map((item) => <button onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>{renderIcon(item.icon, item.iconClass)}{item.label}</button>)}
                 <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
                 <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
               </div>
