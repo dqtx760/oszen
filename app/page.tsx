@@ -142,9 +142,9 @@ export default function Home() {
 
   const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
-  const getCenteredWindowPosition = () => ({
-    x: Math.max(12, Math.round((window.innerWidth - Math.min(720, window.innerWidth - 40)) / 2)),
-    y: Math.max(12, Math.round((window.innerHeight - Math.min(500, window.innerHeight - 100)) / 2) - 20),
+  const getWorkspaceWindowPosition = () => ({
+    x: Math.min(280, Math.max(218, Math.round(window.innerWidth * 0.14))),
+    y: 52,
   });
 
   useEffect(() => {
@@ -259,7 +259,7 @@ export default function Home() {
 
   const openApp = (app: DesktopApp, options?: { maximized?: boolean }) => {
     setStartOpen(false);
-    setWindowPositions((current) => ({ ...current, [app]: getCenteredWindowPosition() }));
+    setWindowPositions((current) => ({ ...current, [app]: getWorkspaceWindowPosition() }));
     setMaximizedApps((current) => {
       const withoutApp = current.filter((item) => item !== app);
       return options?.maximized ? [...withoutApp, app] : withoutApp;
@@ -466,15 +466,19 @@ export default function Home() {
               </div>
               <div className="lock-screen-content">
                 <time>{time}</time>
-                <img src={profileImage} alt="大强同学" />
-                <strong>大强同学</strong>
-                <span>加微信 dqtx33 获取密码</span>
+                <p className="lock-greeting"><i />晚上好，大强同学</p>
+                <div className="lock-user">
+                  <img src={profileImage} alt="大强同学" />
+                  <strong>大强同学</strong>
+                  <span>加微信 dqtx33 获取密码</span>
+                </div>
                 <div className="keep-screen-control">
+                  <i className="lock-setting-icon" aria-hidden="true" />
                   <div><small>Screen Wake Lock</small><b>{keepScreenOn ? "防止锁屏已开启" : "防止锁屏"}</b></div>
                   <button className={keepScreenOn ? "active" : ""} onClick={toggleKeepScreenOn} aria-pressed={keepScreenOn} aria-label="防止锁屏"><i /></button>
                 </div>
-                <div className="keep-screen-timer"><span>保持屏幕唤醒</span><b>{String(Math.floor(keepScreenSeconds / 3600)).padStart(2, "0")}:{String(Math.floor(keepScreenSeconds / 60) % 60).padStart(2, "0")}:{String(keepScreenSeconds % 60).padStart(2, "0")}</b></div>
-                <button onClick={unlockDesktop}>确定进入桌面</button>
+                <div className="keep-screen-timer"><span><i aria-hidden="true">◷</i>保持屏幕唤醒</span><b>{String(Math.floor(keepScreenSeconds / 3600)).padStart(2, "0")}:{String(Math.floor(keepScreenSeconds / 60) % 60).padStart(2, "0")}:{String(keepScreenSeconds % 60).padStart(2, "0")}</b></div>
+                <button onClick={unlockDesktop}>确定进入桌面 <i aria-hidden="true">→</i></button>
               </div>
             </section>
           )}
