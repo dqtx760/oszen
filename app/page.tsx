@@ -484,13 +484,25 @@ export default function Home() {
           )}
 
           <div className="desktop-icons">
-            {desktopApps.map((app) => (
+            {desktopApps.filter((app) => app.id === "chrome" || app.id === "cmd").map((app) => (
               <button className="desktop-app-icon" onClick={() => openApp(app.id, { maximized: app.id === "chrome" })} key={app.id}>
                 {renderIcon(app.icon, app.iconClass)}
                 <small>{app.label}</small>
               </button>
             ))}
-            {shortcuts.map((item) => (
+            {shortcuts.filter((item) => item.label === "GitHub" || item.label === "推特/X").map((item) => (
+              <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
+                {renderIcon(item.icon, item.iconClass)}
+                <small>{item.label}</small>
+              </button>
+            ))}
+            {desktopApps.filter((app) => app.id !== "chrome" && app.id !== "cmd").map((app) => (
+              <button className="desktop-app-icon" onClick={() => openApp(app.id)} key={app.id}>
+                {renderIcon(app.icon, app.iconClass)}
+                <small>{app.label}</small>
+              </button>
+            ))}
+            {shortcuts.filter((item) => item.label !== "GitHub" && item.label !== "推特/X").map((item) => (
               <button className="desktop-app-icon" onClick={() => openInChrome(item.url, item.maximizeOnOpen)} key={item.label}>
                 {renderIcon(item.icon, item.iconClass)}
                 <small>{item.label}</small>
