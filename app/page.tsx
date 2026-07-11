@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 type Tab = "home" | "work" | "about";
 type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
-type DesktopApp = "computer" | "chrome" | "cmd" | "notepad";
+type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
   identity: { x: 170, y: 150 },
@@ -43,6 +43,9 @@ const shortcuts = [
   { icon: "🧩", label: "Chrome 插件", url: "https://110.dqtx.cc", kind: "file", iconClass: "file-logo" },
   { icon: "", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "github-logo" },
   { icon: "𝕏", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "x-logo" },
+  { icon: "MD", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "markdown-logo", maximizeOnOpen: true },
+  { icon: "MD", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "markdown-logo", maximizeOnOpen: true },
+  { icon: "BAT", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "script-logo", maximizeOnOpen: true },
 ];
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
@@ -50,6 +53,35 @@ const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: str
   { id: "chrome", icon: "", label: "Chrome", iconClass: "chrome-logo" },
   { id: "cmd", icon: "", label: "Cmd", iconClass: "cmd-logo" },
   { id: "notepad", icon: "📝", label: "记事本", iconClass: "notepad-logo" },
+  { id: "tools", icon: "🧰", label: "效率工具", iconClass: "folder-logo" },
+  { id: "agent", icon: "✦", label: "Ai Agent", iconClass: "agent-logo" },
+];
+
+const efficiencyTools = [
+  "PixPin / ShareX — 截图",
+  "IDM — 网页下载",
+  "Listary — 全能搜索",
+  "秘塔回响 — 语音输入",
+  "LANDrop — 局域网传输",
+  "微信输入法 — 语音输入、常用语同步",
+  "PicGo / PicList — 图床管理",
+  "QuickLook — 极速预览",
+  "HiBit — 无残留卸载",
+  "Claude Code / Codex — 你的数字工程师",
+  "CC-switch — Agent 模型快速切换",
+  "Cherry Studio — 智能体",
+  "Warp / Terminal / wezterm — 多标签终端",
+];
+
+const agentTools = [
+  { name: "Codex APP", links: ["https://apps.microsoft.com/detail/9plm9xgg6vks?hl=zh-CN&gl=CN", "https://store.rg-adguard.net/", "https://openai.com/zh-Hans-CN/codex/"] },
+  { name: "Coder Work", links: ["https://qoder.com/qoderwork"] },
+  { name: "Workbody", links: ["https://www.codebuddy.cn/work/#download-section"] },
+  { name: "ZCode", links: ["https://zcode.z.ai/cn"] },
+  { name: "Reasonix", links: ["https://reasonix.io/#start"] },
+  { name: "Kimi Code", links: ["https://www.kimi.com/code"] },
+  { name: "Zed", links: ["https://zed.dev/"] },
+  { name: "Orca / AionUi", links: ["https://github.com/stablyai/orca", "https://aionui.com/"] },
 ];
 
 const projects = [
@@ -88,6 +120,7 @@ export default function Home() {
   const [maximizedApps, setMaximizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(false);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
@@ -98,6 +131,8 @@ export default function Home() {
     chrome: { x: 330, y: 80 },
     cmd: { x: 270, y: 150 },
     notepad: { x: 390, y: 120 },
+    tools: { x: 250, y: 110 },
+    agent: { x: 280, y: 120 },
   });
   const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
@@ -121,11 +156,11 @@ export default function Home() {
   useEffect(() => {
     if (tab !== "home" || desktopLaunched) return;
     const launchOnEnter = (event: KeyboardEvent) => {
-      if (event.key === "Enter") setDesktopLaunched(true);
+      if (event.key === "Enter") launchDesktop();
     };
     window.addEventListener("keydown", launchOnEnter);
     return () => window.removeEventListener("keydown", launchOnEnter);
-  }, [desktopLaunched, tab]);
+  }, [desktopLaunched, isLaunching, tab]);
 
   useEffect(() => {
     const syncTabWithUrl = () => {
@@ -147,6 +182,12 @@ export default function Home() {
     const nextUrl = next === "work" ? "#works" : next === "about" ? "#about" : `${window.location.pathname}${window.location.search}`;
     window.history.pushState(null, "", nextUrl);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const launchDesktop = () => {
+    if (isLaunching || desktopLaunched) return;
+    setIsLaunching(true);
+    window.setTimeout(() => setDesktopLaunched(true), 1650);
   };
 
   const openApp = (app: DesktopApp, options?: { maximized?: boolean }) => {
@@ -327,7 +368,7 @@ export default function Home() {
       {tab === "home" && (
         <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
           {!desktopLaunched && (
-            <div className="launch-screen" onClick={() => setDesktopLaunched(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
+            <div className={`launch-screen ${isLaunching ? "is-launching" : ""}`} onClick={launchDesktop} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
@@ -338,10 +379,18 @@ export default function Home() {
                   <p><b>$</b> echo "1 person + AI = 1 team"</p>
                   <p><mark>&gt; 1 person + AI = 1 team</mark></p>
                   <p><b>$</b> open dqtx-os.app</p>
+                  {isLaunching && <div className="launch-progress" aria-label="正在启动"><span>&gt; launching...</span><b><i /></b><em>100%</em></div>}
                 </div>
                 <div className="launch-base" />
               </div>
-              <div className="launch-hint">Press Enter to Launch <span>↓</span></div>
+              {!isLaunching && <>
+                <div className="launch-hint">Press Enter to Launch <span>↓</span></div>
+                <nav className="launch-nav" aria-label="启动页导航">
+                  <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
+                  <button onClick={(event) => { event.stopPropagation(); changeTab("work"); }}><small>02</small>作品集</button>
+                  <button onClick={(event) => { event.stopPropagation(); changeTab("about"); }}><small>03</small>关于我</button>
+                </nav>
+              </>}
             </div>
           )}
 
@@ -423,6 +472,27 @@ export default function Home() {
                   <div>文件　编辑　查看</div>
                   <textarea value={notepadText} onChange={(event) => setNotepadText(event.target.value)} aria-label="记事本内容" />
                 </div>
+              )}
+
+              {app === "tools" && (
+                <section className="catalog-window">
+                  <header><span>效率工具</span><small>我的常用软件清单</small></header>
+                  <ol>{efficiencyTools.map((tool) => <li key={tool}>{tool}</li>)}</ol>
+                </section>
+              )}
+
+              {app === "agent" && (
+                <section className="catalog-window agent-window">
+                  <header><span>Ai Agent</span><small>开发与智能体工具入口</small></header>
+                  <div className="agent-list">
+                    {agentTools.map((tool) => (
+                      <article key={tool.name}>
+                        <b>{tool.name}</b>
+                        <div>{tool.links.map((url) => <button key={url} onClick={() => openInChrome(url, true)}>{new URL(url).hostname}</button>)}</div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
               )}
             </div>
           ))}
