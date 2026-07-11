@@ -53,8 +53,8 @@ button { color: inherit; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
 .launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
 .launch-screen.is-launching { cursor: wait; }
-.launch-laptop { width: min(1120px, 78vw); display: grid; justify-items: center; }
-.launch-screen-panel { position: relative; width: 100%; min-height: clamp(500px, 52vh, 590px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
+.launch-laptop { width: min(980px, 72vw); display: grid; justify-items: center; }
+.launch-screen-panel { position: relative; width: 100%; min-height: clamp(560px, 58vh, 660px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
 .launch-screen-panel::before { content: "dqtx@universe ~ zsh"; position: absolute; top: 26px; right: 42px; left: 42px; padding-bottom: 17px; border-bottom: 1px solid #ffffff1f; text-align: center; color: #9fc9f2; font-size: 14px; }
 .launch-dots { position: absolute; top: 28px; left: 28px; display: flex; gap: 9px; }
 .launch-dots i { width: 13px; height: 13px; border-radius: 50%; }
