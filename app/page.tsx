@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 type Tab = "home" | "work" | "about";
 type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
+type ComputerView = "home" | "photo" | "toolbox";
 type ScreenWakeLock = { release: () => Promise<void>; addEventListener: (type: "release", listener: () => void) => void };
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
@@ -35,6 +36,13 @@ const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]
 
 const profileImage = "/profile.png";
 
+const profilePhotos = [
+  { src: "/photos/portrait-formal.png", label: "创业者肖像" },
+  { src: "/photos/portrait-studio.png", label: "工作室肖像" },
+  { src: "/photos/portrait-editorial.png", label: "Silhouette 2026" },
+  { src: "/photos/portrait-night.png", label: "夜谈时刻" },
+];
+
 const shortcuts = [
   { icon: "/icons/web.png", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
@@ -55,6 +63,13 @@ const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: str
   { id: "notepad", icon: "/icons/files.png", label: "记事本", iconClass: "image-logo" },
   { id: "tools", icon: "/icons/drive.png", label: "效率工具", iconClass: "image-logo" },
   { id: "agent", icon: "/icons/agent.png", label: "Ai Agent", iconClass: "image-logo" },
+];
+
+const toolboxItems: { label: string; note: string; icon: string; url?: string; app?: DesktopApp }[] = [
+  { label: "Obsidian 模板", note: "打开模板文章", icon: "📄", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ" },
+  { label: "Codex APP 指南", note: "打开使用指南", icon: "📘", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA" },
+  { label: "效率工具", note: "查看常用软件清单", icon: "🧰", app: "tools" },
+  { label: "AI Agent", note: "打开智能体工具入口", icon: "✦", app: "agent" },
 ];
 
 const efficiencyTools = [
@@ -127,9 +142,24 @@ export default function Home() {
   const wakeLockRef = useRef<ScreenWakeLock | null>(null);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
-  const [notepadText, setNotepadText] = useState("大强同学的桌面\n\n正在做：AI Coding Agent Skills 跨平台管理\n正在玩：Obsidian 写作工作流、CLI 工具链\n联系邮箱：sphinx308@proton.me");
+  const [notepadText, setNotepadText] = useState(`致每一位来到这里的朋友：
+
+欢迎你来到这个网站。
+
+当你看到这个网站的时候，你已经超越了 99% 以上的人。不是因为你点开了一个页面，而是因为你愿意停下来，主动理解 AI 正在如何改变工作、创作与生活。
+
+我是大强同学，一人公司创业者，也是一名长期在一线做 AI 工具、Obsidian 知识库、个人网站和 Agent 工作流的人。我更关心的不是把工具装上，而是让它们真正进入你的日常工作，帮你节省时间、沉淀能力、把想法变成可以持续迭代的成果。
+
+AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示词，而是把新能力连接到真实问题上的判断力。未来的竞争，不是谁知道得更多，而是谁能更早地建立自己的工作流，并不断把它用得更深。
+
+这里会持续记录我正在实践的工具、方法和经验。希望它能成为你探索 AI 的一个可靠起点；也希望有一天，我们能一起把更多想法做成作品。
+
+愿你始终保持好奇，也保持行动。
+
+大强同学`);
   const [cmdInput, setCmdInput] = useState("");
   const [cmdLines, setCmdLines] = useState(["Microsoft Windows [Version 11.0.2026]", "(c) DQTX OS. All rights reserved.", "", "输入 help 查看可用命令。"]);
+  const [computerView, setComputerView] = useState<ComputerView>("home");
   const [windowPositions, setWindowPositions] = useState<Record<DesktopApp, { x: number; y: number }>>({
     computer: { x: 230, y: 100 },
     chrome: { x: 330, y: 80 },
@@ -142,10 +172,14 @@ export default function Home() {
 
   const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
-  const getWorkspaceWindowPosition = () => ({
-    x: Math.min(280, Math.max(218, Math.round(window.innerWidth * 0.14))),
-    y: 52,
-  });
+  const getWindowPosition = (app: DesktopApp) => {
+    if (app === "computer" || app === "cmd" || app === "notepad") {
+      const width = Math.min(720, window.innerWidth - 40);
+      const height = Math.min(500, window.innerHeight - 100);
+      return { x: Math.max(12, Math.round((window.innerWidth - width) / 2)), y: Math.max(12, Math.round((window.innerHeight - height) / 2) - 20) };
+    }
+    return { x: Math.min(280, Math.max(218, Math.round(window.innerWidth * 0.14))), y: 52 };
+  };
 
   useEffect(() => {
     const updateTime = () =>
@@ -259,7 +293,8 @@ export default function Home() {
 
   const openApp = (app: DesktopApp, options?: { maximized?: boolean }) => {
     setStartOpen(false);
-    setWindowPositions((current) => ({ ...current, [app]: getWorkspaceWindowPosition() }));
+    if (app === "computer") setComputerView("home");
+    setWindowPositions((current) => ({ ...current, [app]: getWindowPosition(app) }));
     setMaximizedApps((current) => {
       const withoutApp = current.filter((item) => item !== app);
       return options?.maximized ? [...withoutApp, app] : withoutApp;
@@ -546,18 +581,30 @@ export default function Home() {
 
               {app === "computer" && (
                 <div className="computer-window">
-                  <div className="explorer-sidebar"><b>主页</b><span>桌面</span><span>文档</span><span>图片</span><span>下载</span></div>
+                  <aside className="explorer-sidebar">
+                    <b>计算机</b>
+                    <button className={computerView === "photo" ? "active" : ""} onClick={() => setComputerView("photo")}>photo</button>
+                    <button className={computerView === "toolbox" ? "active" : ""} onClick={() => setComputerView("toolbox")}>工具箱</button>
+                  </aside>
                   <div className="explorer-main">
-                    <h2>此电脑</h2>
-                    <p>常用位置</p>
-                    <div className="explorer-grid">
-                      <button onClick={() => openInChrome("https://ai.dqtx.cc/", true)}><span>📄</span><b>个人简历</b><small>ai.dqtx.cc</small></button>
-                      <button onClick={() => openInChrome("https://dqtx.cc", true)}><span>🌐</span><b>个人博客</b><small>dqtx.cc</small></button>
-                      <button onClick={() => openInChrome("https://app.dqtx.cc")}><span>⚙️</span><b>数字工坊</b><small>app.dqtx.cc</small></button>
-                      <button onClick={() => openInChrome("https://742112.xyz")}><span>🛠️</span><b>远程服务</b><small>742112.xyz</small></button>
-                    </div>
-                    <p>设备和驱动器</p>
-                    <div className="drive"><span>💽</span><div><b>本地磁盘 (C:)</b><i><em /></i><small>128 GB 可用，共 256 GB</small></div></div>
+                    {computerView === "home" && <>
+                      <h2>计算机</h2>
+                      <p>常用分类</p>
+                      <div className="explorer-grid">
+                        <button onClick={() => setComputerView("photo")}><span>🖼️</span><b>photo</b><small>4 张个人照片</small></button>
+                        <button onClick={() => setComputerView("toolbox")}><span>🧰</span><b>工具箱</b><small>桌面快捷方式</small></button>
+                      </div>
+                      <p>设备与驱动器</p>
+                      <div className="drive"><span>💽</span><div><b>本地磁盘 (C:)</b><i><em /></i><small>128 GB 可用，共 256 GB</small></div></div>
+                    </>}
+                    {computerView === "photo" && <section className="computer-section">
+                      <header><div><h2>photo</h2><p>关于大强同学的四个切面</p></div><small>4 个项目</small></header>
+                      <div className="photo-grid">{profilePhotos.map((photo) => <figure key={photo.src}><img src={photo.src} alt={photo.label} /><figcaption>{photo.label}</figcaption></figure>)}</div>
+                    </section>}
+                    {computerView === "toolbox" && <section className="computer-section">
+                      <header><div><h2>工具箱</h2><p>桌面快捷方式，一键进入对应内容</p></div><small>{toolboxItems.length} 个项目</small></header>
+                      <div className="toolbox-grid">{toolboxItems.map((item) => <button key={item.label} onClick={() => { if (item.url) openInChrome(item.url, true); if (item.app) openApp(item.app); }}><span>{item.icon}</span><b>{item.label}</b><small>{item.note}</small><i>→</i></button>)}</div>
+                    </section>}
                   </div>
                 </div>
               )}
