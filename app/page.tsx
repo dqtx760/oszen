@@ -158,12 +158,27 @@ export default function Home() {
     const launchOnEnter = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         if (isLocked) unlockDesktop();
-        else launchDesktop();
+        else launchDesktop(true);
       }
     };
     window.addEventListener("keydown", launchOnEnter);
     return () => window.removeEventListener("keydown", launchOnEnter);
   }, [desktopLaunched, isLaunching, isLocked, tab]);
+
+  useEffect(() => {
+    if (tab !== "home" || desktopLaunched || isLocked || isLaunching) return;
+    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 1200);
+    return () => window.clearTimeout(autoStartTimer);
+  }, [desktopLaunched, isLaunching, isLocked, tab]);
+
+  useEffect(() => {
+    if (!isLaunching) return;
+    const autoCompleteTimer = window.setTimeout(() => {
+      setDesktopLaunched(true);
+      setIsLaunching(false);
+    }, 2800);
+    return () => window.clearTimeout(autoCompleteTimer);
+  }, [isLaunching]);
 
   useEffect(() => {
     const syncTabWithUrl = () => {
@@ -187,13 +202,14 @@ export default function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const launchDesktop = () => {
-    if (isLaunching || desktopLaunched || isLocked) return;
-    setIsLaunching(true);
-    window.setTimeout(() => {
+  const launchDesktop = (immediate = false) => {
+    if (desktopLaunched || isLocked) return;
+    if (immediate) {
       setIsLaunching(false);
-      setIsLocked(true);
-    }, 1650);
+      setDesktopLaunched(true);
+      return;
+    }
+    if (!isLaunching) setIsLaunching(true);
   };
 
   const unlockDesktop = () => {
@@ -388,7 +404,7 @@ export default function Home() {
       {tab === "home" && (
         <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
           {!desktopLaunched && !isLocked && (
-            <div className={`launch-screen ${isLaunching ? "is-launching" : ""}`} onClick={launchDesktop} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
+            <div className={`launch-screen ${isLaunching ? "is-launching" : ""}`} onClick={() => launchDesktop(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
@@ -403,14 +419,12 @@ export default function Home() {
                 </div>
                 <div className="launch-base" />
               </div>
-              {!isLaunching && <>
-                <div className="launch-hint">Press Enter to Launch <span>↓</span></div>
-                <nav className="launch-nav" aria-label="启动页导航">
-                  <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
-                  <button onClick={(event) => { event.stopPropagation(); changeTab("work"); }}><small>02</small>作品集</button>
-                  <button onClick={(event) => { event.stopPropagation(); changeTab("about"); }}><small>03</small>关于我</button>
-                </nav>
-              </>}
+              <div className={`launch-hint ${isLaunching ? "is-fading" : ""}`}>Press Enter to Launch <span>↓</span></div>
+              <nav className={`launch-nav ${isLaunching ? "is-fading" : ""}`} aria-label="启动页导航">
+                <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
+                <button onClick={(event) => { event.stopPropagation(); changeTab("work"); }}><small>02</small>作品集</button>
+                <button onClick={(event) => { event.stopPropagation(); changeTab("about"); }}><small>03</small>关于我</button>
+              </nav>
             </div>
           )}
 

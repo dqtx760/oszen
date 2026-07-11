@@ -53,8 +53,8 @@ button { color: inherit; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
 .launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
 .launch-screen.is-launching { cursor: wait; }
-.launch-laptop { width: min(920px, 72vw); display: grid; justify-items: center; }
-.launch-screen-panel { position: relative; width: 100%; min-height: 420px; padding: 64px 42px 38px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
+.launch-laptop { width: min(1120px, 78vw); display: grid; justify-items: center; }
+.launch-screen-panel { position: relative; width: 100%; min-height: clamp(500px, 52vh, 590px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
 .launch-screen-panel::before { content: "dqtx@universe ~ zsh"; position: absolute; top: 26px; right: 42px; left: 42px; padding-bottom: 17px; border-bottom: 1px solid #ffffff1f; text-align: center; color: #9fc9f2; font-size: 14px; }
 .launch-dots { position: absolute; top: 28px; left: 28px; display: flex; gap: 9px; }
 .launch-dots i { width: 13px; height: 13px; border-radius: 50%; }
@@ -69,12 +69,13 @@ button { color: inherit; }
 .launch-progress > b::before, .launch-progress > b::after { position: absolute; top: -4px; z-index: 2; color: #ffe268; font-size: 25px; line-height: 1; }
 .launch-progress > b::before { content: "["; left: -8px; }
 .launch-progress > b::after { content: "]"; right: -8px; }
-.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 24px, #f7d84d 24px 26px); animation: bootProgress 1.55s cubic-bezier(.2,.8,.2,1) forwards; }
-.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .18s 1.36s forwards; }
+.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 24px, #f7d84d 24px 26px); animation: bootProgress 2.8s cubic-bezier(.2,.8,.2,1) forwards; }
+.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .18s 2.58s forwards; }
 .launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
-.launch-hint { display: grid; justify-items: center; gap: 18px; margin-top: 58px; color: #9ca3b5; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; }
+.launch-hint { display: grid; justify-items: center; gap: 18px; margin-top: 58px; color: #9ca3b5; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; transition: opacity .45s ease, transform .45s ease; }
 .launch-hint span { font-size: 24px; animation: hintArrow 1.2s ease-in-out infinite; }
-.launch-nav { display: flex; margin-top: 32px; padding: 5px; border-radius: 999px; background: #eef5fbd9; box-shadow: 0 12px 28px #174f843a; }
+.launch-hint.is-fading, .launch-nav.is-fading { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.launch-nav { position: absolute; bottom: 32px; left: 50%; display: flex; padding: 5px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 12px 28px #174f843a; transition: opacity .45s ease, transform .45s ease; }
 .launch-nav button { min-width: 88px; padding: 9px 13px; border: 0; border-radius: 999px; background: transparent; color: #65768a; font-size: 14px; font-weight: 700; cursor: pointer; }
 .launch-nav button:hover { color: #1d66ae; }
 .launch-nav button.active { background: var(--blue); color: white; }
@@ -323,9 +324,9 @@ button { color: inherit; }
   .menu-bar a { display: none; }
   .desktop-icons { grid-template-columns: repeat(2, 86px); grid-auto-rows: 86px; }
   .desktop-app-icon { width: 82px; height: 82px; }
-  .launch-screen-panel { min-height: 350px; font-size: 15px; }
+  .launch-screen-panel { min-height: clamp(420px, 54vh, 520px); font-size: 15px; }
   .launch-hint { margin-top: 46px; }
-  .launch-nav { margin-top: 24px; }
+  .launch-nav { bottom: 22px; }
   .taskbar-status span { display: none; }
   .start-apps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .works-page { padding: 64px 18px 140px; }
@@ -355,6 +356,7 @@ button { color: inherit; }
   .launch-screen-panel::before { right: 22px; left: 22px; }
   .launch-progress { grid-template-columns: 1fr; gap: 4px; font-size: 12px; }
   .launch-progress > b { height: 20px; }
+  .launch-nav { bottom: 14px; }
   .launch-nav button { min-width: 74px; padding: 8px 7px; font-size: 12px; }
   .desktop-app-icon small { font-size: 10px; }
   .desktop-window { left: 8px !important; top: 10px !important; width: calc(100vw - 16px); height: calc(100svh - 82px); min-width: 0; min-height: 260px; resize: none; }
