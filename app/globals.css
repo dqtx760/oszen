@@ -25,7 +25,7 @@ a { color: inherit; text-decoration: none; }
 button { color: inherit; }
 
 .site-shell { position: relative; min-height: 100svh; overflow: hidden; padding-bottom: 128px; background: var(--blue); }
-.site-shell.tab-home { height: 100svh; padding: 0; overflow: hidden; background: #0d74d7; }
+.site-shell.tab-home { height: 100svh; padding: 0; overflow: hidden; background: #f7f4ec; }
 .site-shell.tab-work { min-height: 100svh; padding-bottom: 0; overflow: visible; background: var(--cream); color: var(--ink); }
 .win11-wallpaper { position: fixed; inset: 0; overflow: hidden; pointer-events: none; background: linear-gradient(#00111a40, #00111a40), url("/wallpaper.webp") center / cover no-repeat; }
 .win11-wallpaper::before, .win11-wallpaper::after { content: none; }
@@ -51,8 +51,9 @@ button { color: inherit; }
 
 .desktop-page { position: relative; z-index: 2; min-height: 100svh; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
-.launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
+.launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; transition: opacity .62s ease; }
 .launch-screen.is-launching { cursor: wait; }
+.launch-screen.is-exiting { opacity: 0; pointer-events: none; }
 .launch-laptop { width: min(980px, 72vw); display: grid; justify-items: center; }
 .launch-screen-panel { position: relative; width: 100%; min-height: clamp(560px, 58vh, 660px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
 .launch-screen-panel::before { content: "dqtx@universe ~ zsh"; position: absolute; top: 26px; right: 42px; left: 42px; padding-bottom: 17px; border-bottom: 1px solid #ffffff1f; text-align: center; color: #9fc9f2; font-size: 14px; }
@@ -212,6 +213,9 @@ button { color: inherit; }
 .cmd-line-warning { color: #ffd878; }
 .cmd-command-button { display: block; max-width: 100%; margin: 2px 0; padding: 0; border: 0; background: transparent; color: #8edcff; font: inherit; line-height: 1.5; text-align: left; text-decoration: underline; text-decoration-color: #8edcff75; text-underline-offset: 3px; cursor: pointer; text-shadow: inherit; }
 .cmd-command-button:hover, .cmd-command-button:focus-visible { color: #fff2a2; text-decoration-color: currentColor; outline: none; }
+.cmd-qr { width: max-content; margin: 12px 0 6px; padding: 8px; border: 1px solid #72e5ff8a; border-radius: 8px; background: #07121ad9; box-shadow: 0 0 18px #28d7f241; }
+.cmd-qr img { display: block; width: 150px; height: 150px; object-fit: cover; }
+.cmd-qr figcaption { margin-top: 6px; color: #b7edff; font-size: 12px; text-align: center; }
 .cmd-window label { display: flex; white-space: nowrap; }
 .cmd-window input { flex: 1; border: 0; outline: 0; background: transparent; color: white; font: inherit; }
 
@@ -375,6 +379,8 @@ button { color: inherit; }
 @keyframes lightboxIn { from { opacity: 0; transform: scale(.985); } }
 @keyframes matrixRain { from { transform: translateY(-10%); } to { transform: translateY(150%); } }
 @keyframes launchHintFade { to { opacity: 0; transform: translateY(10px); } }
+@keyframes desktopArrive { from { opacity: .32; transform: scale(.94); } to { opacity: 1; transform: scale(1); } }
+.windows-desktop.desktop-arriving { transform-origin: center; animation: desktopArrive .68s cubic-bezier(.16, 1, .3, 1) both; }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }

@@ -7,7 +7,7 @@ type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
 type ComputerView = "home" | "photo" | "toolbox";
 type ScreenWakeLock = { release: () => Promise<void>; addEventListener: (type: "release", listener: () => void) => void };
-type CmdOutputKind = "text" | "muted" | "accent" | "success" | "warning" | "command";
+type CmdOutputKind = "text" | "muted" | "accent" | "success" | "warning" | "command" | "qr";
 type CmdOutput = { kind: CmdOutputKind; text: string; command?: string };
 type CommandDefinition = {
   name: string;
@@ -153,6 +153,7 @@ export default function Home() {
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [keepScreenOn, setKeepScreenOn] = useState(false);
   const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
@@ -199,7 +200,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [cmdOutput]);
 
   const getWindowPosition = (app: DesktopApp) => {
-    if (app === "computer" || app === "cmd" || app === "notepad") {
+    if (app === "computer" || app === "cmd" || app === "notepad" || app === "tools" || app === "agent") {
       const width = Math.min(app === "cmd" ? 980 : 840, window.innerWidth - 40);
       const height = Math.min(app === "cmd" ? 580 : 560, window.innerHeight - 100);
       return { x: Math.max(12, Math.round((window.innerWidth - width) / 2)), y: Math.max(12, Math.round((window.innerHeight - height) / 2) - 20) };
@@ -237,11 +238,18 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   useEffect(() => {
     if (!isLaunching) return;
-    const autoCompleteTimer = window.setTimeout(() => {
+    const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
+      setIsDesktopTransitioning(true);
+    }, 1100);
+    const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
-    }, 2800);
-    return () => window.clearTimeout(autoCompleteTimer);
+      setIsDesktopTransitioning(false);
+    }, 1700);
+    return () => {
+      window.clearTimeout(desktopTransitionTimer);
+      window.clearTimeout(autoCompleteTimer);
+    };
   }, [isLaunching]);
 
   useEffect(() => {
@@ -280,6 +288,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     if (desktopLaunched || isLocked) return;
     if (immediate) {
       setIsLaunching(false);
+      setIsDesktopTransitioning(false);
       setDesktopLaunched(true);
       return;
     }
@@ -314,6 +323,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     setMinimizedApps([]);
     setMaximizedApps([]);
     setDesktopLaunched(false);
+    setIsDesktopTransitioning(false);
     setIsLocked(true);
   };
 
@@ -438,8 +448,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     {
       name: "contact", aliases: ["wechat"], description: "获取密码或咨询服务", group: "看服务",
       handler: () => [
-        { kind: "success", text: "加微信 dqtx33 获取密码 / 咨询服务 / 获取方案" },
+        { kind: "success", text: "加微信 dqtx33 获取咨询" },
         { kind: "muted", text: "添加时可备注：来自 DQTX OS。" },
+        { kind: "qr", text: "个人微信二维码" },
       ],
     },
     {
@@ -685,9 +696,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       </header>}
 
       {tab === "home" && (
-        <section className="desktop-page windows-desktop page-enter" aria-label="Windows 11 风格主页桌面">
-          {!desktopLaunched && !isLocked && (
-            <div className={`launch-screen ${isLaunching ? "is-launching" : ""}`} onClick={() => launchDesktop(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
+        <section className={`desktop-page windows-desktop ${isDesktopTransitioning ? "desktop-arriving" : ""}`} aria-label="Windows 11 风格主页桌面">
+          {(!desktopLaunched || isDesktopTransitioning) && !isLocked && (
+            <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isDesktopTransitioning ? "is-exiting" : ""}`} onClick={() => launchDesktop(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
@@ -846,6 +857,8 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 <div className="cmd-window" ref={cmdOutputRef}>
                   {cmdOutput.map((line, lineIndex) => line.kind === "command" ? (
                     <button className="cmd-command-button" key={`${line.text}-${lineIndex}`} type="button" onClick={() => executeCommand(line.command, false)}>{line.text}</button>
+                  ) : line.kind === "qr" ? (
+                    <figure className="cmd-qr" key={`${line.text}-${lineIndex}`}><img src="/wechat-qr.webp" alt="大强同学个人微信二维码" /><figcaption>{line.text}</figcaption></figure>
                   ) : (
                     <p className={`cmd-line cmd-line-${line.kind}`} key={`${line.text}-${lineIndex}`}>{line.text || "\u00a0"}</p>
                   ))}
