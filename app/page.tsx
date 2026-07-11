@@ -40,7 +40,6 @@ const shortcuts = [
   { icon: "⚙️", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
   { icon: "💻", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "file-logo" },
   { icon: "🧭", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "folder-logo" },
-  { icon: "🧩", label: "Chrome 插件", url: "https://110.dqtx.cc", kind: "file", iconClass: "file-logo" },
   { icon: "", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "github-logo" },
   { icon: "𝕏", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "x-logo" },
   { icon: "MD", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "markdown-logo", maximizeOnOpen: true },
@@ -58,19 +57,19 @@ const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: str
 ];
 
 const efficiencyTools = [
-  "PixPin / ShareX — 截图",
-  "IDM — 网页下载",
-  "Listary — 全能搜索",
-  "秘塔回响 — 语音输入",
-  "LANDrop — 局域网传输",
-  "微信输入法 — 语音输入、常用语同步",
-  "PicGo / PicList — 图床管理",
-  "QuickLook — 极速预览",
-  "HiBit — 无残留卸载",
-  "Claude Code / Codex — 你的数字工程师",
-  "CC-switch — Agent 模型快速切换",
-  "Cherry Studio — 智能体",
-  "Warp / Terminal / wezterm — 多标签终端",
+  { note: "截图", links: [{ name: "PixPin", url: "https://pixpin.cn/" }, { name: "ShareX", url: "https://getsharex.com/" }] },
+  { note: "网页下载", links: [{ name: "IDM", url: "https://www.internetdownloadmanager.com/" }] },
+  { note: "全能搜索", links: [{ name: "Listary", url: "https://www.listary.com/" }] },
+  { note: "语音输入", links: [{ name: "秘塔回响", url: "https://metaso.cn/echo/downloads" }] },
+  { note: "局域网传输", links: [{ name: "LANDrop", url: "https://landrop.app/" }] },
+  { note: "语音输入、常用语同步", links: [{ name: "微信输入法", url: "https://z.weixin.qq.com/" }] },
+  { note: "图床管理", links: [{ name: "PicGo", url: "https://github.com/Molunerfinn/PicGo" }, { name: "PicList", url: "https://piclist.cn/" }] },
+  { note: "极速预览", links: [{ name: "QuickLook", url: "https://pooi.moe/QuickLook/" }] },
+  { note: "无残留卸载", links: [{ name: "HiBit", url: "https://hibitsoft.ir/" }] },
+  { note: "你的数字工程师", links: [{ name: "Claude Code", url: "https://claude.ai/code" }, { name: "Codex", url: "https://openai.com/codex/" }] },
+  { note: "Agent 模型快速切换", links: [{ name: "CC-switch", url: "https://github.com/farion1231/cc-switch" }] },
+  { note: "智能体", links: [{ name: "Cherry Studio", url: "https://cherry-ai.com/" }] },
+  { note: "多标签终端", links: [{ name: "Warp", url: "https://www.warp.dev/" }, { name: "Terminal", url: "https://support.apple.com/guide/terminal/welcome/mac" }, { name: "wezterm", url: "https://wezterm.org/" }] },
 ];
 
 const agentTools = [
@@ -477,7 +476,12 @@ export default function Home() {
               {app === "tools" && (
                 <section className="catalog-window">
                   <header><span>效率工具</span><small>我的常用软件清单</small></header>
-                  <ol>{efficiencyTools.map((tool) => <li key={tool}>{tool}</li>)}</ol>
+                  <ol>{efficiencyTools.map((tool) => (
+                    <li key={tool.note}>
+                      <span>{tool.links.map((link, index) => <button key={link.name} onClick={() => openInChrome(link.url, true)}>{index ? " / " : ""}{link.name}</button>)}</span>
+                      <small>— {tool.note}</small>
+                    </li>
+                  ))}</ol>
                 </section>
               )}
 

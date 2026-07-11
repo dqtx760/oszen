@@ -79,24 +79,24 @@ button { color: inherit; }
 .launch-nav button:hover { color: #1d66ae; }
 .launch-nav button.active { background: var(--blue); color: white; }
 .launch-nav small { margin-right: 5px; font: 10px ui-monospace, Consolas, monospace; opacity: .7; }
-.desktop-icons { position: absolute; z-index: 3; top: 16px; bottom: 76px; left: 14px; display: grid; grid-template-rows: repeat(6, 92px); grid-auto-flow: column; grid-auto-columns: 92px; gap: 2px 8px; }
+.desktop-icons { position: absolute; z-index: 3; top: 16px; bottom: 76px; left: 14px; display: grid; grid-template-columns: repeat(2, 92px); grid-auto-rows: 92px; gap: 2px 8px; }
 .desktop-app-icon { width: 88px; height: 88px; display: grid; place-items: center; align-content: center; gap: 5px; padding: 5px; border: 1px solid transparent; border-radius: 5px; background: transparent; color: white; text-align: center; text-shadow: 0 1px 3px #003c82; cursor: default; }
-.desktop-app-icon:hover, .desktop-app-icon:focus-visible { border-color: #d4edff99; background: #d5efff30; outline: none; }
-.app-symbol { position: relative; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 10px; background: linear-gradient(145deg, #ffffffee, #cde8ffdd); box-shadow: 0 3px 8px #003e8348; color: #14579b; font-size: 28px; text-shadow: none; }
+.desktop-app-icon:hover, .desktop-app-icon:focus-visible { border-color: #39e7ffb8; background: #002a4f43; outline: none; }
+.app-symbol { position: relative; width: 54px; height: 54px; display: grid; place-items: center; border: 2px solid #13d7fb; border-radius: 9px; background: linear-gradient(145deg, #24313c, #050b11 58%, #162431); box-shadow: inset 0 0 0 2px #000b13, inset 0 0 18px #00b6e955, 0 4px 10px #001829a8, 0 0 10px #11d8ef68; color: #66edff; font-size: 28px; text-shadow: 0 0 8px #15c9ff; }
 .desktop-app-icon small { max-width: 82px; font-size: 12px; line-height: 1.15; }
-.folder-logo { border-radius: 5px 5px 9px 9px; background: linear-gradient(#ffe582, #f6c53c); }
-.folder-logo::before { content: ""; position: absolute; top: -5px; left: 4px; width: 24px; height: 8px; border-radius: 4px 4px 0 0; background: #ffe582; }
-.file-logo { background: linear-gradient(145deg, #fff, #dfe8f3); }
-.markdown-logo { border-radius: 5px; background: linear-gradient(145deg, #ffffff, #dce8f3); color: #3f6f9d; font: 800 12px/1 Consolas, ui-monospace, monospace; }
-.script-logo { border-radius: 6px; background: #1f2937; color: #b9e7ff; font: 800 11px/1 Consolas, ui-monospace, monospace; }
-.agent-logo { border-radius: 14px; background: radial-gradient(circle at 30% 28%, #fff6a9 0 13%, transparent 14%), linear-gradient(145deg, #ffe26d, #faac38); color: #205b9f; font-weight: 900; }
+.folder-logo { border-radius: 5px 5px 9px 9px; background: linear-gradient(145deg, #1a3340, #050b11 58%, #133542); }
+.folder-logo::before { content: ""; position: absolute; top: -6px; left: 5px; width: 27px; height: 9px; border: 2px solid #13d7fb; border-bottom: 0; border-radius: 4px 4px 0 0; background: #143b4a; }
+.file-logo { background: linear-gradient(145deg, #26323d, #071018 58%, #183040); }
+.markdown-logo { border-radius: 5px; background: linear-gradient(145deg, #26323d, #071018 58%, #183040); color: #66edff; font: 800 12px/1 Consolas, ui-monospace, monospace; }
+.script-logo { border-radius: 6px; background: linear-gradient(145deg, #1b2934, #03070b); color: #66edff; font: 800 11px/1 Consolas, ui-monospace, monospace; }
+.agent-logo { border-radius: 14px; background: radial-gradient(circle at 30% 28%, #7cf5ff 0 12%, transparent 13%), linear-gradient(145deg, #24313c, #050b11 58%, #16435a); color: #66edff; font-weight: 900; }
 .chrome-logo { overflow: hidden; border-radius: 50%; background: conic-gradient(#e94235 0 33%, #fabb05 0 66%, #34a853 0 82%, #e94235 0); }
 .chrome-logo::before { content: ""; position: absolute; inset: 11px; border: 5px solid #fff; border-radius: 50%; background: #4285f4; }
 .cmd-logo { border-radius: 6px; background: #111827; box-shadow: inset 0 0 0 2px #2f3948, 0 3px 8px #003e8348; }
 .cmd-logo::before { content: "C:\\_"; color: #f8fafc; font: 700 15px/1 Consolas, ui-monospace, monospace; }
-.github-logo { border-radius: 50%; background: #111827; color: #fff; }
+.github-logo { border-radius: 50%; background: #071018; color: #66edff; }
 .github-logo::before { content: "GH"; font: 800 15px/1 "Segoe UI", sans-serif; letter-spacing: -.05em; }
-.x-logo { border-radius: 50%; background: #050505; color: #fff; font-size: 25px; }
+.x-logo { border-radius: 50%; background: #071018; color: #66edff; font-size: 25px; }
 
 .desktop-window { position: absolute; width: min(720px, calc(100vw - 40px)); height: min(500px, calc(100svh - 100px)); min-width: 360px; min-height: 270px; overflow: hidden; resize: both; border: 1px solid #ffffffb8; border-radius: 10px; background: #f7f9fcee; color: #202634; box-shadow: 0 25px 60px #002b6366; backdrop-filter: blur(26px); }
 .desktop-window.maximized { left: 12px !important; top: 12px !important; width: calc(100vw - 24px); height: calc(100svh - 78px); min-width: 0; min-height: 0; resize: none; }
@@ -155,7 +155,10 @@ button { color: inherit; }
 .catalog-window header span { color: #1e6eb8; font-size: 24px; font-weight: 800; }
 .catalog-window header small { color: #718096; }
 .catalog-window ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 28px; margin: 20px 0 0; padding-left: 24px; }
-.catalog-window li { padding: 8px 0 8px 4px; border-bottom: 1px dashed #dbe5ee; line-height: 1.45; }
+.catalog-window li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px; padding: 8px 0 8px 4px; border-bottom: 1px dashed #dbe5ee; line-height: 1.45; }
+.catalog-window li button { padding: 0; border: 0; background: none; color: #1675c4; font: inherit; font-weight: 700; cursor: pointer; }
+.catalog-window li button:hover { color: #00a9cb; text-decoration: underline; }
+.catalog-window li small { color: #68798a; }
 .agent-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
 .agent-list article { padding: 13px; border: 1px solid #d8e6f2; border-radius: 9px; background: #f6faff; }
 .agent-list b { display: block; margin-bottom: 9px; color: #286fb4; }
@@ -305,7 +308,7 @@ button { color: inherit; }
   .menu-bar { gap: 15px; padding: 0 15px; }
   .menu-bar .brand { font-size: 17px; }
   .menu-bar a { display: none; }
-  .desktop-icons { grid-template-rows: repeat(6, 86px); grid-auto-columns: 86px; }
+  .desktop-icons { grid-template-columns: repeat(2, 86px); grid-auto-rows: 86px; }
   .desktop-app-icon { width: 82px; height: 82px; }
   .launch-screen-panel { min-height: 350px; font-size: 15px; }
   .launch-hint { margin-top: 46px; }
@@ -328,7 +331,7 @@ button { color: inherit; }
 
 @media (max-width: 560px) {
   .menu-bar button:not(.brand) { display: none; }
-  .desktop-icons { top: 10px; left: 7px; grid-template-rows: repeat(6, 78px); grid-auto-columns: 78px; }
+  .desktop-icons { top: 10px; left: 7px; grid-template-columns: repeat(2, 78px); grid-auto-rows: 78px; }
   .desktop-app-icon { width: 74px; height: 74px; gap: 2px; }
   .app-symbol { width: 40px; height: 40px; font-size: 23px; }
   .launch-laptop { width: 88vw; }
