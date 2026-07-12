@@ -51,9 +51,12 @@ button { color: inherit; }
 
 .desktop-page { position: relative; z-index: 2; min-height: 100svh; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
-.launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; transition: opacity .9s ease, transform .9s cubic-bezier(.16, 1, .3, 1), filter .9s ease; }
+.desktop-content { position: absolute; z-index: 2; inset: 0; }
+.launch-screen { position: fixed; z-index: 130; inset: 0; display: grid; justify-items: center; align-content: center; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
 .launch-screen.is-launching { cursor: wait; }
-.launch-screen.is-exiting { opacity: 0; transform: scale(1.08); filter: blur(6px); pointer-events: none; }
+.launch-screen.is-exiting { pointer-events: none; animation: launchScreenExit 4.2s linear forwards; }
+.launch-screen.is-exiting .launch-laptop { animation: launchLaptopExpand 4.2s cubic-bezier(.22, .7, .18, 1) forwards; }
+.launch-screen.is-exiting .launch-hint { opacity: 0; transform: translateY(10px); }
 .launch-laptop { width: min(980px, 72vw); display: grid; justify-items: center; }
 .launch-screen-panel { position: relative; width: 100%; min-height: clamp(560px, 58vh, 660px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
 .launch-screen-panel::before { content: "dqtx@universe ~ zsh"; position: absolute; top: 26px; right: 42px; left: 42px; padding-bottom: 17px; border-bottom: 1px solid #ffffff1f; text-align: center; color: #9fc9f2; font-size: 14px; }
@@ -417,16 +420,18 @@ button { color: inherit; }
 @keyframes pageEnter { from { opacity: 0; transform: translateY(14px) scale(.99); } }
 @keyframes launchIn { from { opacity: 0; transform: scale(1.02); } }
 @keyframes launchType { 0% { max-width: 0; opacity: 1; } 100% { max-width: 100%; opacity: 1; } }
+@keyframes launchLaptopExpand { 0% { transform: scale(1); } 72% { transform: scale(1.24); } 100% { transform: scale(1.32); filter: blur(3px); } }
+@keyframes launchScreenExit { 0%, 72% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes hintArrow { 50% { transform: translateY(5px); } }
 @keyframes bootProgress { to { width: 100%; } }
 @keyframes bootPercent { to { opacity: 1; } }
 @keyframes lightboxIn { from { opacity: 0; transform: scale(.985); } }
 @keyframes matrixRain { from { transform: translateY(-10%); } to { transform: translateY(150%); } }
 @keyframes launchHintFade { to { opacity: 0; transform: translateY(10px); } }
-@keyframes desktopArrive { from { opacity: .18; transform: scale(.88); filter: blur(8px); } to { opacity: 1; transform: scale(1); filter: blur(0); } }
-@keyframes desktopChromeReveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.windows-desktop.desktop-arriving { transform-origin: center; animation: desktopArrive .92s cubic-bezier(.16, 1, .3, 1) both; }
-.windows-desktop.desktop-arriving .desktop-icons, .windows-desktop.desktop-arriving .windows-taskbar { opacity: 0; animation: desktopChromeReveal .38s .52s ease-out forwards; }
+@keyframes desktopArrive { 0%, 68% { opacity: 0; transform: scale(.96); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes desktopBackgroundArrive { 0%, 65% { opacity: 0; transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+.desktop-content.desktop-arriving { transform-origin: center; animation: desktopArrive 4.2s cubic-bezier(.16, 1, .3, 1) both; }
+.win11-wallpaper.desktop-background-arriving { transform-origin: center; animation: desktopBackgroundArrive 4.2s cubic-bezier(.16, 1, .3, 1) both; }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }

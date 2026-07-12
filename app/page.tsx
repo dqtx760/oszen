@@ -262,11 +262,11 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
-    }, 1600);
+    }, 1500);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
-    }, 2500);
+    }, 5700);
     return () => {
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
@@ -811,7 +811,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   return (
     <main className={`site-shell tab-${tab}`}>
-      {tab === "home" && (desktopLaunched || isLocked) && <div className="win11-wallpaper" aria-hidden="true" />}
+      {tab === "home" && (desktopLaunched || isLocked) && <div className={`win11-wallpaper ${isDesktopTransitioning ? "desktop-background-arriving" : ""}`} aria-hidden="true" />}
 
       {tab === "about" && <header className="menu-bar">
         <button className="brand" onClick={() => changeTab("home")}>dqtx OS</button>
@@ -822,7 +822,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       </header>}
 
       {tab === "home" && (
-        <section className={`desktop-page windows-desktop ${isDesktopTransitioning ? "desktop-arriving" : ""}`} aria-label="Windows 11 风格主页桌面">
+        <section className="desktop-page windows-desktop" aria-label="Windows 11 风格主页桌面">
           {(!desktopLaunched || isDesktopTransitioning) && !isLocked && (
             <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isDesktopTransitioning ? "is-exiting" : ""}`} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
@@ -872,7 +872,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             </section>
           )}
 
-          {desktopLaunched && <>
+          {desktopLaunched && <div className={`desktop-content ${isDesktopTransitioning ? "desktop-arriving" : ""}`}>
           <div className="desktop-icons">
             {desktopApps.filter((app) => app.id === "computer" || app.id === "chrome").map((app) => (
               <button className="desktop-app-icon" onClick={() => openApp(app.id, { maximized: app.id === "chrome" })} key={app.id}>
@@ -1059,7 +1059,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             </div>
             <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
-          </>}
+          </div>}
         </section>
       )}
 
