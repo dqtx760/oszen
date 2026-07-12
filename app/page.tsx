@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 type Tab = "home" | "work" | "about";
-type CardId = "identity" | "timeline" | "story" | "skills" | "service" | "sticky";
+type CardId = "identity" | "timeline" | "story" | "skills" | "service";
 type DesktopApp = "computer" | "chrome" | "cmd" | "notepad" | "tools" | "agent";
 type ComputerView = "home" | "photo" | "toolbox";
 type ScreenWakeLock = { release: () => Promise<void>; addEventListener: (type: "release", listener: () => void) => void };
@@ -16,6 +16,17 @@ type CommandDefinition = {
   group: "了解我" | "看服务" | "打开内容" | "系统命令";
   handler: () => CmdOutput[];
 };
+type CanvasTemplate = "text" | "quote" | "image" | "sticky" | "dark" | "link";
+type CustomCanvasCard = { id: string; template: CanvasTemplate; label: string };
+
+const canvasTemplateOptions: { id: CanvasTemplate; icon: string; label: string }[] = [
+  { id: "text", icon: "📝", label: "文字卡" },
+  { id: "quote", icon: "💬", label: "引用卡" },
+  { id: "image", icon: "🖼", label: "图片卡" },
+  { id: "sticky", icon: "📌", label: "便利贴" },
+  { id: "dark", icon: "🌙", label: "深色卡" },
+  { id: "link", icon: "🔗", label: "链接卡" },
+];
 
 const createCmdWelcome = (): CmdOutput[] => [
   { kind: "muted", text: "Microsoft Windows [Version 11.0.2026]" },
@@ -26,12 +37,11 @@ const createCmdWelcome = (): CmdOutput[] => [
 ];
 
 const initialCardPositions: Record<CardId, { x: number; y: number }> = {
-  identity: { x: 170, y: 150 },
-  timeline: { x: 660, y: 120 },
-  service: { x: 1080, y: 230 },
-  story: { x: 180, y: 540 },
-  skills: { x: 690, y: 555 },
-  sticky: { x: 1100, y: 70 },
+  identity: { x: 120, y: 115 },
+  timeline: { x: 675, y: 130 },
+  story: { x: 155, y: 650 },
+  skills: { x: 1085, y: 135 },
+  service: { x: 1070, y: 395 },
 };
 
 const canvasLayers: { id: CardId; label: string; color: string }[] = [
@@ -40,22 +50,19 @@ const canvasLayers: { id: CardId; label: string; color: string }[] = [
   { id: "story", label: "核心叙事", color: "yellow" },
   { id: "skills", label: "技能标签", color: "blue" },
   { id: "service", label: "商业服务", color: "yellow" },
-  { id: "sticky", label: "正在发生", color: "yellow" },
 ];
 
 const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]; toOffset: [number, number]; color: string }[] = [
   { from: "identity", to: "timeline", fromOffset: [390, 140], toOffset: [0, 170], color: "#8bb2e6" },
-  { from: "identity", to: "story", fromOffset: [195, 360], toOffset: [195, 0], color: "#f2c93d" },
+  { from: "identity", to: "story", fromOffset: [230, 500], toOffset: [210, 0], color: "#f2c93d" },
   { from: "timeline", to: "service", fromOffset: [360, 170], toOffset: [0, 180], color: "#8bb2e6" },
-  { from: "story", to: "skills", fromOffset: [400, 150], toOffset: [0, 110], color: "#8bb2e6" },
-  { from: "sticky", to: "service", fromOffset: [210, 135], toOffset: [260, 0], color: "#f2c93d" },
 ];
 
 const profileImage = "/profile.png";
 
 const profilePhotos = [
-  { src: "/photos/portrait-formal.png", label: "创业者肖像" },
-  { src: "/photos/portrait-studio.png", label: "工作室肖像" },
+  { src: "/photos/portrait-formal.png", label: "大强同学（Derek Zhao）" },
+  { src: "/photos/portrait-studio.png", label: "大强同学（Derek Zhao）" },
   { src: "/photos/portrait-editorial.png", label: "Silhouette 2026" },
   { src: "/photos/portrait-night.png", label: "夜谈时刻" },
 ];
@@ -137,11 +144,14 @@ export default function Home() {
   const [time, setTime] = useState("");
   const [zoom, setZoom] = useState(0.82);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [cardPositions, setCardPositions] = useState(initialCardPositions);
-  const [selectedCard, setSelectedCard] = useState<CardId>("identity");
+  const [cardPositions, setCardPositions] = useState<Record<string, { x: number; y: number }>>(initialCardPositions);
+  const [selectedCard, setSelectedCard] = useState<string>("identity");
+  const [deletedCanvasCards, setDeletedCanvasCards] = useState<Set<CardId>>(new Set());
+  const [customCanvasCards, setCustomCanvasCards] = useState<CustomCanvasCard[]>([]);
+  const [showCardTemplates, setShowCardTemplates] = useState(false);
   const [interaction, setInteraction] = useState<{
     type: "pan" | "card";
-    cardId?: CardId;
+    cardId?: string;
     startX: number;
     startY: number;
     originX: number;
@@ -232,7 +242,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   useEffect(() => {
     if (tab !== "home" || desktopLaunched || isLocked || isLaunching) return;
-    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 1200);
+    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 3000);
     return () => window.clearTimeout(autoStartTimer);
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
@@ -241,11 +251,11 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
-    }, 1100);
+    }, 1600);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
-    }, 1700);
+    }, 2500);
     return () => {
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
@@ -618,15 +628,17 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     event.currentTarget.setPointerCapture(event.pointerId);
 
     if (card) {
-      const cardId = card.dataset.card as CardId;
+      const cardId = card.dataset.card as string;
+      const position = cardPositions[cardId];
+      if (!position) return;
       setSelectedCard(cardId);
       setInteraction({
         type: "card",
         cardId,
         startX: event.clientX,
         startY: event.clientY,
-        originX: cardPositions[cardId].x,
-        originY: cardPositions[cardId].y,
+        originX: position.x,
+        originY: position.y,
       });
       return;
     }
@@ -647,7 +659,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     if (interaction.cardId) {
       setCardPositions((current) => ({
         ...current,
-        [interaction.cardId as CardId]: {
+        [interaction.cardId]: {
           x: interaction.originX + deltaX / zoom,
           y: interaction.originY + deltaY / zoom,
         },
@@ -655,14 +667,40 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     }
   };
 
-  const focusCard = (cardId: CardId) => {
+  const focusCard = (cardId: string) => {
     const position = cardPositions[cardId];
+    if (!position) return;
     setSelectedCard(cardId);
     setPan({ x: 300 - position.x * zoom, y: 150 - position.y * zoom });
   };
 
+  const deleteCanvasCard = (cardId: string) => {
+    if (canvasLayers.some((layer) => layer.id === cardId)) {
+      setDeletedCanvasCards((current) => new Set(current).add(cardId as CardId));
+    } else {
+      setCustomCanvasCards((current) => current.filter((card) => card.id !== cardId));
+    }
+    if (selectedCard === cardId) {
+      const fallback = canvasLayers.find((layer) => layer.id !== cardId && !deletedCanvasCards.has(layer.id));
+      setSelectedCard(fallback?.id ?? "");
+    }
+  };
+
+  const addCanvasCard = (template: CanvasTemplate) => {
+    const option = canvasTemplateOptions.find((item) => item.id === template)!;
+    const id = `custom-${template}-${Date.now()}`;
+    const offset = customCanvasCards.length * 28;
+    setCustomCanvasCards((current) => [...current, { id, template, label: option.label }]);
+    setCardPositions((current) => ({ ...current, [id]: { x: 560 + offset, y: 430 + offset } }));
+    setSelectedCard(id);
+    setShowCardTemplates(false);
+  };
+
   const resetCanvas = () => {
     setCardPositions(initialCardPositions);
+    setDeletedCanvasCards(new Set());
+    setCustomCanvasCards([]);
+    setShowCardTemplates(false);
     setPan({ x: 0, y: 0 });
     setZoom(0.82);
     setSelectedCard("identity");
@@ -685,7 +723,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   return (
     <main className={`site-shell tab-${tab}`}>
-      {tab === "home" && <div className="win11-wallpaper" aria-hidden="true" />}
+      {tab === "home" && (desktopLaunched || isLocked) && <div className="win11-wallpaper" aria-hidden="true" />}
 
       {tab === "about" && <header className="menu-bar">
         <button className="brand" onClick={() => changeTab("home")}>dqtx OS</button>
@@ -702,13 +740,13 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
-                  <p><b>$</b> whoami</p>
-                  <p>&gt; 大强同学</p>
-                  <p><b>$</b> cat about.md</p>
-                  <p>&gt; AI 工具 / Obsidian / Agent 工作流</p>
-                  <p><b>$</b> echo "1 person + AI = 1 team"</p>
-                  <p><mark>&gt; 1 person + AI = 1 team</mark></p>
-                  <p><b>$</b> open os.dqtx.cc</p>
+                  <p className="launch-line"><b>$</b> whoami</p>
+                  <p className="launch-line">&gt; 大强同学</p>
+                  <p className="launch-line"><b>$</b> cat about.md</p>
+                  <p className="launch-line">&gt; AI 工具 / Obsidian / Agent 工作流</p>
+                  <p className="launch-line"><b>$</b> echo "1 person + AI = 1 team"</p>
+                  <p className="launch-line"><mark>&gt; 1 person + AI = 1 team</mark></p>
+                  <p className="launch-line"><b>$</b> open os.dqtx.cc</p>
                   {isLaunching && <div className="launch-progress" aria-label="正在启动"><span>&gt; launching...</span><b><i /></b><em>100%</em></div>}
                 </div>
                 <div className="launch-base" />
@@ -977,18 +1015,34 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
           <aside className="canvas-layers">
             <h2>✦ Layers</h2>
             <div className="layer-list">
-              {canvasLayers.map((layer) => (
+              {canvasLayers.filter((layer) => !deletedCanvasCards.has(layer.id)).map((layer) => (
                 <button className={selectedCard === layer.id ? "active" : ""} onClick={() => focusCard(layer.id)} key={layer.id}>
                   <i className={layer.color} />{layer.label}<small>◉</small>
                 </button>
               ))}
+              {customCanvasCards.map((card) => (
+                <button className={selectedCard === card.id ? "active" : ""} onClick={() => focusCard(card.id)} key={card.id}>
+                  <i className="blue" />{card.label}<small>◉</small>
+                </button>
+              ))}
             </div>
-            <button className="new-layer" onClick={() => focusCard("sticky")}>＋ 聚焦正在发生</button>
+            <button className="new-layer" onClick={() => setShowCardTemplates(true)}>＋ 新建</button>
             <div className="mini-map" aria-hidden="true">
               <span>✦ Minimap</span>
               <div><i /><i /><i /><i /><i /></div>
             </div>
           </aside>
+
+          {showCardTemplates && (
+            <div className="canvas-template-backdrop" onMouseDown={() => setShowCardTemplates(false)}>
+              <section className="canvas-template-picker" onMouseDown={(event) => event.stopPropagation()} aria-label="选择卡片模板">
+                <header><h2>✦ 选择卡片模板</h2><button onClick={() => setShowCardTemplates(false)} aria-label="关闭">×</button></header>
+                <div>{canvasTemplateOptions.map((option) => (
+                  <button key={option.id} onClick={() => addCanvasCard(option.id)}><span>{option.icon}</span><b>{option.label}</b></button>
+                ))}</div>
+              </section>
+            </div>
+          )}
 
           <div
             className={`canvas-board ${interaction ? "is-dragging" : ""}`}
@@ -999,7 +1053,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             onWheel={handleCanvasWheel}
           >
             <div className="canvas-stage" style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})` }}>
-              {canvasConnectors.map((connector) => {
+              {canvasConnectors.filter((connector) => !deletedCanvasCards.has(connector.from) && !deletedCanvasCards.has(connector.to)).map((connector) => {
                 const from = cardPositions[connector.from];
                 const to = cardPositions[connector.to];
                 const x1 = from.x + connector.fromOffset[0];
@@ -1011,48 +1065,45 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 return <i className="canvas-connector" key={`${connector.from}-${connector.to}`} style={{ left: x1, top: y1, width, borderColor: connector.color, transform: `rotate(${angle}deg)` }} />;
               })}
 
-              <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
-                <div className="card-grip" data-drag-handle>PROFILE.MD <span>⠿</span></div>
+              {!deletedCanvasCards.has("identity") && <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
+                <div className="card-grip" data-drag-handle>PROFILE / DEREK ZHAO <span>⠿ <button onClick={() => deleteCanvasCard("identity")} aria-label="删除个人信息卡">×</button></span></div>
                 <div className="profile-intro">
                   <img className="profile-photo" src={profileImage} alt="大强同学" />
                   <div>
                     <h2>大强同学</h2>
-                    <p>AI 工具 · Obsidian · 个人网站 · Agent 工作流</p>
-                    <b>Build in Public</b>
+                    <p>92 年生 · 一人公司创业者</p>
+                    <b>Build in Public 践行者</b>
+                    <small>数字生产力玩家 · 工作流构建者</small>
                   </div>
                 </div>
                 <blockquote>1 person + AI = 1 team</blockquote>
-                <p className="canvas-quote">把 AI 工具用起来，把知识库搭起来，把个人网站上线。</p>
-                <div className="canvas-links">
-                  <a href="mailto:sphinx308@proton.me">📮 Email</a>
-                  <a href="https://x.com/dqtx760" target="_blank" rel="noreferrer">𝕏 @dqtx760</a>
-                </div>
-              </article>
+                <p className="canvas-quote">我把 AI、知识库和个人网站连接成可持续迭代的工作流，让想法真正落地。</p>
+              </article>}
 
-              <article className={`canvas-card timeline-card ${selectedCard === "timeline" ? "selected" : ""}`} data-card="timeline" style={{ left: cardPositions.timeline.x, top: cardPositions.timeline.y }}>
-                <div className="card-grip" data-drag-handle>📍 经历时间线 <span>⠿</span></div>
-                <div className="timeline-item"><b>NOW</b><strong>AI Coding Agent Skills</strong><small>跨平台管理与工程化</small></div>
+              {!deletedCanvasCards.has("timeline") && <article className={`canvas-card timeline-card ${selectedCard === "timeline" ? "selected" : ""}`} data-card="timeline" style={{ left: cardPositions.timeline.x, top: cardPositions.timeline.y }}>
+                <div className="card-grip" data-drag-handle>📍 经历时间线 <span>⠿ <button onClick={() => deleteCanvasCard("timeline")} aria-label="删除经历时间线卡">×</button></span></div>
+                <div className="timeline-item"><b>NOW</b><strong>AI Coding Agent Skills</strong><small>让跨平台管理与工程化更简单</small></div>
                 <div className="timeline-item"><b>2024 — 2026</b><strong>Build in Public</strong><small>持续构建 Vibe Coding 产品</small></div>
-                <div className="timeline-item"><b>2023 — 2025</b><strong>Obsidian 工作流</strong><small>写作、Git 与多平台分发</small></div>
+                <div className="timeline-item"><b>2023 — 2025</b><strong>Obsidian 工作流</strong><small>写作、Git 与多平台内容分发</small></div>
                 <div className="timeline-item"><b>2019 — 现在</b><strong>远程技术服务</strong><small>把问题解决在一线</small></div>
-              </article>
+              </article>}
 
-              <article className={`canvas-card story-card ${selectedCard === "story" ? "selected" : ""}`} data-card="story" style={{ left: cardPositions.story.x, top: cardPositions.story.y }}>
-                <div className="card-grip" data-drag-handle>💡 核心叙事 <span>⠿</span></div>
+              {!deletedCanvasCards.has("story") && <article className={`canvas-card story-card ${selectedCard === "story" ? "selected" : ""}`} data-card="story" style={{ left: cardPositions.story.x, top: cardPositions.story.y }}>
+                <div className="card-grip" data-drag-handle>💡 核心叙事 <span>⠿ <button onClick={() => deleteCanvasCard("story")} aria-label="删除核心叙事卡">×</button></span></div>
                 <p className="story-mark">〃</p>
-                <h3>我不只安装工具，<br />我帮你把它真正用起来。</h3>
-                <p>从 AI 工具、Obsidian 知识库，到个人网站和 Agent 工作流，我更关心方案能否落地、能否长期使用、能否减少重复劳动。</p>
+                <h3>工具不是终点，<br />真正的价值是工作流。</h3>
+                <p>从 AI 工具、Obsidian 知识库，到个人网站和 Agent 工作流，我关心的是方案能否持续使用、减少重复劳动，并让能力沉淀下来。</p>
                 <em>CREATE → CONNECT → SHIP</em>
-              </article>
+              </article>}
 
-              <article className={`canvas-card skills-card ${selectedCard === "skills" ? "selected" : ""}`} data-card="skills" style={{ left: cardPositions.skills.x, top: cardPositions.skills.y }}>
-                <div className="card-grip" data-drag-handle>⚡ SKILLS <span>⠿</span></div>
+              {!deletedCanvasCards.has("skills") && <article className={`canvas-card skills-card ${selectedCard === "skills" ? "selected" : ""}`} data-card="skills" style={{ left: cardPositions.skills.x, top: cardPositions.skills.y }}>
+                <div className="card-grip" data-drag-handle>⚡ SKILLS <span>⠿ <button onClick={() => deleteCanvasCard("skills")} aria-label="删除技能卡">×</button></span></div>
                 <div>{["AI Agent", "Obsidian", "Claude Skills", "Codex", "CLI", "自动化", "网站搭建", "内容分发"].map((skill) => <span key={skill}>{skill}</span>)}</div>
-              </article>
+              </article>}
 
-              <article className={`canvas-card service-canvas-card ${selectedCard === "service" ? "selected" : ""}`} data-card="service" style={{ left: cardPositions.service.x, top: cardPositions.service.y }}>
-                <div className="card-grip" data-drag-handle>WORK WITH ME <span>⠿</span></div>
-                <h3>从安装修复，<br />到长期技术顾问。</h3>
+              {!deletedCanvasCards.has("service") && <article className={`canvas-card service-canvas-card ${selectedCard === "service" ? "selected" : ""}`} data-card="service" style={{ left: cardPositions.service.x, top: cardPositions.service.y }}>
+                <div className="card-grip" data-drag-handle>WORK WITH ME <span>⠿ <button onClick={() => deleteCanvasCard("service")} aria-label="删除服务卡">×</button></span></div>
+                <h3>从环境配置，<br />到长期技术顾问。</h3>
                 <div className="service-price-list">
                   <p><span>技术咨询</span><b>50 / 小时</b></p>
                   <p><span>Claude Code 配置</span><b>99</b></p>
@@ -1064,15 +1115,22 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   <p><span>年度技术顾问</span><b>6800 / 年</b></p>
                 </div>
                 <a href="https://742112.xyz" target="_blank" rel="noreferrer">查看全部服务 ↗</a>
-              </article>
+              </article>}
 
-              <article className={`canvas-card sticky-card ${selectedCard === "sticky" ? "selected" : ""}`} data-card="sticky" style={{ left: cardPositions.sticky.x, top: cardPositions.sticky.y }}>
-                <div className="card-grip" data-drag-handle>NOW.TXT <span>⠿</span></div>
-                <strong>正在发生</strong>
-                <p>Agent Skills 跨平台管理</p>
-                <p>Obsidian 写作工作流</p>
-                <p>CLI 工具链工程化</p>
-              </article>
+              {customCanvasCards.map((card) => (
+                <article className={`canvas-card custom-canvas-card template-${card.template} ${selectedCard === card.id ? "selected" : ""}`} data-card={card.id} style={{ left: cardPositions[card.id]?.x ?? 560, top: cardPositions[card.id]?.y ?? 430 }} key={card.id}>
+                  <div className="card-grip" data-drag-handle>{card.label.toUpperCase()} <span>⠿ <button onClick={() => deleteCanvasCard(card.id)} aria-label={`删除${card.label}`}>×</button></span></div>
+                  <div className="custom-card-content" contentEditable suppressContentEditableWarning>
+                    {card.template === "text" && <><h3>新的文字卡</h3><p>点击这里，输入你的内容。</p></>}
+                    {card.template === "quote" && <blockquote>“记录一句值得反复阅读的话。”</blockquote>}
+                    {card.template === "image" && <><div className="custom-image-placeholder">＋</div><p>图片说明</p></>}
+                    {card.template === "sticky" && <><h3>灵感便签</h3><p>写下此刻最重要的一件事。</p></>}
+                    {card.template === "dark" && <><h3>深度思考</h3><p>把复杂问题留在这里慢慢拆解。</p></>}
+                    {card.template === "link" && <><h3>链接标题</h3><p>https://example.com</p></>}
+                  </div>
+                </article>
+              ))}
+
             </div>
           </div>
 
