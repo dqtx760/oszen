@@ -17,7 +17,8 @@ type CommandDefinition = {
   handler: () => CmdOutput[];
 };
 type CanvasTemplate = "text" | "quote" | "image" | "sticky" | "dark" | "link";
-type CustomCanvasCard = { id: string; template: CanvasTemplate; label: string };
+type CustomCanvasCard = { id: string; template: CanvasTemplate; label: string; imageSrc?: string; url?: string };
+type CanvasConnection = { id: string; from: string; to: string };
 
 const canvasTemplateOptions: { id: CanvasTemplate; icon: string; label: string }[] = [
   { id: "text", icon: "📝", label: "文字卡" },
@@ -149,6 +150,9 @@ export default function Home() {
   const [deletedCanvasCards, setDeletedCanvasCards] = useState<Set<CardId>>(new Set());
   const [customCanvasCards, setCustomCanvasCards] = useState<CustomCanvasCard[]>([]);
   const [showCardTemplates, setShowCardTemplates] = useState(false);
+  const [canvasConnections, setCanvasConnections] = useState<CanvasConnection[]>([]);
+  const [connectionSource, setConnectionSource] = useState<string | null>(null);
+  const [canvasCardSizes, setCanvasCardSizes] = useState<Record<string, { width: number; height: number }>>({});
   const [interaction, setInteraction] = useState<{
     type: "pan" | "card";
     cardId?: string;
@@ -164,6 +168,8 @@ export default function Home() {
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
+  const [hasVisited, setHasVisited] = useState(false);
+  const [visitChecked, setVisitChecked] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [keepScreenOn, setKeepScreenOn] = useState(false);
   const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
@@ -229,11 +235,16 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, []);
 
   useEffect(() => {
+    setHasVisited(window.localStorage.getItem("dqtx-os-visited") === "1");
+    setVisitChecked(true);
+  }, []);
+
+  useEffect(() => {
     if (tab !== "home" || desktopLaunched || isLaunching) return;
     const launchOnEnter = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         if (isLocked) unlockDesktop();
-        else launchDesktop(true);
+        else launchDesktop(false);
       }
     };
     window.addEventListener("keydown", launchOnEnter);
@@ -241,10 +252,10 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
-    if (tab !== "home" || desktopLaunched || isLocked || isLaunching) return;
-    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 3000);
+    if (!visitChecked || !hasVisited || tab !== "home" || desktopLaunched || isLocked || isLaunching) return;
+    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 3350);
     return () => window.clearTimeout(autoStartTimer);
-  }, [desktopLaunched, isLaunching, isLocked, tab]);
+  }, [desktopLaunched, hasVisited, isLaunching, isLocked, tab, visitChecked]);
 
   useEffect(() => {
     if (!isLaunching) return;
@@ -296,6 +307,8 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   const launchDesktop = (immediate = false) => {
     if (desktopLaunched || isLocked) return;
+    window.localStorage.setItem("dqtx-os-visited", "1");
+    setHasVisited(true);
     if (immediate) {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
@@ -625,12 +638,12 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
     const handle = target.closest<HTMLElement>("[data-drag-handle]");
     const card = handle?.closest<HTMLElement>("[data-card]");
-    event.currentTarget.setPointerCapture(event.pointerId);
 
     if (card) {
       const cardId = card.dataset.card as string;
       const position = cardPositions[cardId];
       if (!position) return;
+      event.currentTarget.setPointerCapture(event.pointerId);
       setSelectedCard(cardId);
       setInteraction({
         type: "card",
@@ -644,6 +657,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     }
 
     if (!target.closest(".canvas-card")) {
+      event.currentTarget.setPointerCapture(event.pointerId);
       setInteraction({ type: "pan", startX: event.clientX, startY: event.clientY, originX: pan.x, originY: pan.y });
     }
   };
@@ -680,6 +694,8 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     } else {
       setCustomCanvasCards((current) => current.filter((card) => card.id !== cardId));
     }
+    setCanvasConnections((current) => current.filter((connection) => connection.from !== cardId && connection.to !== cardId));
+    if (connectionSource === cardId) setConnectionSource(null);
     if (selectedCard === cardId) {
       const fallback = canvasLayers.find((layer) => layer.id !== cardId && !deletedCanvasCards.has(layer.id));
       setSelectedCard(fallback?.id ?? "");
@@ -690,16 +706,88 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     const option = canvasTemplateOptions.find((item) => item.id === template)!;
     const id = `custom-${template}-${Date.now()}`;
     const offset = customCanvasCards.length * 28;
-    setCustomCanvasCards((current) => [...current, { id, template, label: option.label }]);
+    setCustomCanvasCards((current) => [...current, {
+      id,
+      template,
+      label: option.label,
+      url: template === "link" ? "https://os.dqtx.cc/" : undefined,
+    }]);
     setCardPositions((current) => ({ ...current, [id]: { x: 560 + offset, y: 430 + offset } }));
     setSelectedCard(id);
     setShowCardTemplates(false);
+  };
+
+  const updateCustomCanvasCard = (cardId: string, changes: Partial<CustomCanvasCard>) => {
+    setCustomCanvasCards((current) => current.map((card) => card.id === cardId ? { ...card, ...changes } : card));
+  };
+
+  const readCanvasImage = (cardId: string, file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => updateCustomCanvasCard(cardId, { imageSrc: String(reader.result) });
+    reader.readAsDataURL(file);
+  };
+
+  const handleCanvasImagePaste = (event: React.ClipboardEvent<HTMLDivElement>, cardId: string) => {
+    const imageItem = Array.from(event.clipboardData.items).find((item) => item.type.startsWith("image/"));
+    const imageFile = imageItem?.getAsFile();
+    if (imageFile) {
+      event.preventDefault();
+      readCanvasImage(cardId, imageFile);
+      return;
+    }
+    const pastedUrl = event.clipboardData.getData("text").trim();
+    if (/^https?:\/\//i.test(pastedUrl)) {
+      event.preventDefault();
+      updateCustomCanvasCard(cardId, { imageSrc: pastedUrl });
+    }
+  };
+
+  const openCanvasLink = (url = "") => {
+    const value = url.trim();
+    if (!value) return;
+    window.open(/^https?:\/\//i.test(value) ? value : `https://${value}`, "_blank", "noopener,noreferrer");
+  };
+
+  const connectCanvasCard = (cardId: string) => {
+    if (!connectionSource) {
+      setConnectionSource(cardId);
+      return;
+    }
+    if (connectionSource === cardId) {
+      setConnectionSource(null);
+      return;
+    }
+    setCanvasConnections((current) => current.some((connection) => connection.from === connectionSource && connection.to === cardId)
+      ? current
+      : [...current, { id: `connection-${Date.now()}`, from: connectionSource, to: cardId }]);
+    setConnectionSource(null);
+  };
+
+  const renderCanvasConnectionHandle = (cardId: string) => (
+    <button
+      className={`canvas-connection-handle ${connectionSource === cardId ? "active" : ""}`}
+      onClick={() => connectCanvasCard(cardId)}
+      title={connectionSource ? "连接到这张卡片" : "从这张卡片开始连线"}
+      aria-label={connectionSource ? "完成卡片连线" : "开始卡片连线"}
+    />
+  );
+
+  const syncCanvasCardSizes = () => {
+    const sizes: Record<string, { width: number; height: number }> = {};
+    document.querySelectorAll<HTMLElement>(".canvas-stage [data-card]").forEach((card) => {
+      if (card.dataset.card) sizes[card.dataset.card] = { width: card.offsetWidth, height: card.offsetHeight };
+    });
+    setCanvasCardSizes(sizes);
   };
 
   const resetCanvas = () => {
     setCardPositions(initialCardPositions);
     setDeletedCanvasCards(new Set());
     setCustomCanvasCards([]);
+    setCanvasConnections([]);
+    setConnectionSource(null);
+    setCanvasCardSizes({});
     setShowCardTemplates(false);
     setPan({ x: 0, y: 0 });
     setZoom(0.82);
@@ -736,7 +824,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       {tab === "home" && (
         <section className={`desktop-page windows-desktop ${isDesktopTransitioning ? "desktop-arriving" : ""}`} aria-label="Windows 11 风格主页桌面">
           {(!desktopLaunched || isDesktopTransitioning) && !isLocked && (
-            <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isDesktopTransitioning ? "is-exiting" : ""}`} onClick={() => launchDesktop(true)} role="button" tabIndex={0} aria-label="进入 dqtx OS 桌面">
+            <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isDesktopTransitioning ? "is-exiting" : ""}`} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
@@ -784,6 +872,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             </section>
           )}
 
+          {desktopLaunched && <>
           <div className="desktop-icons">
             {desktopApps.filter((app) => app.id === "computer" || app.id === "chrome").map((app) => (
               <button className="desktop-app-icon" onClick={() => openApp(app.id, { maximized: app.id === "chrome" })} key={app.id}>
@@ -970,6 +1059,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             </div>
             <div className="taskbar-status"><span>⌃　⌁　🔊</span><time>{time}</time></div>
           </div>
+          </>}
         </section>
       )}
 
@@ -1048,7 +1138,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
             className={`canvas-board ${interaction ? "is-dragging" : ""}`}
             onPointerDown={handleCanvasPointerDown}
             onPointerMove={handleCanvasPointerMove}
-            onPointerUp={() => setInteraction(null)}
+            onPointerUp={() => { setInteraction(null); syncCanvasCardSizes(); }}
             onPointerCancel={() => setInteraction(null)}
             onWheel={handleCanvasWheel}
           >
@@ -1064,9 +1154,24 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
                 return <i className="canvas-connector" key={`${connector.from}-${connector.to}`} style={{ left: x1, top: y1, width, borderColor: connector.color, transform: `rotate(${angle}deg)` }} />;
               })}
+              {canvasConnections.map((connection) => {
+                const from = cardPositions[connection.from];
+                const to = cardPositions[connection.to];
+                if (!from || !to) return null;
+                const fromSize = canvasCardSizes[connection.from] ?? { width: 330, height: 220 };
+                const toSize = canvasCardSizes[connection.to] ?? { width: 330, height: 220 };
+                const x1 = from.x + fromSize.width;
+                const y1 = from.y + fromSize.height / 2;
+                const x2 = to.x;
+                const y2 = to.y + toSize.height / 2;
+                const width = Math.hypot(x2 - x1, y2 - y1);
+                const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+                return <button className="canvas-user-connector" key={connection.id} title="双击删除连线" onDoubleClick={() => setCanvasConnections((current) => current.filter((item) => item.id !== connection.id))} style={{ left: x1, top: y1, width, transform: `rotate(${angle}deg)` }} />;
+              })}
 
               {!deletedCanvasCards.has("identity") && <article className={`canvas-card identity-card ${selectedCard === "identity" ? "selected" : ""}`} data-card="identity" style={{ left: cardPositions.identity.x, top: cardPositions.identity.y }}>
                 <div className="card-grip" data-drag-handle>PROFILE / DEREK ZHAO <span>⠿ <button onClick={() => deleteCanvasCard("identity")} aria-label="删除个人信息卡">×</button></span></div>
+                {renderCanvasConnectionHandle("identity")}
                 <div className="profile-intro">
                   <img className="profile-photo" src={profileImage} alt="大强同学" />
                   <div>
@@ -1082,6 +1187,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
               {!deletedCanvasCards.has("timeline") && <article className={`canvas-card timeline-card ${selectedCard === "timeline" ? "selected" : ""}`} data-card="timeline" style={{ left: cardPositions.timeline.x, top: cardPositions.timeline.y }}>
                 <div className="card-grip" data-drag-handle>📍 经历时间线 <span>⠿ <button onClick={() => deleteCanvasCard("timeline")} aria-label="删除经历时间线卡">×</button></span></div>
+                {renderCanvasConnectionHandle("timeline")}
                 <div className="timeline-item"><b>NOW</b><strong>AI Coding Agent Skills</strong><small>让跨平台管理与工程化更简单</small></div>
                 <div className="timeline-item"><b>2024 — 2026</b><strong>Build in Public</strong><small>持续构建 Vibe Coding 产品</small></div>
                 <div className="timeline-item"><b>2023 — 2025</b><strong>Obsidian 工作流</strong><small>写作、Git 与多平台内容分发</small></div>
@@ -1090,6 +1196,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
               {!deletedCanvasCards.has("story") && <article className={`canvas-card story-card ${selectedCard === "story" ? "selected" : ""}`} data-card="story" style={{ left: cardPositions.story.x, top: cardPositions.story.y }}>
                 <div className="card-grip" data-drag-handle>💡 核心叙事 <span>⠿ <button onClick={() => deleteCanvasCard("story")} aria-label="删除核心叙事卡">×</button></span></div>
+                {renderCanvasConnectionHandle("story")}
                 <p className="story-mark">〃</p>
                 <h3>工具不是终点，<br />真正的价值是工作流。</h3>
                 <p>从 AI 工具、Obsidian 知识库，到个人网站和 Agent 工作流，我关心的是方案能否持续使用、减少重复劳动，并让能力沉淀下来。</p>
@@ -1098,11 +1205,13 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
               {!deletedCanvasCards.has("skills") && <article className={`canvas-card skills-card ${selectedCard === "skills" ? "selected" : ""}`} data-card="skills" style={{ left: cardPositions.skills.x, top: cardPositions.skills.y }}>
                 <div className="card-grip" data-drag-handle>⚡ SKILLS <span>⠿ <button onClick={() => deleteCanvasCard("skills")} aria-label="删除技能卡">×</button></span></div>
+                {renderCanvasConnectionHandle("skills")}
                 <div>{["AI Agent", "Obsidian", "Claude Skills", "Codex", "CLI", "自动化", "网站搭建", "内容分发"].map((skill) => <span key={skill}>{skill}</span>)}</div>
               </article>}
 
               {!deletedCanvasCards.has("service") && <article className={`canvas-card service-canvas-card ${selectedCard === "service" ? "selected" : ""}`} data-card="service" style={{ left: cardPositions.service.x, top: cardPositions.service.y }}>
                 <div className="card-grip" data-drag-handle>WORK WITH ME <span>⠿ <button onClick={() => deleteCanvasCard("service")} aria-label="删除服务卡">×</button></span></div>
+                {renderCanvasConnectionHandle("service")}
                 <h3>从环境配置，<br />到长期技术顾问。</h3>
                 <div className="service-price-list">
                   <p><span>技术咨询</span><b>50 / 小时</b></p>
@@ -1120,14 +1229,28 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
               {customCanvasCards.map((card) => (
                 <article className={`canvas-card custom-canvas-card template-${card.template} ${selectedCard === card.id ? "selected" : ""}`} data-card={card.id} style={{ left: cardPositions[card.id]?.x ?? 560, top: cardPositions[card.id]?.y ?? 430 }} key={card.id}>
                   <div className="card-grip" data-drag-handle>{card.label.toUpperCase()} <span>⠿ <button onClick={() => deleteCanvasCard(card.id)} aria-label={`删除${card.label}`}>×</button></span></div>
-                  <div className="custom-card-content" contentEditable suppressContentEditableWarning>
-                    {card.template === "text" && <><h3>新的文字卡</h3><p>点击这里，输入你的内容。</p></>}
-                    {card.template === "quote" && <blockquote>“记录一句值得反复阅读的话。”</blockquote>}
-                    {card.template === "image" && <><div className="custom-image-placeholder">＋</div><p>图片说明</p></>}
-                    {card.template === "sticky" && <><h3>灵感便签</h3><p>写下此刻最重要的一件事。</p></>}
-                    {card.template === "dark" && <><h3>深度思考</h3><p>把复杂问题留在这里慢慢拆解。</p></>}
-                    {card.template === "link" && <><h3>链接标题</h3><p>https://example.com</p></>}
-                  </div>
+                  {renderCanvasConnectionHandle(card.id)}
+                  {card.template === "image" ? (
+                    <div className="custom-card-content image-card-editor" onPaste={(event) => handleCanvasImagePaste(event, card.id)} tabIndex={0}>
+                      <label className="custom-image-placeholder">
+                        {card.imageSrc ? <img src={card.imageSrc} alt="用户添加的画布图片" /> : <><span>＋</span><small>选择本地图片<br />或粘贴网上图片</small></>}
+                        <input type="file" accept="image/*" onChange={(event) => { const file = event.target.files?.[0]; if (file) readCanvasImage(card.id, file); }} />
+                      </label>
+                      <p contentEditable suppressContentEditableWarning>图片说明</p>
+                    </div>
+                  ) : card.template === "link" ? (
+                    <div className="custom-card-content link-card-editor">
+                      <h3 contentEditable suppressContentEditableWarning>链接标题</h3>
+                      <div className="custom-link-row"><input type="url" value={card.url ?? ""} onChange={(event) => updateCustomCanvasCard(card.id, { url: event.target.value })} aria-label="链接地址" /><button onClick={() => openCanvasLink(card.url)}>打开</button></div>
+                    </div>
+                  ) : (
+                    <div className="custom-card-content" contentEditable suppressContentEditableWarning>
+                      {card.template === "text" && <><h3>新的文字卡</h3><p>点击这里，输入你的内容。</p></>}
+                      {card.template === "quote" && <blockquote>“记录一句值得反复阅读的话。”</blockquote>}
+                      {card.template === "sticky" && <><h3>灵感便签</h3><p>写下此刻最重要的一件事。</p></>}
+                      {card.template === "dark" && <><h3>深度思考</h3><p>把复杂问题留在这里慢慢拆解。</p></>}
+                    </div>
+                  )}
                 </article>
               ))}
 
