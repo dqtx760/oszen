@@ -162,6 +162,7 @@ export default function Home() {
     originY: number;
   } | null>(null);
   const [openApps, setOpenApps] = useState<DesktopApp[]>([]);
+  const [featuredProject, setFeaturedProject] = useState(projects[3]);
   const [minimizedApps, setMinimizedApps] = useState<DesktopApp[]>([]);
   const [maximizedApps, setMaximizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
@@ -206,7 +207,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   });
   const [windowDrag, setWindowDrag] = useState<{ app: DesktopApp; startX: number; startY: number; originX: number; originY: number } | null>(null);
 
-  const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
+  const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}${icon === "/icons/chrome-cyber.png" ? " chrome-icon" : ""}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
   useEffect(() => {
     const output = cmdOutputRef.current;
@@ -1059,30 +1060,26 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       {tab === "work" && (
         <section className="works-page page-enter" aria-label="作品集">
           <div className="works-inner">
-            <p className="section-kicker">VIBE CODING ARCHIVE / 2026</p>
-            <div className="works-hero">
-              <h1>1 Person + AI = 1 Team</h1>
+            <header className="works-header">
+              <div><p className="section-kicker">DQTX / PROJECT ARCHIVE / 2026</p><h1>1 Person + AI = 1 Team</h1></div>
               <p>做小而有用的工具，让想法尽快上线。</p>
+              <span>06 PROJECTS · 04 REPOS</span>
+            </header>
+            <div className="works-console">
+              <article className="featured-project">
+                <div className="featured-copy"><span>FEATURED / LIVE PROJECT</span><i>{featuredProject.icon}</i><h2>{featuredProject.name}</h2><p>{featuredProject.desc}</p><a href={featuredProject.url} target="_blank" rel="noreferrer">访问项目 <b>↗</b></a></div>
+                <div className="featured-preview" aria-hidden="true"><i /><i /><i /><i /><span>DQTX / {featuredProject.name}</span></div>
+                <div className="featured-meta"><span>独立构建</span><span>AI 辅助开发</span><span>持续迭代</span><em>◉ ONLINE</em></div>
+              </article>
+              <aside className="project-archive" aria-label="项目索引">
+                <header><span>PROJECT INDEX</span><b>06 / ONLINE</b></header>
+                <div>{projects.map((project, index) => <a href={project.url} target="_blank" rel="noreferrer" className={featuredProject.name === project.name ? "active" : ""} onMouseEnter={() => setFeaturedProject(project)} onFocus={() => setFeaturedProject(project)} key={project.name}><strong>0{index + 1}</strong><i>{project.icon}</i><span><b>{project.name}</b><small>{project.desc}</small></span><em>↗</em></a>)}</div>
+              </aside>
             </div>
-            <div className="project-grid">
-              {projects.map((project, index) => (
-                <a href={project.url} target="_blank" rel="noreferrer" className="project-card" key={project.name}>
-                  <span className="project-index">0{index + 1}</span>
-                  <span className="project-emoji">{project.icon}</span>
-                  <h3>{project.name}</h3>
-                  <p>{project.desc}</p>
-                  <b>打开项目 ↗</b>
-                </a>
-              ))}
-            </div>
-            <div className="repo-strip">
-              <div><span>OPEN SOURCE</span><strong>代表项目</strong></div>
-              {openSource.map((repo) => (
-                <a href={repo.url} target="_blank" rel="noreferrer" key={repo.name}>
-                  <b>{repo.name}</b><small>{repo.note}</small><em>↗</em>
-                </a>
-              ))}
-            </div>
+            <section className="repo-ledger" aria-label="开源项目">
+              <header><span>OPEN SOURCE</span><strong>代表仓库</strong><small>持续构建的公开资产</small></header>
+              <div>{openSource.map((repo) => <a href={repo.url} target="_blank" rel="noreferrer" key={repo.name}><b>{repo.name}</b><span>{repo.note}</span><em>↗</em></a>)}</div>
+            </section>
           </div>
         </section>
       )}
