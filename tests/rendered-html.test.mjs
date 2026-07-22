@@ -47,6 +47,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
   assert.match(page, /\}, 3240\)/);
   assert.match(page, /\}, 4000\)/);
+  assert.match(page, /\{!desktopLaunched && !isLocked && \(/);
   assert.match(page, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(css, /launchScreenExit/);
   assert.match(css, /is-exiting \.launch-laptop \{ animation: launchLaptopRecede \.22s/);

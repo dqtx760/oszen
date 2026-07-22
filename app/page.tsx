@@ -819,7 +819,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
       {tab === "home" && (
         <section className="desktop-page windows-desktop" aria-label="Windows 11 风格主页桌面">
-          {(!desktopLaunched || isDesktopTransitioning) && !isLocked && (
+          {!desktopLaunched && !isLocked && (
             <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isBootExiting ? "is-exiting" : ""}`} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
