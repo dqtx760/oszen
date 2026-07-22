@@ -802,7 +802,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   return (
     <main className={`site-shell tab-${tab}`}>
-      {tab === "home" && (desktopLaunched || isLocked) && <div className={`win11-wallpaper ${isDesktopTransitioning ? "desktop-background-arriving" : ""}`} aria-hidden="true" />}
+      {tab === "home" && <div className={`win11-wallpaper ${isDesktopTransitioning ? "desktop-background-arriving" : ""}`} aria-hidden="true" />}
 
       {tab === "about" && <header className="menu-bar">
         <button className="brand" onClick={() => changeTab("home")}>dqtx OS</button>
