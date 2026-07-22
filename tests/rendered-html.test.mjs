@@ -39,6 +39,7 @@ test("keeps startup short and defers non-critical images", async () => {
 
   assert.doesNotMatch(page, /dqtx-os-visited/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
+  assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 5000\)/);
   assert.match(page, /\}, 80\)/);
   assert.match(page, /\}, 800\)/);
   assert.match(page, /loading="lazy" decoding="async"/);

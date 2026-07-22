@@ -245,6 +245,12 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
+    if (tab !== "home" || desktopLaunched || isLaunching || isLocked) return;
+    const autoLaunchTimer = window.setTimeout(() => setIsLaunching(true), 5000);
+    return () => window.clearTimeout(autoLaunchTimer);
+  }, [desktopLaunched, isLaunching, isLocked, tab]);
+
+  useEffect(() => {
     if (!isLaunching) return;
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
