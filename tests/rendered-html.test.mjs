@@ -42,6 +42,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
   assert.match(page, /featuredProject, setFeaturedProject/);
+  assert.match(page, /useState\(projects\[3\]\)/);
   assert.match(page, /className="works-console"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);

@@ -285,7 +285,7 @@ button { color: inherit; }
 .start-user { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 12px 38px; background: #e7eef4c9; font-size: 13px; }
 .start-user img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .start-user button { margin-left: auto; width: 34px; height: 34px; border: 0; border-radius: 5px; background: transparent; }
-.works-page { position: relative; z-index: 4; min-height: 100svh; padding: clamp(88px, 11vh, 132px) 24px 230px; overflow: hidden; background: radial-gradient(circle at 72% 88%, #063c6538, transparent 26%), linear-gradient(90deg, #02090d, #030609 65%, #010305); color: #d9ecf5; }
+.works-page { position: relative; z-index: 4; min-height: 100svh; padding: clamp(30px, 4vh, 48px) 24px 150px; overflow: hidden; background: radial-gradient(circle at 72% 88%, #063c6538, transparent 26%), linear-gradient(90deg, #02090d, #030609 65%, #010305); color: #d9ecf5; }
 .works-page::before { content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none; opacity: .2; background-image: linear-gradient(#00c8f30d 1px, transparent 1px), linear-gradient(90deg, #00c8f30d 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, black, transparent 20% 80%, black); }
 .works-inner { width: min(1280px, 100%); margin: 0 auto; }
 .section-kicker { margin: 0; color: #22c8f6; font: 700 11px ui-monospace, Consolas, monospace; letter-spacing: .18em; }
@@ -444,7 +444,7 @@ button { color: inherit; }
   .launch-nav { bottom: 22px; }
   .taskbar-status span { display: none; }
   .start-apps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .works-page { padding: 88px 18px 210px; }
+  .works-page { padding: 48px 18px 150px; }
   .works-console { grid-template-columns: 1fr; }
   .project-archive > div { grid-template-columns: 1fr 1fr; gap: 4px; }
   .repo-ledger { grid-template-columns: 220px 1fr; }
@@ -494,7 +494,7 @@ button { color: inherit; }
   .start-menu { bottom: 64px; width: calc(100vw - 24px); height: min(560px, calc(100svh - 82px)); }
   .start-search { margin: 18px 18px 10px; }
   .start-apps { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 84px; padding: 0 16px 18px; }
-  .works-page { padding: 76px 14px 200px; }
+  .works-page { padding: 48px 14px 140px; }
   .works-header { grid-template-columns: 1fr; gap: 14px; margin-bottom: 24px; }
   .works-header h1 { font-size: 40px; }
   .works-header > span { justify-self: start; }
