@@ -233,12 +233,6 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, []);
 
   useEffect(() => {
-    if (window.localStorage.getItem("dqtx-os-visited") === "1") {
-      setDesktopLaunched(true);
-    }
-  }, []);
-
-  useEffect(() => {
     if (tab !== "home" || desktopLaunched || isLaunching) return;
     const launchOnEnter = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
@@ -300,7 +294,6 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   const launchDesktop = (immediate = false) => {
     if (desktopLaunched || isLocked) return;
-    window.localStorage.setItem("dqtx-os-visited", "1");
     if (immediate) {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);

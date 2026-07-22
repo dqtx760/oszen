@@ -37,7 +37,8 @@ test("keeps startup short and defers non-critical images", async () => {
     readFile(new URL("../package.json", import.meta.url), "utf8"),
   ]);
 
-  assert.match(page, /localStorage\.getItem\("dqtx-os-visited"\)/);
+  assert.doesNotMatch(page, /dqtx-os-visited/);
+  assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.match(page, /\}, 80\)/);
   assert.match(page, /\}, 800\)/);
   assert.match(page, /loading="lazy" decoding="async"/);
