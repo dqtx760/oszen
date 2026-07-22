@@ -40,6 +40,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.doesNotMatch(page, /dqtx-os-visited/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 5000\)/);
+  assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /\}, 240\)/);
   assert.match(page, /\}, 800\)/);

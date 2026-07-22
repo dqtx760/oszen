@@ -83,7 +83,7 @@ const shortcuts = [
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
   { id: "computer", icon: "/icons/computer.png", label: "计算机", iconClass: "image-logo" },
-  { id: "chrome", icon: "/icons/chrome.png", label: "Chrome", iconClass: "image-logo" },
+  { id: "chrome", icon: "/icons/chrome-cyber.png", label: "Chrome", iconClass: "image-logo" },
   { id: "cmd", icon: "/icons/cmd.png", label: "Cmd", iconClass: "image-logo" },
   { id: "notepad", icon: "/icons/files.png", label: "记事本", iconClass: "image-logo" },
   { id: "tools", icon: "/icons/drive.png", label: "效率工具", iconClass: "image-logo" },
