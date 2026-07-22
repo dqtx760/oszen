@@ -57,9 +57,8 @@ button { color: inherit; }
 .launch-screen { position: fixed; z-index: 130; inset: 0; isolation: isolate; display: grid; justify-items: center; align-content: center; overflow: hidden; background: #f7f4ec; color: #66708a; animation: launchIn .24s var(--ease-out-expo) both; }
 .launch-screen::after { content: ""; position: absolute; z-index: 2; inset: 0; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 90px #0d5dab38; opacity: 0; pointer-events: none; }
 .launch-screen.is-launching { cursor: wait; }
-.launch-screen.is-launching .launch-laptop { animation: launchLaptopRecede .22s var(--ease-out-quart) forwards; }
 .launch-screen.is-exiting { pointer-events: none; background: transparent; }
-.launch-screen.is-exiting .launch-laptop { opacity: 0; }
+.launch-screen.is-exiting .launch-laptop { animation: launchLaptopRecede .22s var(--ease-out-quart) forwards; }
 .launch-screen.is-exiting::after { opacity: 0; }
 .launch-screen.is-exiting .launch-hint { opacity: 0; transform: translateY(10px); }
 .launch-screen.is-exiting .launch-nav { opacity: 0; transform: translate(-50%, 10px); transition: opacity .2s ease, transform .2s ease; }
@@ -87,8 +86,8 @@ button { color: inherit; }
 .launch-progress > b::before, .launch-progress > b::after { position: absolute; top: -5px; z-index: 2; color: #ffe268; font-size: 25px; line-height: 1; }
 .launch-progress > b::before { content: "["; left: -7px; }
 .launch-progress > b::after { content: "]"; right: -7px; }
-.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress 1.45s steps(11, end) forwards; }
-.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .16s 1.35s forwards; }
+.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress 3s steps(11, end) forwards; }
+.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .16s 2.84s forwards; }
 .launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
 .launch-hint { position: relative; z-index: 3; display: grid; justify-items: center; gap: 18px; margin-top: 58px; padding: 0; border: 0; color: #66708a; background: transparent; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; cursor: pointer; transition: color .18s ease, opacity .24s ease, transform .24s ease; }
 .launch-hint:hover, .launch-hint:focus-visible { color: var(--blue-deep); outline: none; }
@@ -286,7 +285,7 @@ button { color: inherit; }
 .start-user { display: flex; align-items: center; gap: 10px; min-height: 64px; padding: 12px 38px; background: #e7eef4c9; font-size: 13px; }
 .start-user img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .start-user button { margin-left: auto; width: 34px; height: 34px; border: 0; border-radius: 5px; background: transparent; }
-.works-page { position: relative; z-index: 4; min-height: 100svh; padding: clamp(88px, 11vh, 132px) 24px 150px; overflow: hidden; background: radial-gradient(circle at 72% 88%, #063c6538, transparent 26%), linear-gradient(90deg, #02090d, #030609 65%, #010305); color: #d9ecf5; }
+.works-page { position: relative; z-index: 4; min-height: 100svh; padding: clamp(88px, 11vh, 132px) 24px 230px; overflow: hidden; background: radial-gradient(circle at 72% 88%, #063c6538, transparent 26%), linear-gradient(90deg, #02090d, #030609 65%, #010305); color: #d9ecf5; }
 .works-page::before { content: ""; position: fixed; z-index: -1; inset: 0; pointer-events: none; opacity: .2; background-image: linear-gradient(#00c8f30d 1px, transparent 1px), linear-gradient(90deg, #00c8f30d 1px, transparent 1px); background-size: 32px 32px; mask-image: linear-gradient(90deg, black, transparent 20% 80%, black); }
 .works-inner { width: min(1280px, 100%); margin: 0 auto; }
 .section-kicker { margin: 0; color: #22c8f6; font: 700 11px ui-monospace, Consolas, monospace; letter-spacing: .18em; }
@@ -445,7 +444,7 @@ button { color: inherit; }
   .launch-nav { bottom: 22px; }
   .taskbar-status span { display: none; }
   .start-apps { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-  .works-page { padding: 88px 18px 140px; }
+  .works-page { padding: 88px 18px 210px; }
   .works-console { grid-template-columns: 1fr; }
   .project-archive > div { grid-template-columns: 1fr 1fr; gap: 4px; }
   .repo-ledger { grid-template-columns: 220px 1fr; }
@@ -495,7 +494,7 @@ button { color: inherit; }
   .start-menu { bottom: 64px; width: calc(100vw - 24px); height: min(560px, calc(100svh - 82px)); }
   .start-search { margin: 18px 18px 10px; }
   .start-apps { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 84px; padding: 0 16px 18px; }
-  .works-page { padding: 76px 14px 130px; }
+  .works-page { padding: 76px 14px 200px; }
   .works-header { grid-template-columns: 1fr; gap: 14px; margin-bottom: 24px; }
   .works-header h1 { font-size: 40px; }
   .works-header > span { justify-self: start; }

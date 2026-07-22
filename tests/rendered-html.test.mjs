@@ -39,16 +39,18 @@ test("keeps startup short and defers non-critical images", async () => {
 
   assert.doesNotMatch(page, /dqtx-os-visited/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
-  assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 5000\)/);
+  assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /className="works-console"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
-  assert.match(page, /\}, 240\)/);
-  assert.match(page, /\}, 800\)/);
+  assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
+  assert.match(page, /\}, 3240\)/);
+  assert.match(page, /\}, 4000\)/);
   assert.match(page, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(css, /launchScreenExit/);
-  assert.match(css, /is-launching \.launch-laptop \{ animation: launchLaptopRecede \.22s/);
+  assert.match(css, /is-exiting \.launch-laptop \{ animation: launchLaptopRecede \.22s/);
+  assert.match(css, /bootProgress 3s/);
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #0a5fae linear-gradient/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);

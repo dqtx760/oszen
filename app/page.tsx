@@ -168,6 +168,7 @@ export default function Home() {
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [isBootExiting, setIsBootExiting] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [keepScreenOn, setKeepScreenOn] = useState(false);
@@ -247,21 +248,24 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   useEffect(() => {
     if (tab !== "home" || desktopLaunched || isLaunching || isLocked) return;
-    const autoLaunchTimer = window.setTimeout(() => setIsLaunching(true), 5000);
+    const autoLaunchTimer = window.setTimeout(() => setIsLaunching(true), 3500);
     return () => window.clearTimeout(autoLaunchTimer);
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
     if (!isLaunching) return;
+    const bootExitTimer = window.setTimeout(() => setIsBootExiting(true), 3000);
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
-    }, 240);
+    }, 3240);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
+      setIsBootExiting(false);
       setIsDesktopTransitioning(false);
-    }, 800);
+    }, 4000);
     return () => {
+      window.clearTimeout(bootExitTimer);
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
     };
@@ -816,7 +820,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       {tab === "home" && (
         <section className="desktop-page windows-desktop" aria-label="Windows 11 风格主页桌面">
           {(!desktopLaunched || isDesktopTransitioning) && !isLocked && (
-            <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isDesktopTransitioning ? "is-exiting" : ""}`} aria-label="进入 dqtx OS 桌面">
+            <div className={`launch-screen ${isLaunching ? "is-launching" : ""} ${isBootExiting ? "is-exiting" : ""}`} aria-label="进入 dqtx OS 桌面">
               <div className="launch-laptop" aria-hidden="true">
                 <div className="launch-screen-panel">
                   <div className="launch-dots"><i /><i /><i /></div>
@@ -832,7 +836,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 <div className="launch-base" />
               </div>
               <button type="button" className={`launch-hint ${isLaunching ? "is-fading" : ""}`} onClick={() => launchDesktop(false)} disabled={isLaunching}>
-                进入桌面 <span aria-hidden="true">↓</span>
+                {isLaunching ? "系统正在启动" : "进入桌面"} <span aria-hidden="true">↓</span>
               </button>
               <nav className="launch-nav" aria-label="启动页导航">
                 <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
@@ -933,7 +937,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   <aside className="explorer-sidebar">
                     <b>计算机</b>
                     <button className={computerView === "photo" ? "active" : ""} onClick={() => setComputerView("photo")}>photo</button>
-                    <button className={computerView === "toolbox" ? "active" : ""} onClick={() => setComputerView("toolbox")}>工具箱</button>
+                    <button className={computerView === "toolbox" ? "active" : ""} onClick={() => setComputerView("toolbox")}>Tools</button>
                   </aside>
                   <div className="explorer-main">
                     {computerView === "home" && <>
@@ -941,7 +945,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                       <p>常用分类</p>
                       <div className="explorer-grid">
                         <button onClick={() => setComputerView("photo")}><span>🖼️</span><b>photo</b><small>4 张个人照片</small></button>
-                        <button onClick={() => setComputerView("toolbox")}><span>🧰</span><b>工具箱</b><small>桌面快捷方式</small></button>
+                        <button onClick={() => setComputerView("toolbox")}><span>🧰</span><b>Tools</b><small>桌面快捷方式</small></button>
                       </div>
                       <p>设备与驱动器</p>
                       <div className="drive"><span>💽</span><div><b>本地磁盘 (C:)</b><i><em /></i><small>128 GB 可用，共 256 GB</small></div></div>
@@ -956,7 +960,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                       ))}</div>
                     </section>}
                     {computerView === "toolbox" && <section className="computer-section">
-                      <header><div><h2>工具箱</h2><p>桌面快捷方式，一键进入对应内容</p></div><small>{toolboxItems.length} 个项目</small></header>
+                      <header><div><h2>Tools</h2><p>桌面快捷方式，一键进入对应内容</p></div><small>{toolboxItems.length} 个项目</small></header>
                       <div className="toolbox-grid">{toolboxItems.map((item) => <button key={item.label} onClick={() => { if (item.url) openInChrome(item.url, true); if (item.app) openApp(item.app); }}><span>{item.icon}</span><b>{item.label}</b><small>{item.note}</small><i>→</i></button>)}</div>
                     </section>}
                   </div>
