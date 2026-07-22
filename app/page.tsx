@@ -255,7 +255,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
-    }, 80);
+    }, 240);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);

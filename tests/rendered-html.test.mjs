@@ -41,10 +41,11 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 5000\)/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
-  assert.match(page, /\}, 80\)/);
+  assert.match(page, /\}, 240\)/);
   assert.match(page, /\}, 800\)/);
   assert.match(page, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(css, /launchScreenExit/);
+  assert.match(css, /is-launching \.launch-laptop \{ animation: launchLaptopRecede \.22s/);
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #0a5fae linear-gradient/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
