@@ -7,6 +7,8 @@
   --yellow: #ffe268;
   --ink: #17365f;
   --orange: #f2633d;
+  --ease-out-quart: cubic-bezier(.25, 1, .5, 1);
+  --ease-out-expo: cubic-bezier(.16, 1, .3, 1);
 }
 
 * { box-sizing: border-box; }
@@ -52,12 +54,12 @@ button { color: inherit; }
 .desktop-page { position: relative; z-index: 2; min-height: 100svh; }
 .windows-desktop { height: 100svh; overflow: hidden; user-select: none; }
 .desktop-content { position: absolute; z-index: 2; inset: 0; }
-.launch-screen { position: fixed; z-index: 130; inset: 0; isolation: isolate; display: grid; justify-items: center; align-content: center; overflow: hidden; background: #f7f4ec; color: #66708a; cursor: pointer; animation: launchIn .36s ease both; }
+.launch-screen { position: fixed; z-index: 130; inset: 0; isolation: isolate; display: grid; justify-items: center; align-content: center; overflow: hidden; background: #f7f4ec; color: #66708a; animation: launchIn .24s var(--ease-out-expo) both; }
 .launch-screen::after { content: ""; position: absolute; z-index: 2; inset: 0; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 90px #0d5dab38; opacity: 0; pointer-events: none; }
 .launch-screen.is-launching { cursor: wait; }
-.launch-screen.is-exiting { pointer-events: none; animation: launchScreenExit 4.2s linear forwards; }
-.launch-screen.is-exiting .launch-laptop { animation: launchLaptopExpand 4.2s cubic-bezier(.22, .7, .18, 1) forwards; }
-.launch-screen.is-exiting::after { animation: launchBlueTakeover 4.2s cubic-bezier(.4, 0, .2, 1) forwards; }
+.launch-screen.is-exiting { pointer-events: none; animation: launchScreenExit .64s var(--ease-out-quart) forwards; }
+.launch-screen.is-exiting .launch-laptop { animation: launchLaptopRecede .56s var(--ease-out-expo) forwards; }
+.launch-screen.is-exiting::after { animation: launchBlueTakeover .52s var(--ease-out-quart) forwards; }
 .launch-screen.is-exiting .launch-hint { opacity: 0; transform: translateY(10px); }
 .launch-laptop { position: relative; z-index: 1; width: min(980px, 72vw); display: grid; justify-items: center; }
 .launch-screen-panel { position: relative; width: 100%; min-height: clamp(560px, 58vh, 660px); padding: 70px 48px 44px; border: 16px solid #2b2d34; border-radius: 16px 16px 9px 9px; background: repeating-linear-gradient(0deg, #2c8ce4 0 2px, #2f89dc 2px 4px); box-shadow: inset 0 0 45px #0d5dab55; color: #d7eaff; font: 700 18px/1.7 Consolas, ui-monospace, monospace; }
@@ -86,7 +88,10 @@ button { color: inherit; }
 .launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress 1.45s steps(11, end) forwards; }
 .launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .16s 1.35s forwards; }
 .launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
-.launch-hint { position: relative; z-index: 3; display: grid; justify-items: center; gap: 18px; margin-top: 58px; color: #9ca3b5; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; transition: opacity .45s ease, transform .45s ease; }
+.launch-hint { position: relative; z-index: 3; display: grid; justify-items: center; gap: 18px; margin-top: 58px; padding: 0; border: 0; color: #66708a; background: transparent; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; cursor: pointer; transition: color .18s ease, opacity .24s ease, transform .24s ease; }
+.launch-hint:hover, .launch-hint:focus-visible { color: var(--blue-deep); outline: none; }
+.launch-hint:focus-visible { text-decoration: underline; text-underline-offset: 6px; }
+.launch-hint:disabled { cursor: wait; }
 .launch-hint span { font-size: 24px; animation: hintArrow 1.2s ease-in-out infinite; }
 .launch-hint.is-fading { pointer-events: none; animation: launchHintFade .35s 1.35s ease forwards; }
 .launch-nav { position: absolute; z-index: 3; bottom: 32px; left: 50%; display: flex; padding: 5px; transform: translateX(-50%); border-radius: 999px; background: #eef5fbd9; box-shadow: 0 12px 28px #174f843a; transition: opacity .45s ease, transform .45s ease; }
@@ -422,19 +427,19 @@ button { color: inherit; }
 @keyframes pageEnter { from { opacity: 0; transform: translateY(14px) scale(.99); } }
 @keyframes launchIn { from { opacity: 0; transform: scale(1.02); } }
 @keyframes launchType { 0% { max-width: 0; opacity: 1; } 100% { max-width: 100%; opacity: 1; } }
-@keyframes launchLaptopExpand { 0% { transform: scale(1); } 48% { transform: scale(1.42); } 68% { transform: scale(2.35); filter: blur(1px); } 100% { transform: scale(2.65); filter: blur(2px); } }
-@keyframes launchBlueTakeover { 0%, 48% { opacity: 0; } 70%, 100% { opacity: 1; } }
-@keyframes launchScreenExit { 0%, 92% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes launchLaptopRecede { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.985) translateY(-10px); } }
+@keyframes launchBlueTakeover { from { opacity: 0; } to { opacity: .18; } }
+@keyframes launchScreenExit { from { opacity: 1; } to { opacity: 0; } }
 @keyframes hintArrow { 50% { transform: translateY(5px); } }
 @keyframes bootProgress { to { width: 100%; } }
 @keyframes bootPercent { to { opacity: 1; } }
 @keyframes lightboxIn { from { opacity: 0; transform: scale(.985); } }
 @keyframes matrixRain { from { transform: translateY(-10%); } to { transform: translateY(150%); } }
 @keyframes launchHintFade { to { opacity: 0; transform: translateY(10px); } }
-@keyframes desktopArrive { 0%, 84% { opacity: 0; transform: scale(.97); } 100% { opacity: 1; transform: scale(1); } }
-@keyframes desktopBackgroundArrive { 0%, 82% { opacity: 0; transform: scale(1.03); } 100% { opacity: 1; transform: scale(1); } }
-.desktop-content.desktop-arriving { transform-origin: center; animation: desktopArrive 4.2s cubic-bezier(.16, 1, .3, 1) both; }
-.win11-wallpaper.desktop-background-arriving { transform-origin: center; animation: desktopBackgroundArrive 4.2s cubic-bezier(.16, 1, .3, 1) both; }
+@keyframes desktopArrive { from { opacity: .35; transform: scale(.992); } to { opacity: 1; transform: scale(1); } }
+@keyframes desktopBackgroundArrive { from { opacity: .5; transform: scale(1.01); } to { opacity: 1; transform: scale(1); } }
+.desktop-content.desktop-arriving { transform-origin: center; animation: desktopArrive .7s var(--ease-out-expo) both; }
+.win11-wallpaper.desktop-background-arriving { transform-origin: center; animation: desktopBackgroundArrive .7s var(--ease-out-expo) both; }
 
 @media (max-width: 900px) {
   .site-shell { padding-bottom: 108px; }

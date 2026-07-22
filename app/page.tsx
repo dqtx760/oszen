@@ -62,10 +62,10 @@ const canvasConnectors: { from: CardId; to: CardId; fromOffset: [number, number]
 const profileImage = "/profile.png";
 
 const profilePhotos = [
-  { src: "/photos/portrait-formal.png", label: "大强同学（Derek Zhao）" },
-  { src: "/photos/portrait-studio.png", label: "大强同学（Derek Zhao）" },
-  { src: "/photos/portrait-editorial.png", label: "Silhouette 2026" },
-  { src: "/photos/portrait-night.png", label: "夜谈时刻" },
+  { src: "/photos/portrait-formal.png", label: "大强同学（Derek Zhao）", width: 1060, height: 1484 },
+  { src: "/photos/portrait-studio.png", label: "大强同学（Derek Zhao）", width: 1122, height: 1402 },
+  { src: "/photos/portrait-editorial.png", label: "Silhouette 2026", width: 1086, height: 1448 },
+  { src: "/photos/portrait-night.png", label: "夜谈时刻", width: 1086, height: 1448 },
 ];
 
 const shortcuts = [
@@ -168,8 +168,6 @@ export default function Home() {
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
-  const [hasVisited, setHasVisited] = useState(false);
-  const [visitChecked, setVisitChecked] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [keepScreenOn, setKeepScreenOn] = useState(false);
   const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
@@ -235,8 +233,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, []);
 
   useEffect(() => {
-    setHasVisited(window.localStorage.getItem("dqtx-os-visited") === "1");
-    setVisitChecked(true);
+    if (window.localStorage.getItem("dqtx-os-visited") === "1") {
+      setDesktopLaunched(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -252,21 +251,15 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
-    if (!visitChecked || !hasVisited || tab !== "home" || desktopLaunched || isLocked || isLaunching) return;
-    const autoStartTimer = window.setTimeout(() => setIsLaunching(true), 3350);
-    return () => window.clearTimeout(autoStartTimer);
-  }, [desktopLaunched, hasVisited, isLaunching, isLocked, tab, visitChecked]);
-
-  useEffect(() => {
     if (!isLaunching) return;
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
-    }, 1500);
+    }, 80);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
-    }, 5700);
+    }, 800);
     return () => {
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
@@ -308,7 +301,6 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   const launchDesktop = (immediate = false) => {
     if (desktopLaunched || isLocked) return;
     window.localStorage.setItem("dqtx-os-visited", "1");
-    setHasVisited(true);
     if (immediate) {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
@@ -839,7 +831,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 </div>
                 <div className="launch-base" />
               </div>
-              <div className={`launch-hint ${isLaunching ? "is-fading" : ""}`}>Press Enter to Launch <span>↓</span></div>
+              <button type="button" className={`launch-hint ${isLaunching ? "is-fading" : ""}`} onClick={() => launchDesktop(false)} disabled={isLaunching}>
+                进入桌面 <span aria-hidden="true">↓</span>
+              </button>
               <nav className="launch-nav" aria-label="启动页导航">
                 <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>
                 <button onClick={(event) => { event.stopPropagation(); changeTab("work"); }}><small>02</small>作品集</button>
@@ -857,7 +851,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 <time>{time}</time>
                 <p className="lock-greeting"><i />晚上好，大强同学</p>
                 <div className="lock-user">
-                  <img src={profileImage} alt="大强同学" />
+                  <img src={profileImage} alt="大强同学" width="1122" height="1402" decoding="async" />
                   <strong>大强同学</strong>
                   <span>加微信 dqtx33 获取密码</span>
                 </div>
@@ -956,7 +950,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                       <header><div><h2>photo</h2><p>关于大强同学的四个切面</p></div><small>4 个项目</small></header>
                       <div className="photo-grid">{profilePhotos.map((photo) => (
                         <button type="button" className="photo-card" key={photo.src} onClick={() => setSelectedPhoto(photo)}>
-                          <img src={photo.src} alt={photo.label} />
+                          <img src={photo.src} alt={photo.label} width={photo.width} height={photo.height} loading="lazy" decoding="async" />
                           <span>{photo.label}</span>
                         </button>
                       ))}</div>
@@ -985,7 +979,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   {cmdOutput.map((line, lineIndex) => line.kind === "command" ? (
                     <button className="cmd-command-button" key={`${line.text}-${lineIndex}`} type="button" onClick={() => executeCommand(line.command, false)}>{line.text}</button>
                   ) : line.kind === "qr" ? (
-                    <figure className="cmd-qr" key={`${line.text}-${lineIndex}`}><img src="/wechat-qr.webp" alt="大强同学个人微信二维码" /><figcaption>{line.text}</figcaption></figure>
+                    <figure className="cmd-qr" key={`${line.text}-${lineIndex}`}><img src="/wechat-qr.webp" alt="大强同学个人微信二维码" width="150" height="150" loading="lazy" decoding="async" /><figcaption>{line.text}</figcaption></figure>
                   ) : (
                     <p className={`cmd-line cmd-line-${line.kind}`} key={`${line.text}-${lineIndex}`}>{line.text || "\u00a0"}</p>
                   ))}
@@ -1047,7 +1041,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 <button onClick={() => changeTab("work")}><span>🗂️</span>作品集</button>
                 <button onClick={() => changeTab("about")}><span>🧠</span>个人画布</button>
               </div>
-              <div className="start-user"><img src={profileImage} alt="" /><b>大强同学</b><button title="关机并锁屏" aria-label="关机并锁屏" onClick={lockDesktop}>⏻</button></div>
+              <div className="start-user"><img src={profileImage} alt="" width="1122" height="1402" loading="lazy" decoding="async" /><b>大强同学</b><button title="关机并锁屏" aria-label="关机并锁屏" onClick={lockDesktop}>⏻</button></div>
             </div>
           )}
 
@@ -1173,7 +1167,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 <div className="card-grip" data-drag-handle>PROFILE / DEREK ZHAO <span>⠿ <button onClick={() => deleteCanvasCard("identity")} aria-label="删除个人信息卡">×</button></span></div>
                 {renderCanvasConnectionHandle("identity")}
                 <div className="profile-intro">
-                  <img className="profile-photo" src={profileImage} alt="大强同学" />
+                  <img className="profile-photo" src={profileImage} alt="大强同学" width="1122" height="1402" loading="lazy" decoding="async" />
                   <div>
                     <h2>大强同学</h2>
                     <p>92 年生 · 一人公司创业者</p>
