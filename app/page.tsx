@@ -74,7 +74,7 @@ const shortcuts = [
   { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
-  { icon: "/icons/github.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/github.png", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo github-icon" },
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
@@ -175,6 +175,7 @@ export default function Home() {
   const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
   const wakeLockRef = useRef<ScreenWakeLock | null>(null);
   const startupAudioContextRef = useRef<AudioContext | null>(null);
+  const startupAudioBufferRef = useRef<Promise<AudioBuffer> | null>(null);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState(`致每一位来到这里的朋友：
@@ -305,40 +306,27 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const prepareStartupAudio = () => {
-    const AudioContextClass = window.AudioContext;
-    if (!AudioContextClass) return null;
-    const audioContext = startupAudioContextRef.current ?? new AudioContextClass();
+  function prepareStartupAudio() {
+    const audioContext = startupAudioContextRef.current ?? new AudioContext();
     startupAudioContextRef.current = audioContext;
     if (audioContext.state === "suspended") void audioContext.resume();
-    return audioContext;
-  };
+    startupAudioBufferRef.current ??= fetch("/windows-startup.mp3")
+      .then((response) => response.arrayBuffer())
+      .then((audioData) => audioContext.decodeAudioData(audioData));
+  }
 
-  const playDesktopStartupSound = () => {
-    const audioContext = prepareStartupAudio();
-    if (!audioContext || audioContext.state !== "running") return;
-
-    const masterGain = audioContext.createGain();
-    masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
-    masterGain.gain.exponentialRampToValueAtTime(0.14, audioContext.currentTime + 0.06);
-    masterGain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 1.35);
-    masterGain.connect(audioContext.destination);
-
-    [523.25, 659.25, 783.99].forEach((frequency, index) => {
-      const oscillator = audioContext.createOscillator();
-      const noteGain = audioContext.createGain();
-      const startsAt = audioContext.currentTime + index * 0.13;
-      oscillator.type = "sine";
-      oscillator.frequency.setValueAtTime(frequency, startsAt);
-      noteGain.gain.setValueAtTime(0.0001, startsAt);
-      noteGain.gain.exponentialRampToValueAtTime(0.55, startsAt + 0.04);
-      noteGain.gain.exponentialRampToValueAtTime(0.0001, startsAt + 0.72);
-      oscillator.connect(noteGain);
-      noteGain.connect(masterGain);
-      oscillator.start(startsAt);
-      oscillator.stop(startsAt + 0.75);
-    });
-  };
+  function playDesktopStartupSound() {
+    const audioContext = startupAudioContextRef.current;
+    const audioBuffer = startupAudioBufferRef.current;
+    if (!audioContext || !audioBuffer) return;
+    void audioBuffer.then((buffer) => {
+      if (audioContext.state !== "running") return;
+      const source = audioContext.createBufferSource();
+      source.buffer = buffer;
+      source.connect(audioContext.destination);
+      source.start();
+    }).catch(() => undefined);
+  }
 
   const launchDesktop = (immediate = false) => {
     if (desktopLaunched || isLocked) return;

@@ -41,13 +41,14 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
+  assert.match(page, /icon: "\/icons\/github\.png"[^\n]*iconClass: "image-logo github-icon"/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /useState\(projects\[3\]\)/);
   assert.match(page, /className="works-console"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
   assert.match(page, /playDesktopStartupSound\(\)/);
-  assert.match(page, /\[523\.25, 659\.25, 783\.99\]/);
+  assert.match(page, /fetch\("\/windows-startup\.mp3"\)/);
   assert.match(page, /\}, 3240\)/);
   assert.match(page, /\}, 4000\)/);
   assert.match(page, /\{!desktopLaunched && !isLocked && \(/);
@@ -58,6 +59,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
   assert.match(css, /\.image-logo img \{[^}]*filter: none;/);
+  assert.match(css, /\.image-logo\.github-icon img \{[^}]*filter: invert\(1\);/);
   assert.match(css, /\.image-logo\.chrome-icon \{[^}]*box-shadow: none;/);
   assert.doesNotMatch(css, /\.image-logo img \{[^}]*drop-shadow/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
