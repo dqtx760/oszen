@@ -51,8 +51,8 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /label: "远程服务", url: "https:\/\/fix\.dqtx\.cc\/"/);
   assert.doesNotMatch(page, /openApp\(app\.id, \{ maximized: app\.id === "chrome" \}\)/);
   assert.match(page, /name: "Hermes"[^\n]*links: \["https:\/\/hermes-agent\.nousresearch\.com\/"\]/);
-  assert.match(page, /name: "Cindy"[^\n]*links: \["https:\/\/github\.com\/makecindy\/cindy"\]/);
-  assert.match(page, /name: "Minis"[^\n]*links: \["https:\/\/github\.com\/OpenMinis\/AwesomeMinis"\]/);
+  assert.match(page, /name: "Cindy"[^\n]*note: "对标codex开源智能体，有APP、颜值高"[^\n]*links: \["https:\/\/github\.com\/makecindy\/cindy"\]/);
+  assert.match(page, /name: "Minis"[^\n]*note: "手机端 AI 智能体"[^\n]*links: \["https:\/\/github\.com\/OpenMinis\/AwesomeMinis"\]/);
   assert.match(page, /name: "Claudian", icon: "CL", color: "purple"[^\n]*links: \["https:\/\/github\.com\/YishenTu\/claudian"\]/);
   assert.match(page, /name: "CC Switch", icon: "CC", color: "navy"[^\n]*links: \["https:\/\/ccswitch\.io\/zh\/"\]/);
   assert.match(page, /name: "opencodex", icon: "OC", color: "slate"[^\n]*links: \["https:\/\/github\.com\/lidge-jun\/opencodex"\]/);
