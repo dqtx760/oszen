@@ -121,7 +121,13 @@ const agentTools = [
   { name: "Reasonix", links: ["https://reasonix.io/#start"] },
   { name: "Kimi Code", links: ["https://www.kimi.com/code"] },
   { name: "Zed", links: ["https://zed.dev/"] },
-  { name: "Orca / AionUi", links: ["https://github.com/stablyai/orca", "https://aionui.com/"] },
+  { name: "Hermes", links: ["https://hermes-agent.nousresearch.com/"] },
+  { name: "Cindy", links: ["https://github.com/makecindy/cindy"] },
+  { name: "Minis", links: ["https://github.com/OpenMinis/AwesomeMinis"] },
+  { name: "Claudian", links: ["https://github.com/YishenTu/claudian"] },
+  { name: "CC Switch", links: ["https://ccswitch.io/zh/"] },
+  { name: "opencodex", links: ["https://github.com/lidge-jun/opencodex"] },
+  { name: "Orca / AionUi/ccgui", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
 ];
 
 const projects = [
@@ -167,7 +173,7 @@ export default function Home() {
   const [maximizedApps, setMaximizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
-  const [isLaunching, setIsLaunching] = useState(true);
+  const [isLaunching, setIsLaunching] = useState(false);
   const [isBootExiting, setIsBootExiting] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);

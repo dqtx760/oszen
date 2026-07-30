@@ -25,7 +25,7 @@ test("server-renders the dqtx OS launch screen", async () => {
   assert.match(html, /<title>大强同学 · 1 Person \+ AI = 1 Team<\/title>/);
   assert.match(html, /进入 dqtx OS 桌面/);
   assert.match(html, /<button type="button" class="launch-hint">Press Enter to Launch/);
-  assert.match(html, /launching\.\.\./);
+  assert.doesNotMatch(html, /launching\.\.\./);
   assert.match(html, /Windows 11 风格主页桌面/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton/);
 });
@@ -39,7 +39,7 @@ test("keeps startup short and defers non-critical images", async () => {
   ]);
 
   assert.doesNotMatch(page, /dqtx-os-visited/);
-  assert.match(page, /const \[isLaunching, setIsLaunching\] = useState\(true\)/);
+  assert.match(page, /const \[isLaunching, setIsLaunching\] = useState\(false\)/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.doesNotMatch(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
@@ -50,6 +50,13 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /label: "Obsidian模板\.md"[^\n]*maximizeOnOpen: false/);
   assert.match(page, /label: "远程服务", url: "https:\/\/fix\.dqtx\.cc\/"/);
   assert.doesNotMatch(page, /openApp\(app\.id, \{ maximized: app\.id === "chrome" \}\)/);
+  assert.match(page, /name: "Hermes", links: \["https:\/\/hermes-agent\.nousresearch\.com\/"\]/);
+  assert.match(page, /name: "Cindy", links: \["https:\/\/github\.com\/makecindy\/cindy"\]/);
+  assert.match(page, /name: "Minis", links: \["https:\/\/github\.com\/OpenMinis\/AwesomeMinis"\]/);
+  assert.match(page, /name: "Claudian", links: \["https:\/\/github\.com\/YishenTu\/claudian"\]/);
+  assert.match(page, /name: "CC Switch", links: \["https:\/\/ccswitch\.io\/zh\/"\]/);
+  assert.match(page, /name: "opencodex", links: \["https:\/\/github\.com\/lidge-jun\/opencodex"\]/);
+  assert.match(page, /name: "Orca \/ AionUi\/ccgui"[^\n]*https:\/\/github\.com\/zhukunpenglinyutong\/desktop-cc-gui/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /useState\(projects\[3\]\)/);
   assert.match(page, /className="works-console"/);
