@@ -29,7 +29,7 @@ button { color: inherit; }
 .site-shell { position: relative; min-height: 100svh; overflow: hidden; padding-bottom: 128px; background: var(--blue); }
 .site-shell.tab-home { height: 100svh; padding: 0; overflow: hidden; background: #f7f4ec; }
 .site-shell.tab-work { min-height: 100svh; padding-bottom: 0; overflow: visible; background: var(--cream); color: var(--ink); }
-.win11-wallpaper { position: fixed; inset: 0; overflow: hidden; pointer-events: none; background: #0a5fae linear-gradient(#00111a40, #00111a40), url("/wallpaper.webp") center / cover no-repeat; }
+.win11-wallpaper { position: fixed; inset: 0; overflow: hidden; pointer-events: none; background: #020202 linear-gradient(#0000001f, #0000001f), url("/desktop-wallpaper-hacker.webp") center / cover no-repeat; }
 .win11-wallpaper::before, .win11-wallpaper::after { content: none; }
 .win11-wallpaper::before { top: 2vh; right: -8vw; background: linear-gradient(145deg, #ffffffa8, #65c8ff6e 35%, #0b66ddc7 68%, #042e91e8); }
 .win11-wallpaper::after { right: 5vw; bottom: -21vw; transform: rotate(22deg); background: linear-gradient(145deg, #063797d9, #2197efb8 50%, #d3f8ffb0); }

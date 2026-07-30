@@ -54,7 +54,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /is-exiting \.launch-laptop \{ animation: launchLaptopRecede \.22s/);
   assert.match(css, /bootProgress 3s/);
   assert.match(css, /desktopArrive \.7s/);
-  assert.match(css, /background: #0a5fae linear-gradient/);
+  assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /--ease-out-expo/);
