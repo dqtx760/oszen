@@ -41,7 +41,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.doesNotMatch(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
-  assert.match(page, /icon: "\/icons\/github\.png"[^\n]*iconClass: "image-logo github-icon"/);
+  assert.match(page, /icon: "\/icons\/github-cyber\.svg"[^\n]*iconClass: "image-logo github-icon"/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /useState\(projects\[3\]\)/);
   assert.match(page, /className="works-console"/);
@@ -59,9 +59,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
   assert.match(css, /\.image-logo img \{[^}]*filter: none;/);
-  assert.match(css, /\.image-logo\.github-icon \{[^}]*background: #12c9e8;/);
-  assert.match(css, /\.image-logo\.github-icon img \{[^}]*transform: translate\(-2px, -2px\);[^}]*filter: none;/);
-  assert.match(css, /\.image-logo\.github-icon::after \{[^}]*border: 1px solid #087b90;/);
+  assert.match(css, /\.image-logo\.github-icon img \{[^}]*width: 64px;[^}]*height: 64px;[^}]*filter: none;/);
   assert.match(css, /\.image-logo\.chrome-icon \{[^}]*box-shadow: none;/);
   assert.doesNotMatch(css, /\.image-logo img \{[^}]*drop-shadow/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
