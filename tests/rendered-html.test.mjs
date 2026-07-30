@@ -39,7 +39,7 @@ test("keeps startup short and defers non-critical images", async () => {
 
   assert.doesNotMatch(page, /dqtx-os-visited/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
-  assert.match(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
+  assert.doesNotMatch(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
   assert.match(page, /icon: "\/icons\/github\.png"[^\n]*iconClass: "image-logo github-icon"/);
   assert.match(page, /featuredProject, setFeaturedProject/);
