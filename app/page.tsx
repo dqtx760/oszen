@@ -124,10 +124,11 @@ const agentTools = [
   { name: "Hermes", icon: "H", color: "red", note: "Nous Research 的开源智能体", links: ["https://hermes-agent.nousresearch.com/"] },
   { name: "Cindy", icon: "C", color: "pink", note: "可在本地运行的个人 AI 助手", links: ["https://github.com/makecindy/cindy"] },
   { name: "Minis", icon: "M", color: "teal", note: "轻量开源智能体项目合集", links: ["https://github.com/OpenMinis/AwesomeMinis"] },
-  { name: "Claudian", icon: "", color: "", note: "在 Obsidian 中使用 Claude 智能体", links: ["https://github.com/YishenTu/claudian"] },
-  { name: "CC Switch", icon: "", color: "", note: "快速切换 Claude Code 模型与配置", links: ["https://ccswitch.io/zh/"] },
-  { name: "opencodex", icon: "", color: "", note: "扩展 Codex 模型与服务连接能力", links: ["https://github.com/lidge-jun/opencodex"] },
-  { name: "Orca / AionUi/ccgui", icon: "", color: "", note: "多种桌面 AI Agent 图形界面", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
+  { name: "Claudian", icon: "CL", color: "purple", note: "在 Obsidian 中使用 Claude 智能体", links: ["https://github.com/YishenTu/claudian"] },
+  { name: "CC Switch", icon: "CC", color: "navy", note: "快速切换 Claude Code 模型与配置", links: ["https://ccswitch.io/zh/"] },
+  { name: "opencodex", icon: "OC", color: "slate", note: "扩展 Codex 模型与服务连接能力", links: ["https://github.com/lidge-jun/opencodex"] },
+  { name: "GitHub Proxy", icon: "GP", color: "green", note: "GitHub 文件代理与下载加速", links: ["https://github.akams.cn/"] },
+  { name: "Orca / AionUi/ccgui", icon: "UI", color: "brown", note: "多种桌面 AI Agent 图形界面", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
 ];
 
 const projects = [
@@ -224,6 +225,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [cmdOutput]);
 
   const getWindowPosition = (app: DesktopApp) => {
+    if (app === "agent") {
+      return { x: Math.min(350, Math.max(220, Math.round(window.innerWidth * 0.17))), y: Math.max(36, Math.round(window.innerHeight * 0.04)) };
+    }
     if (app === "computer" || app === "cmd" || app === "notepad" || app === "tools") {
       const width = Math.min(app === "cmd" ? 980 : 840, window.innerWidth - 40);
       const height = Math.min(app === "cmd" ? 580 : 560, window.innerHeight - 100);

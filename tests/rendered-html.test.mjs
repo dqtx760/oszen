@@ -53,10 +53,11 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /name: "Hermes"[^\n]*links: \["https:\/\/hermes-agent\.nousresearch\.com\/"\]/);
   assert.match(page, /name: "Cindy"[^\n]*links: \["https:\/\/github\.com\/makecindy\/cindy"\]/);
   assert.match(page, /name: "Minis"[^\n]*links: \["https:\/\/github\.com\/OpenMinis\/AwesomeMinis"\]/);
-  assert.match(page, /name: "Claudian", icon: ""[^\n]*links: \["https:\/\/github\.com\/YishenTu\/claudian"\]/);
-  assert.match(page, /name: "CC Switch", icon: ""[^\n]*links: \["https:\/\/ccswitch\.io\/zh\/"\]/);
-  assert.match(page, /name: "opencodex", icon: ""[^\n]*links: \["https:\/\/github\.com\/lidge-jun\/opencodex"\]/);
-  assert.match(page, /name: "Orca \/ AionUi\/ccgui"[^\n]*https:\/\/github\.com\/zhukunpenglinyutong\/desktop-cc-gui/);
+  assert.match(page, /name: "Claudian", icon: "CL", color: "purple"[^\n]*links: \["https:\/\/github\.com\/YishenTu\/claudian"\]/);
+  assert.match(page, /name: "CC Switch", icon: "CC", color: "navy"[^\n]*links: \["https:\/\/ccswitch\.io\/zh\/"\]/);
+  assert.match(page, /name: "opencodex", icon: "OC", color: "slate"[^\n]*links: \["https:\/\/github\.com\/lidge-jun\/opencodex"\]/);
+  assert.match(page, /name: "GitHub Proxy", icon: "GP", color: "green"[^\n]*links: \["https:\/\/github\.akams\.cn\/"\]/);
+  assert.match(page, /name: "Orca \/ AionUi\/ccgui", icon: "UI", color: "brown"[^\n]*https:\/\/github\.com\/zhukunpenglinyutong\/desktop-cc-gui/);
   assert.match(page, /note: "OpenAI 官方桌面编程智能体"/);
   assert.match(page, /className=\{tool\.icon \? "" : "agent-tool-no-icon"\}/);
   assert.match(page, /featuredProject, setFeaturedProject/);
@@ -79,6 +80,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /\.image-logo img \{[^}]*filter: none;/);
   assert.match(css, /\.image-logo\.github-icon img \{[^}]*width: 64px;[^}]*height: 64px;[^}]*filter: none;/);
   assert.match(css, /\.image-logo\.chrome-icon \{[^}]*box-shadow: none;/);
+  assert.match(css, /\.window-agent \{ width: min\(78vw, calc\(100vw - 40px\)\); height: min\(78svh, calc\(100svh - 100px\)\); \}/);
   assert.doesNotMatch(css, /\.image-logo img \{[^}]*drop-shadow/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
