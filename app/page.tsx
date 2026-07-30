@@ -69,15 +69,15 @@ const profilePhotos = [
 ];
 
 const shortcuts = [
-  { icon: "/icons/web.png", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "image-logo", maximizeOnOpen: true },
-  { icon: "/icons/files.png", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/web.png", label: "个人博客", url: "https://dqtx.cc", kind: "folder", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/files.png", label: "个人简历", url: "https://ai.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
   { icon: "/icons/agent.png", label: "数字工坊", url: "https://app.dqtx.cc", kind: "folder", iconClass: "image-logo" },
-  { icon: "/icons/remote.png", label: "远程服务", url: "https://742112.xyz", kind: "file", iconClass: "image-logo" },
+  { icon: "/icons/remote.png", label: "远程服务", url: "https://fix.dqtx.cc/", kind: "file", iconClass: "image-logo" },
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/github-cyber.svg", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo github-icon" },
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
-  { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
-  { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: true },
+  { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
   { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", download: true },
 ];
 
@@ -893,7 +893,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
           {desktopLaunched && <div className={`desktop-content ${isDesktopTransitioning ? "desktop-arriving" : ""}`}>
           <div className="desktop-icons">
             {desktopApps.filter((app) => app.id === "computer" || app.id === "chrome").map((app) => (
-              <button className="desktop-app-icon" onClick={() => openApp(app.id, { maximized: app.id === "chrome" })} key={app.id}>
+              <button className="desktop-app-icon" onClick={() => openApp(app.id)} key={app.id}>
                 {renderIcon(app.icon, app.iconClass)}
                 <small>{app.label}</small>
               </button>

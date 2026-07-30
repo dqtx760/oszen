@@ -42,6 +42,12 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.doesNotMatch(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
   assert.match(page, /icon: "\/icons\/github-cyber\.svg"[^\n]*iconClass: "image-logo github-icon"/);
+  assert.match(page, /label: "个人博客"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "个人简历"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "Codex APP指南\.md"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "Obsidian模板\.md"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "远程服务", url: "https:\/\/fix\.dqtx\.cc\/"/);
+  assert.doesNotMatch(page, /openApp\(app\.id, \{ maximized: app\.id === "chrome" \}\)/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /useState\(projects\[3\]\)/);
   assert.match(page, /className="works-console"/);
