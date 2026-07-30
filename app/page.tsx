@@ -167,7 +167,7 @@ export default function Home() {
   const [maximizedApps, setMaximizedApps] = useState<DesktopApp[]>([]);
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
-  const [isLaunching, setIsLaunching] = useState(false);
+  const [isLaunching, setIsLaunching] = useState(true);
   const [isBootExiting, setIsBootExiting] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -237,7 +237,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, []);
 
   useEffect(() => {
-    if (tab !== "home" || desktopLaunched || isLaunching) return;
+    if (tab !== "home" || desktopLaunched) return;
     const launchOnEnter = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         if (isLocked) unlockDesktop();
@@ -249,7 +249,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [desktopLaunched, isLaunching, isLocked, tab]);
 
   useEffect(() => {
-    if (!isLaunching) return;
+    if (!isLaunching || tab !== "home") return;
     const bootExitTimer = window.setTimeout(() => setIsBootExiting(true), 3000);
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
@@ -266,7 +266,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
     };
-  }, [isLaunching]);
+  }, [isLaunching, tab]);
 
   useEffect(() => {
     if (!keepScreenOn) return;
@@ -855,8 +855,8 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                 </div>
                 <div className="launch-base" />
               </div>
-              <button type="button" className={`launch-hint ${isLaunching ? "is-fading" : ""}`} onClick={() => launchDesktop(false)} disabled={isLaunching}>
-                {isLaunching ? "系统正在启动" : "进入桌面"} <span aria-hidden="true">↓</span>
+              <button type="button" className="launch-hint" onClick={() => launchDesktop(false)}>
+                Press Enter to Launch <span aria-hidden="true">↓</span>
               </button>
               <nav className="launch-nav" aria-label="启动页导航">
                 <button className="active" onClick={(event) => { event.stopPropagation(); }}> <small>01</small>主页</button>

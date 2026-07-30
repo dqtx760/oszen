@@ -24,7 +24,8 @@ test("server-renders the dqtx OS launch screen", async () => {
   const html = await response.text();
   assert.match(html, /<title>大强同学 · 1 Person \+ AI = 1 Team<\/title>/);
   assert.match(html, /进入 dqtx OS 桌面/);
-  assert.match(html, /<button type="button" class="launch-hint[^\"]*">进入桌面/);
+  assert.match(html, /<button type="button" class="launch-hint">Press Enter to Launch/);
+  assert.match(html, /launching\.\.\./);
   assert.match(html, /Windows 11 风格主页桌面/);
   assert.doesNotMatch(html, /Your site is taking shape|react-loading-skeleton/);
 });
@@ -38,6 +39,7 @@ test("keeps startup short and defers non-critical images", async () => {
   ]);
 
   assert.doesNotMatch(page, /dqtx-os-visited/);
+  assert.match(page, /const \[isLaunching, setIsLaunching\] = useState\(true\)/);
   assert.match(page, /onClick=\{\(\) => launchDesktop\(false\)\}/);
   assert.doesNotMatch(page, /setTimeout\(\(\) => setIsLaunching\(true\), 3500\)/);
   assert.match(page, /icon: "\/icons\/chrome-cyber\.png"/);
@@ -53,6 +55,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /className="works-console"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
+  assert.match(page, /if \(!isLaunching \|\| tab !== "home"\) return;/);
   assert.match(page, /playDesktopStartupSound\(\)/);
   assert.match(page, /fetch\("\/windows-startup\.mp3"\)/);
   assert.match(page, /\}, 3240\)/);
