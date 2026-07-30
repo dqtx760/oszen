@@ -114,20 +114,20 @@ const efficiencyTools = [
 ];
 
 const agentTools = [
-  { name: "Codex APP", links: ["https://apps.microsoft.com/detail/9plm9xgg6vks?hl=zh-CN&gl=CN", "https://store.rg-adguard.net/", "https://openai.com/zh-Hans-CN/codex/"] },
-  { name: "Coder Work", links: ["https://qoder.com/qoderwork"] },
-  { name: "Workbody", links: ["https://www.codebuddy.cn/work/#download-section"] },
-  { name: "ZCode", links: ["https://zcode.z.ai/cn"] },
-  { name: "Reasonix", links: ["https://reasonix.io/#start"] },
-  { name: "Kimi Code", links: ["https://www.kimi.com/code"] },
-  { name: "Zed", links: ["https://zed.dev/"] },
-  { name: "Hermes", links: ["https://hermes-agent.nousresearch.com/"] },
-  { name: "Cindy", links: ["https://github.com/makecindy/cindy"] },
-  { name: "Minis", links: ["https://github.com/OpenMinis/AwesomeMinis"] },
-  { name: "Claudian", links: ["https://github.com/YishenTu/claudian"] },
-  { name: "CC Switch", links: ["https://ccswitch.io/zh/"] },
-  { name: "opencodex", links: ["https://github.com/lidge-jun/opencodex"] },
-  { name: "Orca / AionUi/ccgui", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
+  { name: "Codex APP", icon: "CX", color: "blue", note: "OpenAI 官方桌面编程智能体", links: ["https://apps.microsoft.com/detail/9plm9xgg6vks?hl=zh-CN&gl=CN", "https://store.rg-adguard.net/", "https://openai.com/zh-Hans-CN/codex/"] },
+  { name: "Coder Work", icon: "Q", color: "violet", note: "Qoder 推出的桌面智能开发环境", links: ["https://qoder.com/qoderwork"] },
+  { name: "Workbody", icon: "WB", color: "cyan", note: "腾讯 CodeBuddy 智能开发工作台", links: ["https://www.codebuddy.cn/work/#download-section"] },
+  { name: "ZCode", icon: "Z", color: "orange", note: "智谱面向开发者的 AI 编程工具", links: ["https://zcode.z.ai/cn"] },
+  { name: "Reasonix", icon: "R", color: "green", note: "面向复杂任务的智能体工作平台", links: ["https://reasonix.io/#start"] },
+  { name: "Kimi Code", icon: "K", color: "indigo", note: "Kimi 提供的 AI 编程助手", links: ["https://www.kimi.com/code"] },
+  { name: "Zed", icon: "ZED", color: "amber", note: "高性能协作代码编辑器", links: ["https://zed.dev/"] },
+  { name: "Hermes", icon: "H", color: "red", note: "Nous Research 的开源智能体", links: ["https://hermes-agent.nousresearch.com/"] },
+  { name: "Cindy", icon: "C", color: "pink", note: "可在本地运行的个人 AI 助手", links: ["https://github.com/makecindy/cindy"] },
+  { name: "Minis", icon: "M", color: "teal", note: "轻量开源智能体项目合集", links: ["https://github.com/OpenMinis/AwesomeMinis"] },
+  { name: "Claudian", icon: "", color: "", note: "在 Obsidian 中使用 Claude 智能体", links: ["https://github.com/YishenTu/claudian"] },
+  { name: "CC Switch", icon: "", color: "", note: "快速切换 Claude Code 模型与配置", links: ["https://ccswitch.io/zh/"] },
+  { name: "opencodex", icon: "", color: "", note: "扩展 Codex 模型与服务连接能力", links: ["https://github.com/lidge-jun/opencodex"] },
+  { name: "Orca / AionUi/ccgui", icon: "", color: "", note: "多种桌面 AI Agent 图形界面", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
 ];
 
 const projects = [
@@ -224,7 +224,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   }, [cmdOutput]);
 
   const getWindowPosition = (app: DesktopApp) => {
-    if (app === "computer" || app === "cmd" || app === "notepad" || app === "tools" || app === "agent") {
+    if (app === "computer" || app === "cmd" || app === "notepad" || app === "tools") {
       const width = Math.min(app === "cmd" ? 980 : 840, window.innerWidth - 40);
       const height = Math.min(app === "cmd" ? 580 : 560, window.innerHeight - 100);
       return { x: Math.max(12, Math.round((window.innerWidth - width) / 2)), y: Math.max(12, Math.round((window.innerHeight - height) / 2) - 20) };
@@ -1041,8 +1041,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   <header><span>Ai Agent</span><small>开发与智能体工具入口</small></header>
                   <div className="agent-list">
                     {agentTools.map((tool) => (
-                      <article key={tool.name}>
-                        <b>{tool.name}</b>
+                      <article className={tool.icon ? "" : "agent-tool-no-icon"} key={tool.name}>
+                        {tool.icon && <i className={`agent-tool-icon agent-tool-icon-${tool.color}`} aria-hidden="true">{tool.icon}</i>}
+                        <span><b>{tool.name}</b><small>{tool.note}</small></span>
                         <div>{tool.links.map((url) => <button key={url} onClick={() => openInChrome(url, true)}>{new URL(url).hostname}</button>)}</div>
                       </article>
                     ))}
