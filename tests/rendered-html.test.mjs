@@ -59,7 +59,8 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
   assert.match(css, /\.image-logo img \{[^}]*filter: none;/);
-  assert.match(css, /\.image-logo\.github-icon img \{[^}]*filter: invert\(1\);/);
+  assert.match(css, /\.image-logo\.github-icon \{[^}]*background: #12c9e8;/);
+  assert.match(css, /\.image-logo\.github-icon img \{[^}]*filter: none;/);
   assert.match(css, /\.image-logo\.chrome-icon \{[^}]*box-shadow: none;/);
   assert.doesNotMatch(css, /\.image-logo img \{[^}]*drop-shadow/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
