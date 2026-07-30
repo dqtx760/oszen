@@ -46,6 +46,8 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /className="works-console"/);
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
+  assert.match(page, /playDesktopStartupSound\(\)/);
+  assert.match(page, /\[523\.25, 659\.25, 783\.99\]/);
   assert.match(page, /\}, 3240\)/);
   assert.match(page, /\}, 4000\)/);
   assert.match(page, /\{!desktopLaunched && !isLocked && \(/);
@@ -55,6 +57,9 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(css, /bootProgress 3s/);
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
+  assert.match(css, /\.image-logo img \{[^}]*filter: none;/);
+  assert.match(css, /\.image-logo\.chrome-icon \{[^}]*box-shadow: none;/);
+  assert.doesNotMatch(css, /\.image-logo img \{[^}]*drop-shadow/);
   assert.match(css, /desktopBackgroundArrive \{ from \{ opacity: 1/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /--ease-out-expo/);

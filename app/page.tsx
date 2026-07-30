@@ -174,6 +174,7 @@ export default function Home() {
   const [keepScreenOn, setKeepScreenOn] = useState(false);
   const [keepScreenSeconds, setKeepScreenSeconds] = useState(0);
   const wakeLockRef = useRef<ScreenWakeLock | null>(null);
+  const startupAudioContextRef = useRef<AudioContext | null>(null);
   const [chromeUrl, setChromeUrl] = useState("");
   const [chromePageUrl, setChromePageUrl] = useState("https://www.google.com/webhp?igu=1");
   const [notepadText, setNotepadText] = useState(`致每一位来到这里的朋友：
@@ -258,6 +259,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
       setIsDesktopTransitioning(true);
+      playDesktopStartupSound();
     }, 3240);
     const autoCompleteTimer = window.setTimeout(() => {
       setIsLaunching(false);
@@ -303,8 +305,44 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const prepareStartupAudio = () => {
+    const AudioContextClass = window.AudioContext;
+    if (!AudioContextClass) return null;
+    const audioContext = startupAudioContextRef.current ?? new AudioContextClass();
+    startupAudioContextRef.current = audioContext;
+    if (audioContext.state === "suspended") void audioContext.resume();
+    return audioContext;
+  };
+
+  const playDesktopStartupSound = () => {
+    const audioContext = prepareStartupAudio();
+    if (!audioContext || audioContext.state !== "running") return;
+
+    const masterGain = audioContext.createGain();
+    masterGain.gain.setValueAtTime(0.0001, audioContext.currentTime);
+    masterGain.gain.exponentialRampToValueAtTime(0.14, audioContext.currentTime + 0.06);
+    masterGain.gain.exponentialRampToValueAtTime(0.0001, audioContext.currentTime + 1.35);
+    masterGain.connect(audioContext.destination);
+
+    [523.25, 659.25, 783.99].forEach((frequency, index) => {
+      const oscillator = audioContext.createOscillator();
+      const noteGain = audioContext.createGain();
+      const startsAt = audioContext.currentTime + index * 0.13;
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(frequency, startsAt);
+      noteGain.gain.setValueAtTime(0.0001, startsAt);
+      noteGain.gain.exponentialRampToValueAtTime(0.55, startsAt + 0.04);
+      noteGain.gain.exponentialRampToValueAtTime(0.0001, startsAt + 0.72);
+      oscillator.connect(noteGain);
+      noteGain.connect(masterGain);
+      oscillator.start(startsAt);
+      oscillator.stop(startsAt + 0.75);
+    });
+  };
+
   const launchDesktop = (immediate = false) => {
     if (desktopLaunched || isLocked) return;
+    prepareStartupAudio();
     if (immediate) {
       setIsLaunching(false);
       setIsDesktopTransitioning(false);
