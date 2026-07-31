@@ -114,7 +114,7 @@ const efficiencyTools = [
 ];
 
 const agentTools = [
-  { name: "Codex APP", icon: "CX", color: "blue", note: "OpenAI 官方桌面编程智能体", links: ["https://apps.microsoft.com/detail/9plm9xgg6vks?hl=zh-CN&gl=CN", "https://store.rg-adguard.net/", "https://openai.com/zh-Hans-CN/codex/"] },
+  { name: "ChatGPT 桌面端", icon: "CX", color: "blue", note: "OpenAI 官方桌面编程智能体", links: ["https://apps.microsoft.com/detail/9plm9xgg6vks?hl=zh-CN&gl=CN", "https://store.rg-adguard.net/", "https://openai.com/zh-Hans-CN/codex/"] },
   { name: "Coder Work", icon: "Q", color: "violet", note: "Qoder 推出的桌面智能开发环境", links: ["https://qoder.com/qoderwork"] },
   { name: "Workbody", icon: "WB", color: "cyan", note: "腾讯 CodeBuddy 智能开发工作台", links: ["https://www.codebuddy.cn/work/#download-section"] },
   { name: "ZCode", icon: "Z", color: "orange", note: "智谱面向开发者的 AI 编程工具", links: ["https://zcode.z.ai/cn"] },

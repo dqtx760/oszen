@@ -59,6 +59,7 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /name: "GitHub Proxy", icon: "GP", color: "green"[^\n]*links: \["https:\/\/github\.akams\.cn\/"\]/);
   assert.match(page, /name: "Orca \/ AionUi\/ccgui", icon: "UI", color: "brown"[^\n]*https:\/\/github\.com\/zhukunpenglinyutong\/desktop-cc-gui/);
   assert.match(page, /note: "OpenAI 官方桌面编程智能体"/);
+  assert.match(page, /name: "ChatGPT 桌面端", icon: "CX"/);
   assert.match(page, /className=\{tool\.icon \? "" : "agent-tool-no-icon"\}/);
   assert.match(page, /featuredProject, setFeaturedProject/);
   assert.match(page, /useState\(projects\[3\]\)/);
