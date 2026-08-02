@@ -437,6 +437,10 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
   };
 
   const openInChrome = (url: string, maximized = false) => {
+    if (/^https:\/\/mp\.weixin\.qq\.com\//i.test(url)) {
+      window.open(url, "_blank", "noopener,noreferrer");
+      return;
+    }
     setChromeUrl(url);
     setChromePageUrl(url);
     openApp("chrome", { maximized });
