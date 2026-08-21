@@ -103,14 +103,13 @@ const efficiencyTools = [
   { note: "截图", links: [{ name: "PixPin", url: "https://pixpin.cn/" }, { name: "ShareX", url: "https://getsharex.com/" }] },
   { note: "网页下载", links: [{ name: "IDM", url: "https://www.internetdownloadmanager.com/" }] },
   { note: "全能搜索", links: [{ name: "Listary", url: "https://www.listary.com/" }] },
-  { note: "语音输入", links: [{ name: "秘塔回响", url: "https://metaso.cn/echo/downloads" }] },
   { note: "局域网传输", links: [{ name: "LANDrop", url: "https://landrop.app/" }] },
   { note: "语音输入、常用语同步", links: [{ name: "微信输入法", url: "https://z.weixin.qq.com/" }] },
   { note: "图床管理", links: [{ name: "PicGo", url: "https://github.com/Molunerfinn/PicGo" }, { name: "PicList", url: "https://piclist.cn/" }] },
   { note: "极速预览", links: [{ name: "QuickLook", url: "https://pooi.moe/QuickLook/" }] },
   { note: "无残留卸载", links: [{ name: "HiBit", url: "https://hibitsoft.ir/" }] },
   { note: "你的数字工程师", links: [{ name: "Claude Code", url: "https://claude.ai/code" }, { name: "Codex", url: "https://openai.com/codex/" }] },
-  { note: "Agent 模型快速切换", links: [{ name: "CC-switch", url: "https://github.com/farion1231/cc-switch" }] },
+  { note: "Agent 模型快速切换", links: [{ name: "CC-switch", url: "https://github.com/farion1231/cc-switch" }, { name: "Opencodex", url: "https://mp.weixin.qq.com/s/_pSBZvLVB_-zhlruIKMgCw" }] },
   { note: "智能体", links: [{ name: "Cherry Studio", url: "https://cherry-ai.com/" }] },
   { note: "多标签终端", links: [{ name: "Warp", url: "https://www.warp.dev/" }, { name: "Terminal", url: "https://support.apple.com/guide/terminal/welcome/mac" }, { name: "wezterm", url: "https://wezterm.org/" }] },
 ];
@@ -130,7 +129,10 @@ const agentTools = [
   { name: "CC Switch", icon: "CC", color: "navy", note: "快速切换 Claude Code 模型与配置", links: ["https://ccswitch.io/zh/"] },
   { name: "opencodex", icon: "OC", color: "slate", note: "扩展 Codex 模型与服务连接能力", links: ["https://github.com/lidge-jun/opencodex"] },
   { name: "GitHub Proxy", icon: "GP", color: "green", note: "GitHub 文件代理与下载加速", links: ["https://github.akams.cn/"] },
-  { name: "Orca / AionUi/ccgui", icon: "UI", color: "brown", note: "多种桌面 AI Agent 图形界面", links: ["https://github.com/stablyai/orca", "https://aionui.com/", "https://github.com/zhukunpenglinyutong/desktop-cc-gui"] },
+  { name: "AionUi", icon: "UI", color: "brown", note: "桌面 AI Agent 图形界面", links: ["https://aionui.com/"] },
+  { name: "Netlify CLI", icon: "N", color: "green", note: "Netlify 网站部署命令行工具", links: ["https://docs.netlify.com/api-and-cli-guides/cli-guides/get-started-with-cli/"] },
+  { name: "Cloudflare wrangler", icon: "CF", color: "orange", note: "Cloudflare Workers 命令行工具", links: ["https://developers.cloudflare.com/workers/wrangler/"] },
+  { name: "Vercel CLI", icon: "V", color: "slate", note: "Vercel 项目部署命令行工具", links: ["https://vercel.com/docs/cli"] },
 ];
 
 const projects = [

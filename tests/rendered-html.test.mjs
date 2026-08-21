@@ -60,7 +60,12 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /name: "CC Switch", icon: "CC", color: "navy"[^\n]*links: \["https:\/\/ccswitch\.io\/zh\/"\]/);
   assert.match(page, /name: "opencodex", icon: "OC", color: "slate"[^\n]*links: \["https:\/\/github\.com\/lidge-jun\/opencodex"\]/);
   assert.match(page, /name: "GitHub Proxy", icon: "GP", color: "green"[^\n]*links: \["https:\/\/github\.akams\.cn\/"\]/);
-  assert.match(page, /name: "Orca \/ AionUi\/ccgui", icon: "UI", color: "brown"[^\n]*https:\/\/github\.com\/zhukunpenglinyutong\/desktop-cc-gui/);
+  assert.match(page, /name: "AionUi", icon: "UI", color: "brown"[^\n]*links: \["https:\/\/aionui\.com\/"\]/);
+  assert.match(page, /name: "Netlify CLI", icon: "N", color: "green"[^\n]*links: \["https:\/\/docs\.netlify\.com\/api-and-cli-guides\/cli-guides\/get-started-with-cli\/"\]/);
+  assert.match(page, /name: "Cloudflare wrangler", icon: "CF", color: "orange"[^\n]*links: \["https:\/\/developers\.cloudflare\.com\/workers\/wrangler\/"\]/);
+  assert.match(page, /name: "Vercel CLI", icon: "V", color: "slate"[^\n]*links: \["https:\/\/vercel\.com\/docs\/cli"\]/);
+  assert.match(page, /note: "Agent 模型快速切换", links: \[\{ name: "CC-switch", url: "https:\/\/github\.com\/farion1231\/cc-switch" \}, \{ name: "Opencodex", url: "https:\/\/mp\.weixin\.qq\.com\/s\/_pSBZvLVB_-zhlruIKMgCw" \}\]/);
+  assert.doesNotMatch(page, /秘塔回响|Orca \/ AionUi\/ccgui|desktop-cc-gui/);
   assert.match(page, /note: "OpenAI 官方桌面编程智能体"/);
   assert.match(page, /name: "ChatGPT 桌面端", icon: "CX"/);
   assert.match(page, /className=\{tool\.icon \? "" : "agent-tool-no-icon"\}/);
