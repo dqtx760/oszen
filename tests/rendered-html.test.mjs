@@ -67,6 +67,12 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /tab === "home" && <div className=\{`win11-wallpaper/);
   assert.match(page, /setTimeout\(\(\) => setIsBootExiting\(true\), 3000\)/);
   assert.match(page, /if \(!isLaunching \|\| tab !== "home"\) return;/);
+  assert.match(page, /const BOOT_PROGRESS_STEPS = 12/);
+  assert.match(page, /const BOOT_PROGRESS_INTERVAL_MS = 240/);
+  assert.match(page, /setBootProgress\(0\)/);
+  assert.match(page, /Math\.min\(BOOT_PROGRESS_STEPS, current \+ 1\)/);
+  assert.match(page, /const bootBar = `\$\{"█"\.repeat\(bootProgress\)\}\$\{"░"\.repeat\(BOOT_PROGRESS_STEPS - bootProgress\)\}`/);
+  assert.match(page, /aria-label=\{`正在启动 \$\{bootPercent\}%`\}/);
   assert.match(page, /playDesktopStartupSound\(\)/);
   assert.match(page, /fetch\("\/windows-startup\.mp3"\)/);
   assert.match(page, /\}, 3240\)/);
@@ -75,7 +81,8 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /loading="lazy" decoding="async"/);
   assert.doesNotMatch(css, /launchScreenExit/);
   assert.match(css, /is-exiting \.launch-laptop \{ animation: launchLaptopRecede \.22s/);
-  assert.match(css, /bootProgress 3s/);
+  assert.doesNotMatch(css, /animation: bootProgress/);
+  assert.match(css, /\.launch-progress > b \{[^}]*white-space: nowrap;/);
   assert.match(css, /desktopArrive \.7s/);
   assert.match(css, /background: #020202 linear-gradient\(#0000001f, #0000001f\), url\("\/desktop-wallpaper-hacker\.webp"\)/);
   assert.match(css, /\.image-logo img \{[^}]*filter: none;/);

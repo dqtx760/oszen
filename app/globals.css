@@ -81,13 +81,9 @@ button { color: inherit; }
 .launch-screen-panel .launch-line:nth-of-type(7) { animation-delay: 2.62s; }
 .launch-screen-panel b { color: #ffe268; }
 .launch-screen-panel mark { padding: 3px 9px; border-radius: 4px; background: #ffe268; color: #205b9f; }
-.launch-progress { display: grid; grid-template-columns: auto 158px auto; align-items: center; gap: 8px; width: max-content; margin-top: -4px; color: #dcefff; font: 700 16px/1.5 Consolas, ui-monospace, monospace; }
-.launch-progress > b { position: relative; width: 158px; height: 22px; overflow: hidden; border: 2px solid #ffe268; box-shadow: inset 0 0 0 1px #c6911d; }
-.launch-progress > b::before, .launch-progress > b::after { position: absolute; top: -5px; z-index: 2; color: #ffe268; font-size: 25px; line-height: 1; }
-.launch-progress > b::before { content: "["; left: -7px; }
-.launch-progress > b::after { content: "]"; right: -7px; }
-.launch-progress i { display: block; width: 0; height: 100%; background: repeating-linear-gradient(90deg, #ffe268 0 13px, #f7d84d 13px 15px); box-shadow: 0 0 12px #ffe2688f; animation: bootProgress 3s steps(11, end) forwards; }
-.launch-progress em { color: #ffe268; font-style: normal; opacity: 0; animation: bootPercent .16s 2.84s forwards; }
+.launch-progress { display: grid; grid-template-columns: auto auto auto; align-items: center; gap: 8px; width: max-content; margin-top: -4px; color: #dcefff; font: 700 16px/1.5 Consolas, ui-monospace, monospace; }
+.launch-progress > b { color: #ffe268; font-weight: 700; letter-spacing: -.04em; white-space: nowrap; }
+.launch-progress em { min-width: 4ch; color: #ffe268; font-style: normal; text-align: right; }
 .launch-base { width: 106%; height: 18px; border-radius: 0 0 42px 42px; background: linear-gradient(#c6c8ce, #8f9299 42%, #eceff4); box-shadow: 0 25px 40px #11182730; }
 .launch-hint { position: relative; z-index: 3; display: grid; justify-items: center; gap: 18px; margin-top: 58px; padding: 0; border: 0; color: #66708a; background: transparent; font: 15px ui-monospace, Consolas, monospace; letter-spacing: .18em; cursor: pointer; transition: color .18s ease, opacity .24s ease, transform .24s ease; }
 .launch-hint:hover, .launch-hint:focus-visible { color: var(--blue-deep); outline: none; }
@@ -441,8 +437,6 @@ button { color: inherit; }
 @keyframes launchType { 0% { max-width: 0; opacity: 1; } 100% { max-width: 100%; opacity: 1; } }
 @keyframes launchLaptopRecede { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(.985) translateY(-8px); } }
 @keyframes hintArrow { 50% { transform: translateY(5px); } }
-@keyframes bootProgress { to { width: 100%; } }
-@keyframes bootPercent { to { opacity: 1; } }
 @keyframes lightboxIn { from { opacity: 0; transform: scale(.985); } }
 @keyframes matrixRain { from { transform: translateY(-10%); } to { transform: translateY(150%); } }
 @keyframes launchHintFade { to { opacity: 0; transform: translateY(10px); } }
@@ -497,7 +491,6 @@ button { color: inherit; }
   .launch-screen-panel p { margin-bottom: 12px; }
   .launch-screen-panel::before { right: 22px; left: 22px; }
   .launch-progress { grid-template-columns: 1fr; gap: 4px; font-size: 12px; }
-  .launch-progress > b { height: 20px; }
   .launch-nav { bottom: 14px; }
   .launch-nav button { min-width: 74px; padding: 8px 7px; font-size: 12px; }
   .desktop-app-icon small { font-size: 10px; }

@@ -147,6 +147,9 @@ const openSource = [
   { name: "oplist-Neumorphism", note: "OpenList 主题", url: "https://github.com/dqtx760/oplist-Neumorphism" },
 ];
 
+const BOOT_PROGRESS_STEPS = 12;
+const BOOT_PROGRESS_INTERVAL_MS = 240;
+
 export default function Home() {
   const [tab, setTab] = useState<Tab>("home");
   const [time, setTime] = useState("");
@@ -175,6 +178,7 @@ export default function Home() {
   const [startOpen, setStartOpen] = useState(false);
   const [desktopLaunched, setDesktopLaunched] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
+  const [bootProgress, setBootProgress] = useState(0);
   const [isBootExiting, setIsBootExiting] = useState(false);
   const [isDesktopTransitioning, setIsDesktopTransitioning] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -219,6 +223,9 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   const renderIcon = (icon: string, iconClass: string) => <span className={`app-symbol ${iconClass}${icon === "/icons/chrome-cyber.png" ? " chrome-icon" : ""}`}>{icon.startsWith("/") ? <img src={icon} alt="" /> : icon}</span>;
 
+  const bootPercent = Math.round((bootProgress / BOOT_PROGRESS_STEPS) * 100);
+  const bootBar = `${"█".repeat(bootProgress)}${"░".repeat(BOOT_PROGRESS_STEPS - bootProgress)}`;
+
   useEffect(() => {
     const output = cmdOutputRef.current;
     if (output) output.scrollTop = output.scrollHeight;
@@ -260,6 +267,13 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
 
   useEffect(() => {
     if (!isLaunching || tab !== "home") return;
+    const bootProgressTimer = window.setInterval(() => {
+      setBootProgress((current) => {
+        const next = Math.min(BOOT_PROGRESS_STEPS, current + 1);
+        if (next === BOOT_PROGRESS_STEPS) window.clearInterval(bootProgressTimer);
+        return next;
+      });
+    }, BOOT_PROGRESS_INTERVAL_MS);
     const bootExitTimer = window.setTimeout(() => setIsBootExiting(true), 3000);
     const desktopTransitionTimer = window.setTimeout(() => {
       setDesktopLaunched(true);
@@ -272,6 +286,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       setIsDesktopTransitioning(false);
     }, 4000);
     return () => {
+      window.clearInterval(bootProgressTimer);
       window.clearTimeout(bootExitTimer);
       window.clearTimeout(desktopTransitionTimer);
       window.clearTimeout(autoCompleteTimer);
@@ -341,7 +356,10 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
       setDesktopLaunched(true);
       return;
     }
-    if (!isLaunching) setIsLaunching(true);
+    if (!isLaunching) {
+      setBootProgress(0);
+      setIsLaunching(true);
+    }
   };
 
   const unlockDesktop = () => {
@@ -865,7 +883,7 @@ AI 的变化很快，但真正稀缺的从来不是某个模型或某个提示�
                   <p className="launch-line"><b>$</b> echo "1 person + AI = 1 team"</p>
                   <p className="launch-line"><mark>&gt; 1 person + AI = 1 team</mark></p>
                   <p className="launch-line"><b>$</b> open os.dqtx.cc</p>
-                  {isLaunching && <div className="launch-progress" aria-label="正在启动"><span>&gt; launching...</span><b><i /></b><em>100%</em></div>}
+                  {isLaunching && <div className="launch-progress" role="status" aria-label={`正在启动 ${bootPercent}%`}><span>&gt; launching...</span><b aria-hidden="true">[{bootBar}]</b><em>{bootPercent}%</em></div>}
                 </div>
                 <div className="launch-base" />
               </div>
