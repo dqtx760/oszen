@@ -76,11 +76,11 @@ const shortcuts = [
   { icon: "/icons/star.png", label: "大强导航", url: "https://123.dqtx.cc", kind: "folder", iconClass: "image-logo" },
   { icon: "/icons/github-cyber.svg", label: "GitHub", url: "https://github.com/dqtx760", kind: "file", iconClass: "image-logo github-icon" },
   { icon: "/icons/x.png", label: "推特/X", url: "https://x.com/dqtx760", kind: "file", iconClass: "image-logo" },
-  { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
-  { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/files.png", label: "Codex手册", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/files.png", label: "OB模板库", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
   { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", download: true },
   { icon: "/icons/files.png", label: "ChatGPT充值", url: "https://plus.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
-  { icon: "/icons/package.png", label: "Codex手册", url: "https://gpt.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/package.png", label: "Codex安装", url: "https://gpt.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
 ];
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [

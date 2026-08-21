@@ -46,10 +46,11 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /icon: "\/icons\/github-cyber\.svg"[^\n]*iconClass: "image-logo github-icon"/);
   assert.match(page, /label: "个人博客"[^\n]*maximizeOnOpen: false/);
   assert.match(page, /label: "个人简历"[^\n]*maximizeOnOpen: false/);
-  assert.match(page, /label: "Codex APP指南\.md"[^\n]*maximizeOnOpen: false/);
-  assert.match(page, /label: "Obsidian模板\.md"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "Codex手册"[^\n]*F3HS6BUfTDP0h3rFipoJhA[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /label: "OB模板库"[^\n]*5LkcBS6TvwXEGxIMiA-1jQ[^\n]*maximizeOnOpen: false/);
   assert.match(page, /icon: "\/icons\/files\.png", label: "ChatGPT充值", url: "https:\/\/plus\.dqtx\.cc\/"[^\n]*maximizeOnOpen: false/);
-  assert.match(page, /icon: "\/icons\/package\.png", label: "Codex手册", url: "https:\/\/gpt\.dqtx\.cc\/"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /icon: "\/icons\/package\.png", label: "Codex安装", url: "https:\/\/gpt\.dqtx\.cc\/"[^\n]*maximizeOnOpen: false/);
+  assert.doesNotMatch(page, /Codex APP指南\.md|Obsidian模板\.md/);
   assert.match(page, /label: "远程服务", url: "https:\/\/fix\.dqtx\.cc\/"/);
   assert.doesNotMatch(page, /openApp\(app\.id, \{ maximized: app\.id === "chrome" \}\)/);
   assert.match(page, /name: "Hermes"[^\n]*links: \["https:\/\/hermes-agent\.nousresearch\.com\/"\]/);
