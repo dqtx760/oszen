@@ -48,6 +48,8 @@ test("keeps startup short and defers non-critical images", async () => {
   assert.match(page, /label: "个人简历"[^\n]*maximizeOnOpen: false/);
   assert.match(page, /label: "Codex APP指南\.md"[^\n]*maximizeOnOpen: false/);
   assert.match(page, /label: "Obsidian模板\.md"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /icon: "\/icons\/files\.png", label: "ChatGPT充值", url: "https:\/\/plus\.dqtx\.cc\/"[^\n]*maximizeOnOpen: false/);
+  assert.match(page, /icon: "\/icons\/package\.png", label: "Codex手册", url: "https:\/\/gpt\.dqtx\.cc\/"[^\n]*maximizeOnOpen: false/);
   assert.match(page, /label: "远程服务", url: "https:\/\/fix\.dqtx\.cc\/"/);
   assert.doesNotMatch(page, /openApp\(app\.id, \{ maximized: app\.id === "chrome" \}\)/);
   assert.match(page, /name: "Hermes"[^\n]*links: \["https:\/\/hermes-agent\.nousresearch\.com\/"\]/);

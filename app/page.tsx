@@ -79,6 +79,8 @@ const shortcuts = [
   { icon: "/icons/files.png", label: "Codex APP指南.md", url: "https://mp.weixin.qq.com/s/F3HS6BUfTDP0h3rFipoJhA", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
   { icon: "/icons/files.png", label: "Obsidian模板.md", url: "https://mp.weixin.qq.com/s/5LkcBS6TvwXEGxIMiA-1jQ", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
   { icon: "/icons/package.png", label: "SetProxy.bat", url: "https://lz.qaiu.top/parser?url=https://wwbxq.lanzouq.com/iILcv3tj3web", kind: "file", iconClass: "image-logo", download: true },
+  { icon: "/icons/files.png", label: "ChatGPT充值", url: "https://plus.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
+  { icon: "/icons/package.png", label: "Codex手册", url: "https://gpt.dqtx.cc/", kind: "file", iconClass: "image-logo", maximizeOnOpen: false },
 ];
 
 const desktopApps: { id: DesktopApp; icon: string; label: string; iconClass: string }[] = [
